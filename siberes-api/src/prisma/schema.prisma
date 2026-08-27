@@ -1,0 +1,238 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider     = "prisma-client"
+  output       = "../src/generated/prisma"
+  moduleFormat = "cjs"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum BrsStatus {
+  DRAFT
+  FINAL
+}
+
+enum UploadStatus {
+  PROCESSING
+  ACTIVE
+  SUPERSEDED
+  FAILED
+}
+
+enum DocumentType {
+  DRAFT
+  FINAL
+  REVISION
+}
+
+model User {
+  id           Int     @id @default(autoincrement())
+  name         String
+  username     String  @unique
+  passwordHash String?
+  isActive     Boolean @default(true)
+
+  roles UserRole[]
+
+  uploadedData   DataUpload[]     @relation("UploadedBy")
+  rawDataChanges RawDataHistory[] @relation("RawDataChangedBy")
+  templates      TemplateBrs[]    @relation("TemplateCreatedBy")
+  documents      DocumentBrs[]    @relation("DocumentCreatedBy")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("users")
+}
+
+
+model Role {
+  id   Int    @id @default(autoincrement())
+  name String @unique
+
+  users UserRole[]
+
+  @@map("roles")
+}
+
+model UserRole {
+  id Int @id @default(autoincrement())
+
+  userId Int
+  roleId Int
+
+  startedAt DateTime  @default(now())
+  endedAt   DateTime?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  role Role @relation(fields: [roleId], references: [id])
+
+  @@index([userId])
+  @@index([roleId])
+  @@map("user_roles")
+}
+
+model Brs {
+  id Int @id @default(autoincrement())
+
+  jenisBrs String @default("PARIWISATA")
+
+  bulan Int
+  tahun Int
+
+  nomorBrs         String?
+  tanggalPublikasi DateTime? @db.Date
+
+  status BrsStatus @default(DRAFT)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  dataUploads DataUpload[]
+  documents   DocumentBrs[]
+
+  @@unique([jenisBrs, bulan, tahun])
+  @@index([tahun, bulan])
+  @@map("brs")
+}
+
+model DataUpload {
+  id Int @id @default(autoincrement())
+
+  brsId        Int
+  uploadedById Int
+
+  originalName String
+  storedName   String
+  path         String
+  mimeType     String?
+  size         BigInt?
+
+  version Int
+
+  status UploadStatus @default(PROCESSING)
+
+  uploadedAt DateTime @default(now())
+
+  brs Brs @relation(fields: [brsId], references: [id], onDelete: Cascade)
+
+  uploadedBy User @relation("UploadedBy", fields: [uploadedById], references: [id])
+
+  rawData RawData[]
+
+  @@unique([brsId, version])
+  @@index([brsId, status])
+  @@map("data_uploads")
+}
+
+model RawData {
+  id Int @id @default(autoincrement())
+
+  dataUploadId Int
+
+  jenisAkomodasi Int
+  kelasAkomodasi Int
+
+  mktj  Decimal @db.Decimal(18, 4)
+  mkts  Decimal @db.Decimal(18, 4)
+  mta   Decimal @db.Decimal(18, 4)
+  ta    Decimal @db.Decimal(18, 4)
+  mtnus Decimal @db.Decimal(18, 4)
+  tnus  Decimal @db.Decimal(18, 4)
+
+  dataUpload DataUpload @relation(fields: [dataUploadId], references: [id], onDelete: Cascade)
+
+  histories RawDataHistory[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([dataUploadId])
+  @@index([jenisAkomodasi, kelasAkomodasi])
+  @@map("raw_data")
+}
+
+model RawDataHistory {
+  id Int @id @default(autoincrement())
+
+  rawDataId   Int
+  changedById Int
+
+  fieldName String
+
+  oldValue String?
+  newValue String?
+
+  changedAt DateTime @default(now())
+
+  rawData RawData @relation(fields: [rawDataId], references: [id], onDelete: Cascade)
+
+  changedBy User @relation("RawDataChangedBy", fields: [changedById], references: [id])
+
+  @@index([rawDataId])
+  @@map("raw_data_history")
+}
+
+model TemplateBrs {
+  id Int @id @default(autoincrement())
+
+  name     String
+  jenisBrs String @default("PARIWISATA")
+
+  version Int
+
+  originalName String
+  storedName   String
+  path         String
+
+  isActive Boolean @default(true)
+
+  createdById Int
+
+  createdBy User @relation("TemplateCreatedBy", fields: [createdById], references: [id])
+
+  documents DocumentBrs[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([jenisBrs, version])
+  @@index([jenisBrs, isActive])
+  @@map("template_brs")
+}
+
+model DocumentBrs {
+  id Int @id @default(autoincrement())
+
+  brsId       Int
+  templateId  Int
+  createdById Int
+
+  name String
+  path String
+
+  version Int
+
+  type DocumentType @default(DRAFT)
+
+  generationPayload Json?
+
+  brs Brs @relation(fields: [brsId], references: [id], onDelete: Cascade)
+
+  template TemplateBrs @relation(fields: [templateId], references: [id])
+
+  createdBy User @relation("DocumentCreatedBy", fields: [createdById], references: [id])
+
+  createdAt DateTime @default(now())
+
+  @@unique([brsId, version])
+  @@index([brsId])
+  @@map("dokumen_brs")
+}
