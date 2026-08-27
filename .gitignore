@@ -1,0 +1,29 @@
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Next.js
+.next/
+out/
+
+# NestJS
+dist/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Prisma generated client
+src/generated/
+**/src/generated/
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
