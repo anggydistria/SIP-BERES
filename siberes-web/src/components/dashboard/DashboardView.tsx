@@ -18,6 +18,7 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { getDashboardSummary } from '@/lib/api/dashboard';
 import type { DashboardSummary } from '@/types/dashboard';
+import { downloadBrsDocument } from '@/lib/api/brs-document';
 
 const MONTH_OPTIONS = [
   { value: '1', label: 'Januari' },
@@ -52,71 +53,75 @@ export function DashboardView() {
   const [isLoading, setIsLoading] = useState(true);
 
   const [error, setError] = useState<string | null>(null);
+  const [isDownloading, setIsDownloading] = useState(false);
 
- useEffect(() => {
-   let isCancelled = false;
+  const [downloadError, setDownloadError] = useState<
+    string | null
+  >(null);
 
-   getDashboardSummary(2, 2026)
-     .then((result) => {
-       if (isCancelled) {
-         return;
-       }
+  useEffect(() => {
+    let isCancelled = false;
 
-       setSummary(result);
-       setError(null);
-     })
-     .catch((caughtError: unknown) => {
-       if (isCancelled) {
-         return;
-       }
+    getDashboardSummary(2, 2026)
+      .then((result) => {
+        if (isCancelled) {
+          return;
+        }
 
-       setSummary(null);
+        setSummary(result);
+        setError(null);
+      })
+      .catch((caughtError: unknown) => {
+        if (isCancelled) {
+          return;
+        }
 
-       setError(
-         caughtError instanceof Error
-           ? caughtError.message
-           : 'Gagal mengambil data dashboard'
-       );
-     })
-     .finally(() => {
-       if (!isCancelled) {
-         setIsLoading(false);
-       }
-     });
+        setSummary(null);
 
-   return () => {
-     isCancelled = true;
-   };
- }, []);
+        setError(
+          caughtError instanceof Error
+            ? caughtError.message
+            : 'Gagal mengambil data dashboard'
+        );
+      })
+      .finally(() => {
+        if (!isCancelled) {
+          setIsLoading(false);
+        }
+      });
 
- async function loadSummary(
-   selectedMonth: number,
-   selectedYear: number
- ) {
-   setIsLoading(true);
-   setError(null);
+    return () => {
+      isCancelled = true;
+    };
+  }, []);
 
-   try {
-     const result = await getDashboardSummary(
-       selectedMonth,
-       selectedYear
-     );
+  async function loadSummary(
+    selectedMonth: number,
+    selectedYear: number
+  ) {
+    setIsLoading(true);
+    setError(null);
 
-     setSummary(result);
-   } catch (caughtError) {
-     setSummary(null);
+    try {
+      const result = await getDashboardSummary(
+        selectedMonth,
+        selectedYear
+      );
 
-     setError(
-       caughtError instanceof Error
-         ? caughtError.message
-         : 'Gagal mengambil data dashboard'
-     );
-   } finally {
-     setIsLoading(false);
-   }
- }
+      setSummary(result);
+    } catch (caughtError) {
+      setSummary(null);
 
- 
+      setError(
+        caughtError instanceof Error
+          ? caughtError.message
+          : 'Gagal mengambil data dashboard'
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
   function handleFilter() {
     const selectedMonth = Number(month);
     const selectedYear = Number(year);
@@ -141,6 +146,43 @@ export function DashboardView() {
     void loadSummary(selectedMonth, selectedYear);
   }
 
+  async function handleDownloadDocument() {
+    if (!summary) {
+      return;
+    }
+
+    setIsDownloading(true);
+    setDownloadError(null);
+
+    try {
+      const result = await downloadBrsDocument(
+        summary.brs.bulan,
+        summary.brs.tahun
+      );
+
+      const objectUrl = URL.createObjectURL(result.blob);
+
+      const anchor = document.createElement('a');
+
+      anchor.href = objectUrl;
+      anchor.download = result.filename;
+
+      document.body.appendChild(anchor);
+
+      anchor.click();
+      anchor.remove();
+
+      URL.revokeObjectURL(objectUrl);
+    } catch (caughtError) {
+      setDownloadError(
+        caughtError instanceof Error
+          ? caughtError.message
+          : 'Gagal mengunduh dokumen BRS'
+      );
+    } finally {
+      setIsDownloading(false);
+    }
+  }
   return (
     <Stack gap="lg">
       <div>
@@ -191,11 +233,22 @@ export function DashboardView() {
         </Alert>
       )}
 
+      {downloadError && (
+        <Alert
+          color="red"
+          title="Dokumen gagal dibuat"
+          withCloseButton
+          onClose={() => setDownloadError(null)}
+        >
+          {downloadError}
+        </Alert>
+      )}
+
       {isLoading && <DashboardSkeleton />}
 
       {!isLoading && summary && (
         <>
-          <Group justify="space-between">
+          <Group justify="space-between" align="center">
             <div>
               <Text fw={600}>
                 Periode{' '}
@@ -214,10 +267,22 @@ export function DashboardView() {
               </Text>
             </div>
 
-            <Badge color="green" variant="light">
-              Versi {summary.dataUpload.version} ·{' '}
-              {summary.dataUpload.rowCount} baris
-            </Badge>
+            <Group>
+              <Badge color="green" variant="light">
+                Versi {summary.dataUpload.version} ·{' '}
+                {summary.dataUpload.rowCount} baris
+              </Badge>
+
+              <Button
+                color="orange"
+                onClick={() => {
+                  void handleDownloadDocument();
+                }}
+                loading={isDownloading}
+              >
+                Unduh BRS Word
+              </Button>
+            </Group>
           </Group>
 
           <SimpleGrid
