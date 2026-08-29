@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "multer": "^2.3.0",
+    "xlsx": "^0.18.5"
+  },
+  "devDependencies": {
+    "@types/multer": "^2.2.0"
+  }
+}
