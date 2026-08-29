@@ -6,7 +6,9 @@ import { AppService } from './app.service';
 import { BrsModule } from './brs/brs.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { DataUploadModule } from './data-upload/data-upload.module';
-
+import { DashboardModule } from './dashboard/dashboard.module';
+import { BrsAnalyticsModule } from './brs-analytics/brs-analytics.module';
+import { BrsDocumentModule } from './brs-document/brs-document.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -15,6 +17,9 @@ import { DataUploadModule } from './data-upload/data-upload.module';
     PrismaModule,
     BrsModule,
     DataUploadModule,
+    DashboardModule,
+    BrsAnalyticsModule,
+    BrsDocumentModule,
   ],
   controllers: [AppController],
   providers: [AppService],

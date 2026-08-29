@@ -38,3 +38,22 @@ export interface ExcelPreviewResponse {
   data: ExcelPreviewRow[];
   errors: ExcelRowError[];
 }
+
+export interface SaveExcelResponse {
+  message: string;
+
+  dataUpload: {
+    id: number;
+    brsId: number;
+    version: number;
+    status: 'ACTIVE';
+    originalName: string;
+    rowCount: number;
+  };
+
+  period: {
+    label: string;
+    bulan: number;
+    tahun: number;
+  };
+}

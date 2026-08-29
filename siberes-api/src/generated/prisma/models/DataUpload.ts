@@ -31,6 +31,7 @@ export type DataUploadAvgAggregateOutputType = {
   brsId: number | null
   uploadedById: number | null
   size: number | null
+  rowCount: number | null
   version: number | null
 }
 
@@ -38,7 +39,8 @@ export type DataUploadSumAggregateOutputType = {
   id: number | null
   brsId: number | null
   uploadedById: number | null
-  size: bigint | null
+  size: number | null
+  rowCount: number | null
   version: number | null
 }
 
@@ -50,10 +52,14 @@ export type DataUploadMinAggregateOutputType = {
   storedName: string | null
   path: string | null
   mimeType: string | null
-  size: bigint | null
+  size: number | null
+  sheetName: string | null
+  rowCount: number | null
   version: number | null
   status: $Enums.UploadStatus | null
+  errorMessage: string | null
   uploadedAt: Date | null
+  processedAt: Date | null
 }
 
 export type DataUploadMaxAggregateOutputType = {
@@ -64,10 +70,14 @@ export type DataUploadMaxAggregateOutputType = {
   storedName: string | null
   path: string | null
   mimeType: string | null
-  size: bigint | null
+  size: number | null
+  sheetName: string | null
+  rowCount: number | null
   version: number | null
   status: $Enums.UploadStatus | null
+  errorMessage: string | null
   uploadedAt: Date | null
+  processedAt: Date | null
 }
 
 export type DataUploadCountAggregateOutputType = {
@@ -79,9 +89,13 @@ export type DataUploadCountAggregateOutputType = {
   path: number
   mimeType: number
   size: number
+  sheetName: number
+  rowCount: number
   version: number
   status: number
+  errorMessage: number
   uploadedAt: number
+  processedAt: number
   _all: number
 }
 
@@ -91,6 +105,7 @@ export type DataUploadAvgAggregateInputType = {
   brsId?: true
   uploadedById?: true
   size?: true
+  rowCount?: true
   version?: true
 }
 
@@ -99,6 +114,7 @@ export type DataUploadSumAggregateInputType = {
   brsId?: true
   uploadedById?: true
   size?: true
+  rowCount?: true
   version?: true
 }
 
@@ -111,9 +127,13 @@ export type DataUploadMinAggregateInputType = {
   path?: true
   mimeType?: true
   size?: true
+  sheetName?: true
+  rowCount?: true
   version?: true
   status?: true
+  errorMessage?: true
   uploadedAt?: true
+  processedAt?: true
 }
 
 export type DataUploadMaxAggregateInputType = {
@@ -125,9 +145,13 @@ export type DataUploadMaxAggregateInputType = {
   path?: true
   mimeType?: true
   size?: true
+  sheetName?: true
+  rowCount?: true
   version?: true
   status?: true
+  errorMessage?: true
   uploadedAt?: true
+  processedAt?: true
 }
 
 export type DataUploadCountAggregateInputType = {
@@ -139,9 +163,13 @@ export type DataUploadCountAggregateInputType = {
   path?: true
   mimeType?: true
   size?: true
+  sheetName?: true
+  rowCount?: true
   version?: true
   status?: true
+  errorMessage?: true
   uploadedAt?: true
+  processedAt?: true
   _all?: true
 }
 
@@ -239,10 +267,14 @@ export type DataUploadGroupByOutputType = {
   storedName: string
   path: string
   mimeType: string | null
-  size: bigint | null
+  size: number | null
+  sheetName: string | null
+  rowCount: number
   version: number
   status: $Enums.UploadStatus
+  errorMessage: string | null
   uploadedAt: Date
+  processedAt: Date | null
   _count: DataUploadCountAggregateOutputType | null
   _avg: DataUploadAvgAggregateOutputType | null
   _sum: DataUploadSumAggregateOutputType | null
@@ -276,10 +308,14 @@ export type DataUploadWhereInput = {
   storedName?: Prisma.StringFilter<"DataUpload"> | string
   path?: Prisma.StringFilter<"DataUpload"> | string
   mimeType?: Prisma.StringNullableFilter<"DataUpload"> | string | null
-  size?: Prisma.BigIntNullableFilter<"DataUpload"> | bigint | number | null
+  size?: Prisma.IntNullableFilter<"DataUpload"> | number | null
+  sheetName?: Prisma.StringNullableFilter<"DataUpload"> | string | null
+  rowCount?: Prisma.IntFilter<"DataUpload"> | number
   version?: Prisma.IntFilter<"DataUpload"> | number
   status?: Prisma.EnumUploadStatusFilter<"DataUpload"> | $Enums.UploadStatus
+  errorMessage?: Prisma.StringNullableFilter<"DataUpload"> | string | null
   uploadedAt?: Prisma.DateTimeFilter<"DataUpload"> | Date | string
+  processedAt?: Prisma.DateTimeNullableFilter<"DataUpload"> | Date | string | null
   brs?: Prisma.XOR<Prisma.BrsScalarRelationFilter, Prisma.BrsWhereInput>
   uploadedBy?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   rawData?: Prisma.RawDataListRelationFilter
@@ -294,9 +330,13 @@ export type DataUploadOrderByWithRelationInput = {
   path?: Prisma.SortOrder
   mimeType?: Prisma.SortOrderInput | Prisma.SortOrder
   size?: Prisma.SortOrderInput | Prisma.SortOrder
+  sheetName?: Prisma.SortOrderInput | Prisma.SortOrder
+  rowCount?: Prisma.SortOrder
   version?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  errorMessage?: Prisma.SortOrderInput | Prisma.SortOrder
   uploadedAt?: Prisma.SortOrder
+  processedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   brs?: Prisma.BrsOrderByWithRelationInput
   uploadedBy?: Prisma.UserOrderByWithRelationInput
   rawData?: Prisma.RawDataOrderByRelationAggregateInput
@@ -314,10 +354,14 @@ export type DataUploadWhereUniqueInput = Prisma.AtLeast<{
   storedName?: Prisma.StringFilter<"DataUpload"> | string
   path?: Prisma.StringFilter<"DataUpload"> | string
   mimeType?: Prisma.StringNullableFilter<"DataUpload"> | string | null
-  size?: Prisma.BigIntNullableFilter<"DataUpload"> | bigint | number | null
+  size?: Prisma.IntNullableFilter<"DataUpload"> | number | null
+  sheetName?: Prisma.StringNullableFilter<"DataUpload"> | string | null
+  rowCount?: Prisma.IntFilter<"DataUpload"> | number
   version?: Prisma.IntFilter<"DataUpload"> | number
   status?: Prisma.EnumUploadStatusFilter<"DataUpload"> | $Enums.UploadStatus
+  errorMessage?: Prisma.StringNullableFilter<"DataUpload"> | string | null
   uploadedAt?: Prisma.DateTimeFilter<"DataUpload"> | Date | string
+  processedAt?: Prisma.DateTimeNullableFilter<"DataUpload"> | Date | string | null
   brs?: Prisma.XOR<Prisma.BrsScalarRelationFilter, Prisma.BrsWhereInput>
   uploadedBy?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   rawData?: Prisma.RawDataListRelationFilter
@@ -332,9 +376,13 @@ export type DataUploadOrderByWithAggregationInput = {
   path?: Prisma.SortOrder
   mimeType?: Prisma.SortOrderInput | Prisma.SortOrder
   size?: Prisma.SortOrderInput | Prisma.SortOrder
+  sheetName?: Prisma.SortOrderInput | Prisma.SortOrder
+  rowCount?: Prisma.SortOrder
   version?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  errorMessage?: Prisma.SortOrderInput | Prisma.SortOrder
   uploadedAt?: Prisma.SortOrder
+  processedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.DataUploadCountOrderByAggregateInput
   _avg?: Prisma.DataUploadAvgOrderByAggregateInput
   _max?: Prisma.DataUploadMaxOrderByAggregateInput
@@ -353,10 +401,14 @@ export type DataUploadScalarWhereWithAggregatesInput = {
   storedName?: Prisma.StringWithAggregatesFilter<"DataUpload"> | string
   path?: Prisma.StringWithAggregatesFilter<"DataUpload"> | string
   mimeType?: Prisma.StringNullableWithAggregatesFilter<"DataUpload"> | string | null
-  size?: Prisma.BigIntNullableWithAggregatesFilter<"DataUpload"> | bigint | number | null
+  size?: Prisma.IntNullableWithAggregatesFilter<"DataUpload"> | number | null
+  sheetName?: Prisma.StringNullableWithAggregatesFilter<"DataUpload"> | string | null
+  rowCount?: Prisma.IntWithAggregatesFilter<"DataUpload"> | number
   version?: Prisma.IntWithAggregatesFilter<"DataUpload"> | number
   status?: Prisma.EnumUploadStatusWithAggregatesFilter<"DataUpload"> | $Enums.UploadStatus
+  errorMessage?: Prisma.StringNullableWithAggregatesFilter<"DataUpload"> | string | null
   uploadedAt?: Prisma.DateTimeWithAggregatesFilter<"DataUpload"> | Date | string
+  processedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"DataUpload"> | Date | string | null
 }
 
 export type DataUploadCreateInput = {
@@ -364,10 +416,14 @@ export type DataUploadCreateInput = {
   storedName: string
   path: string
   mimeType?: string | null
-  size?: bigint | number | null
+  size?: number | null
+  sheetName?: string | null
+  rowCount?: number
   version: number
   status?: $Enums.UploadStatus
+  errorMessage?: string | null
   uploadedAt?: Date | string
+  processedAt?: Date | string | null
   brs: Prisma.BrsCreateNestedOneWithoutDataUploadsInput
   uploadedBy: Prisma.UserCreateNestedOneWithoutUploadedDataInput
   rawData?: Prisma.RawDataCreateNestedManyWithoutDataUploadInput
@@ -381,10 +437,14 @@ export type DataUploadUncheckedCreateInput = {
   storedName: string
   path: string
   mimeType?: string | null
-  size?: bigint | number | null
+  size?: number | null
+  sheetName?: string | null
+  rowCount?: number
   version: number
   status?: $Enums.UploadStatus
+  errorMessage?: string | null
   uploadedAt?: Date | string
+  processedAt?: Date | string | null
   rawData?: Prisma.RawDataUncheckedCreateNestedManyWithoutDataUploadInput
 }
 
@@ -393,10 +453,14 @@ export type DataUploadUpdateInput = {
   storedName?: Prisma.StringFieldUpdateOperationsInput | string
   path?: Prisma.StringFieldUpdateOperationsInput | string
   mimeType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  size?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+  size?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  sheetName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rowCount?: Prisma.IntFieldUpdateOperationsInput | number
   version?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumUploadStatusFieldUpdateOperationsInput | $Enums.UploadStatus
+  errorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   uploadedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  processedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   brs?: Prisma.BrsUpdateOneRequiredWithoutDataUploadsNestedInput
   uploadedBy?: Prisma.UserUpdateOneRequiredWithoutUploadedDataNestedInput
   rawData?: Prisma.RawDataUpdateManyWithoutDataUploadNestedInput
@@ -410,10 +474,14 @@ export type DataUploadUncheckedUpdateInput = {
   storedName?: Prisma.StringFieldUpdateOperationsInput | string
   path?: Prisma.StringFieldUpdateOperationsInput | string
   mimeType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  size?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+  size?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  sheetName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rowCount?: Prisma.IntFieldUpdateOperationsInput | number
   version?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumUploadStatusFieldUpdateOperationsInput | $Enums.UploadStatus
+  errorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   uploadedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  processedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   rawData?: Prisma.RawDataUncheckedUpdateManyWithoutDataUploadNestedInput
 }
 
@@ -425,10 +493,14 @@ export type DataUploadCreateManyInput = {
   storedName: string
   path: string
   mimeType?: string | null
-  size?: bigint | number | null
+  size?: number | null
+  sheetName?: string | null
+  rowCount?: number
   version: number
   status?: $Enums.UploadStatus
+  errorMessage?: string | null
   uploadedAt?: Date | string
+  processedAt?: Date | string | null
 }
 
 export type DataUploadUpdateManyMutationInput = {
@@ -436,10 +508,14 @@ export type DataUploadUpdateManyMutationInput = {
   storedName?: Prisma.StringFieldUpdateOperationsInput | string
   path?: Prisma.StringFieldUpdateOperationsInput | string
   mimeType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  size?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+  size?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  sheetName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rowCount?: Prisma.IntFieldUpdateOperationsInput | number
   version?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumUploadStatusFieldUpdateOperationsInput | $Enums.UploadStatus
+  errorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   uploadedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  processedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type DataUploadUncheckedUpdateManyInput = {
@@ -450,10 +526,14 @@ export type DataUploadUncheckedUpdateManyInput = {
   storedName?: Prisma.StringFieldUpdateOperationsInput | string
   path?: Prisma.StringFieldUpdateOperationsInput | string
   mimeType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  size?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+  size?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  sheetName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rowCount?: Prisma.IntFieldUpdateOperationsInput | number
   version?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumUploadStatusFieldUpdateOperationsInput | $Enums.UploadStatus
+  errorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   uploadedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  processedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type DataUploadListRelationFilter = {
@@ -480,9 +560,13 @@ export type DataUploadCountOrderByAggregateInput = {
   path?: Prisma.SortOrder
   mimeType?: Prisma.SortOrder
   size?: Prisma.SortOrder
+  sheetName?: Prisma.SortOrder
+  rowCount?: Prisma.SortOrder
   version?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  errorMessage?: Prisma.SortOrder
   uploadedAt?: Prisma.SortOrder
+  processedAt?: Prisma.SortOrder
 }
 
 export type DataUploadAvgOrderByAggregateInput = {
@@ -490,6 +574,7 @@ export type DataUploadAvgOrderByAggregateInput = {
   brsId?: Prisma.SortOrder
   uploadedById?: Prisma.SortOrder
   size?: Prisma.SortOrder
+  rowCount?: Prisma.SortOrder
   version?: Prisma.SortOrder
 }
 
@@ -502,9 +587,13 @@ export type DataUploadMaxOrderByAggregateInput = {
   path?: Prisma.SortOrder
   mimeType?: Prisma.SortOrder
   size?: Prisma.SortOrder
+  sheetName?: Prisma.SortOrder
+  rowCount?: Prisma.SortOrder
   version?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  errorMessage?: Prisma.SortOrder
   uploadedAt?: Prisma.SortOrder
+  processedAt?: Prisma.SortOrder
 }
 
 export type DataUploadMinOrderByAggregateInput = {
@@ -516,9 +605,13 @@ export type DataUploadMinOrderByAggregateInput = {
   path?: Prisma.SortOrder
   mimeType?: Prisma.SortOrder
   size?: Prisma.SortOrder
+  sheetName?: Prisma.SortOrder
+  rowCount?: Prisma.SortOrder
   version?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  errorMessage?: Prisma.SortOrder
   uploadedAt?: Prisma.SortOrder
+  processedAt?: Prisma.SortOrder
 }
 
 export type DataUploadSumOrderByAggregateInput = {
@@ -526,6 +619,7 @@ export type DataUploadSumOrderByAggregateInput = {
   brsId?: Prisma.SortOrder
   uploadedById?: Prisma.SortOrder
   size?: Prisma.SortOrder
+  rowCount?: Prisma.SortOrder
   version?: Prisma.SortOrder
 }
 
@@ -618,12 +712,12 @@ export type DataUploadUncheckedUpdateManyWithoutBrsNestedInput = {
   deleteMany?: Prisma.DataUploadScalarWhereInput | Prisma.DataUploadScalarWhereInput[]
 }
 
-export type NullableBigIntFieldUpdateOperationsInput = {
-  set?: bigint | number | null
-  increment?: bigint | number
-  decrement?: bigint | number
-  multiply?: bigint | number
-  divide?: bigint | number
+export type NullableIntFieldUpdateOperationsInput = {
+  set?: number | null
+  increment?: number
+  decrement?: number
+  multiply?: number
+  divide?: number
 }
 
 export type EnumUploadStatusFieldUpdateOperationsInput = {
@@ -649,10 +743,14 @@ export type DataUploadCreateWithoutUploadedByInput = {
   storedName: string
   path: string
   mimeType?: string | null
-  size?: bigint | number | null
+  size?: number | null
+  sheetName?: string | null
+  rowCount?: number
   version: number
   status?: $Enums.UploadStatus
+  errorMessage?: string | null
   uploadedAt?: Date | string
+  processedAt?: Date | string | null
   brs: Prisma.BrsCreateNestedOneWithoutDataUploadsInput
   rawData?: Prisma.RawDataCreateNestedManyWithoutDataUploadInput
 }
@@ -664,10 +762,14 @@ export type DataUploadUncheckedCreateWithoutUploadedByInput = {
   storedName: string
   path: string
   mimeType?: string | null
-  size?: bigint | number | null
+  size?: number | null
+  sheetName?: string | null
+  rowCount?: number
   version: number
   status?: $Enums.UploadStatus
+  errorMessage?: string | null
   uploadedAt?: Date | string
+  processedAt?: Date | string | null
   rawData?: Prisma.RawDataUncheckedCreateNestedManyWithoutDataUploadInput
 }
 
@@ -708,10 +810,14 @@ export type DataUploadScalarWhereInput = {
   storedName?: Prisma.StringFilter<"DataUpload"> | string
   path?: Prisma.StringFilter<"DataUpload"> | string
   mimeType?: Prisma.StringNullableFilter<"DataUpload"> | string | null
-  size?: Prisma.BigIntNullableFilter<"DataUpload"> | bigint | number | null
+  size?: Prisma.IntNullableFilter<"DataUpload"> | number | null
+  sheetName?: Prisma.StringNullableFilter<"DataUpload"> | string | null
+  rowCount?: Prisma.IntFilter<"DataUpload"> | number
   version?: Prisma.IntFilter<"DataUpload"> | number
   status?: Prisma.EnumUploadStatusFilter<"DataUpload"> | $Enums.UploadStatus
+  errorMessage?: Prisma.StringNullableFilter<"DataUpload"> | string | null
   uploadedAt?: Prisma.DateTimeFilter<"DataUpload"> | Date | string
+  processedAt?: Prisma.DateTimeNullableFilter<"DataUpload"> | Date | string | null
 }
 
 export type DataUploadCreateWithoutBrsInput = {
@@ -719,10 +825,14 @@ export type DataUploadCreateWithoutBrsInput = {
   storedName: string
   path: string
   mimeType?: string | null
-  size?: bigint | number | null
+  size?: number | null
+  sheetName?: string | null
+  rowCount?: number
   version: number
   status?: $Enums.UploadStatus
+  errorMessage?: string | null
   uploadedAt?: Date | string
+  processedAt?: Date | string | null
   uploadedBy: Prisma.UserCreateNestedOneWithoutUploadedDataInput
   rawData?: Prisma.RawDataCreateNestedManyWithoutDataUploadInput
 }
@@ -734,10 +844,14 @@ export type DataUploadUncheckedCreateWithoutBrsInput = {
   storedName: string
   path: string
   mimeType?: string | null
-  size?: bigint | number | null
+  size?: number | null
+  sheetName?: string | null
+  rowCount?: number
   version: number
   status?: $Enums.UploadStatus
+  errorMessage?: string | null
   uploadedAt?: Date | string
+  processedAt?: Date | string | null
   rawData?: Prisma.RawDataUncheckedCreateNestedManyWithoutDataUploadInput
 }
 
@@ -772,10 +886,14 @@ export type DataUploadCreateWithoutRawDataInput = {
   storedName: string
   path: string
   mimeType?: string | null
-  size?: bigint | number | null
+  size?: number | null
+  sheetName?: string | null
+  rowCount?: number
   version: number
   status?: $Enums.UploadStatus
+  errorMessage?: string | null
   uploadedAt?: Date | string
+  processedAt?: Date | string | null
   brs: Prisma.BrsCreateNestedOneWithoutDataUploadsInput
   uploadedBy: Prisma.UserCreateNestedOneWithoutUploadedDataInput
 }
@@ -788,10 +906,14 @@ export type DataUploadUncheckedCreateWithoutRawDataInput = {
   storedName: string
   path: string
   mimeType?: string | null
-  size?: bigint | number | null
+  size?: number | null
+  sheetName?: string | null
+  rowCount?: number
   version: number
   status?: $Enums.UploadStatus
+  errorMessage?: string | null
   uploadedAt?: Date | string
+  processedAt?: Date | string | null
 }
 
 export type DataUploadCreateOrConnectWithoutRawDataInput = {
@@ -815,10 +937,14 @@ export type DataUploadUpdateWithoutRawDataInput = {
   storedName?: Prisma.StringFieldUpdateOperationsInput | string
   path?: Prisma.StringFieldUpdateOperationsInput | string
   mimeType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  size?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+  size?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  sheetName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rowCount?: Prisma.IntFieldUpdateOperationsInput | number
   version?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumUploadStatusFieldUpdateOperationsInput | $Enums.UploadStatus
+  errorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   uploadedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  processedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   brs?: Prisma.BrsUpdateOneRequiredWithoutDataUploadsNestedInput
   uploadedBy?: Prisma.UserUpdateOneRequiredWithoutUploadedDataNestedInput
 }
@@ -831,10 +957,14 @@ export type DataUploadUncheckedUpdateWithoutRawDataInput = {
   storedName?: Prisma.StringFieldUpdateOperationsInput | string
   path?: Prisma.StringFieldUpdateOperationsInput | string
   mimeType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  size?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+  size?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  sheetName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rowCount?: Prisma.IntFieldUpdateOperationsInput | number
   version?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumUploadStatusFieldUpdateOperationsInput | $Enums.UploadStatus
+  errorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   uploadedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  processedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type DataUploadCreateManyUploadedByInput = {
@@ -844,10 +974,14 @@ export type DataUploadCreateManyUploadedByInput = {
   storedName: string
   path: string
   mimeType?: string | null
-  size?: bigint | number | null
+  size?: number | null
+  sheetName?: string | null
+  rowCount?: number
   version: number
   status?: $Enums.UploadStatus
+  errorMessage?: string | null
   uploadedAt?: Date | string
+  processedAt?: Date | string | null
 }
 
 export type DataUploadUpdateWithoutUploadedByInput = {
@@ -855,10 +989,14 @@ export type DataUploadUpdateWithoutUploadedByInput = {
   storedName?: Prisma.StringFieldUpdateOperationsInput | string
   path?: Prisma.StringFieldUpdateOperationsInput | string
   mimeType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  size?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+  size?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  sheetName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rowCount?: Prisma.IntFieldUpdateOperationsInput | number
   version?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumUploadStatusFieldUpdateOperationsInput | $Enums.UploadStatus
+  errorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   uploadedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  processedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   brs?: Prisma.BrsUpdateOneRequiredWithoutDataUploadsNestedInput
   rawData?: Prisma.RawDataUpdateManyWithoutDataUploadNestedInput
 }
@@ -870,10 +1008,14 @@ export type DataUploadUncheckedUpdateWithoutUploadedByInput = {
   storedName?: Prisma.StringFieldUpdateOperationsInput | string
   path?: Prisma.StringFieldUpdateOperationsInput | string
   mimeType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  size?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+  size?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  sheetName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rowCount?: Prisma.IntFieldUpdateOperationsInput | number
   version?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumUploadStatusFieldUpdateOperationsInput | $Enums.UploadStatus
+  errorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   uploadedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  processedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   rawData?: Prisma.RawDataUncheckedUpdateManyWithoutDataUploadNestedInput
 }
 
@@ -884,10 +1026,14 @@ export type DataUploadUncheckedUpdateManyWithoutUploadedByInput = {
   storedName?: Prisma.StringFieldUpdateOperationsInput | string
   path?: Prisma.StringFieldUpdateOperationsInput | string
   mimeType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  size?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+  size?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  sheetName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rowCount?: Prisma.IntFieldUpdateOperationsInput | number
   version?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumUploadStatusFieldUpdateOperationsInput | $Enums.UploadStatus
+  errorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   uploadedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  processedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type DataUploadCreateManyBrsInput = {
@@ -897,10 +1043,14 @@ export type DataUploadCreateManyBrsInput = {
   storedName: string
   path: string
   mimeType?: string | null
-  size?: bigint | number | null
+  size?: number | null
+  sheetName?: string | null
+  rowCount?: number
   version: number
   status?: $Enums.UploadStatus
+  errorMessage?: string | null
   uploadedAt?: Date | string
+  processedAt?: Date | string | null
 }
 
 export type DataUploadUpdateWithoutBrsInput = {
@@ -908,10 +1058,14 @@ export type DataUploadUpdateWithoutBrsInput = {
   storedName?: Prisma.StringFieldUpdateOperationsInput | string
   path?: Prisma.StringFieldUpdateOperationsInput | string
   mimeType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  size?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+  size?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  sheetName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rowCount?: Prisma.IntFieldUpdateOperationsInput | number
   version?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumUploadStatusFieldUpdateOperationsInput | $Enums.UploadStatus
+  errorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   uploadedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  processedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   uploadedBy?: Prisma.UserUpdateOneRequiredWithoutUploadedDataNestedInput
   rawData?: Prisma.RawDataUpdateManyWithoutDataUploadNestedInput
 }
@@ -923,10 +1077,14 @@ export type DataUploadUncheckedUpdateWithoutBrsInput = {
   storedName?: Prisma.StringFieldUpdateOperationsInput | string
   path?: Prisma.StringFieldUpdateOperationsInput | string
   mimeType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  size?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+  size?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  sheetName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rowCount?: Prisma.IntFieldUpdateOperationsInput | number
   version?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumUploadStatusFieldUpdateOperationsInput | $Enums.UploadStatus
+  errorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   uploadedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  processedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   rawData?: Prisma.RawDataUncheckedUpdateManyWithoutDataUploadNestedInput
 }
 
@@ -937,10 +1095,14 @@ export type DataUploadUncheckedUpdateManyWithoutBrsInput = {
   storedName?: Prisma.StringFieldUpdateOperationsInput | string
   path?: Prisma.StringFieldUpdateOperationsInput | string
   mimeType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  size?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+  size?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  sheetName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rowCount?: Prisma.IntFieldUpdateOperationsInput | number
   version?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumUploadStatusFieldUpdateOperationsInput | $Enums.UploadStatus
+  errorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   uploadedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  processedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 
@@ -983,9 +1145,13 @@ export type DataUploadSelect<ExtArgs extends runtime.Types.Extensions.InternalAr
   path?: boolean
   mimeType?: boolean
   size?: boolean
+  sheetName?: boolean
+  rowCount?: boolean
   version?: boolean
   status?: boolean
+  errorMessage?: boolean
   uploadedAt?: boolean
+  processedAt?: boolean
   brs?: boolean | Prisma.BrsDefaultArgs<ExtArgs>
   uploadedBy?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   rawData?: boolean | Prisma.DataUpload$rawDataArgs<ExtArgs>
@@ -1001,9 +1167,13 @@ export type DataUploadSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ex
   path?: boolean
   mimeType?: boolean
   size?: boolean
+  sheetName?: boolean
+  rowCount?: boolean
   version?: boolean
   status?: boolean
+  errorMessage?: boolean
   uploadedAt?: boolean
+  processedAt?: boolean
   brs?: boolean | Prisma.BrsDefaultArgs<ExtArgs>
   uploadedBy?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["dataUpload"]>
@@ -1017,9 +1187,13 @@ export type DataUploadSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ex
   path?: boolean
   mimeType?: boolean
   size?: boolean
+  sheetName?: boolean
+  rowCount?: boolean
   version?: boolean
   status?: boolean
+  errorMessage?: boolean
   uploadedAt?: boolean
+  processedAt?: boolean
   brs?: boolean | Prisma.BrsDefaultArgs<ExtArgs>
   uploadedBy?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["dataUpload"]>
@@ -1033,12 +1207,16 @@ export type DataUploadSelectScalar = {
   path?: boolean
   mimeType?: boolean
   size?: boolean
+  sheetName?: boolean
+  rowCount?: boolean
   version?: boolean
   status?: boolean
+  errorMessage?: boolean
   uploadedAt?: boolean
+  processedAt?: boolean
 }
 
-export type DataUploadOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "brsId" | "uploadedById" | "originalName" | "storedName" | "path" | "mimeType" | "size" | "version" | "status" | "uploadedAt", ExtArgs["result"]["dataUpload"]>
+export type DataUploadOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "brsId" | "uploadedById" | "originalName" | "storedName" | "path" | "mimeType" | "size" | "sheetName" | "rowCount" | "version" | "status" | "errorMessage" | "uploadedAt" | "processedAt", ExtArgs["result"]["dataUpload"]>
 export type DataUploadInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   brs?: boolean | Prisma.BrsDefaultArgs<ExtArgs>
   uploadedBy?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -1069,10 +1247,14 @@ export type $DataUploadPayload<ExtArgs extends runtime.Types.Extensions.Internal
     storedName: string
     path: string
     mimeType: string | null
-    size: bigint | null
+    size: number | null
+    sheetName: string | null
+    rowCount: number
     version: number
     status: $Enums.UploadStatus
+    errorMessage: string | null
     uploadedAt: Date
+    processedAt: Date | null
   }, ExtArgs["result"]["dataUpload"]>
   composites: {}
 }
@@ -1506,10 +1688,14 @@ export interface DataUploadFieldRefs {
   readonly storedName: Prisma.FieldRef<"DataUpload", 'String'>
   readonly path: Prisma.FieldRef<"DataUpload", 'String'>
   readonly mimeType: Prisma.FieldRef<"DataUpload", 'String'>
-  readonly size: Prisma.FieldRef<"DataUpload", 'BigInt'>
+  readonly size: Prisma.FieldRef<"DataUpload", 'Int'>
+  readonly sheetName: Prisma.FieldRef<"DataUpload", 'String'>
+  readonly rowCount: Prisma.FieldRef<"DataUpload", 'Int'>
   readonly version: Prisma.FieldRef<"DataUpload", 'Int'>
   readonly status: Prisma.FieldRef<"DataUpload", 'UploadStatus'>
+  readonly errorMessage: Prisma.FieldRef<"DataUpload", 'String'>
   readonly uploadedAt: Prisma.FieldRef<"DataUpload", 'DateTime'>
+  readonly processedAt: Prisma.FieldRef<"DataUpload", 'DateTime'>
 }
     
 

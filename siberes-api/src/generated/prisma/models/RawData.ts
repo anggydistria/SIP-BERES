@@ -29,6 +29,7 @@ export type AggregateRawData = {
 export type RawDataAvgAggregateOutputType = {
   id: number | null
   dataUploadId: number | null
+  sourceRow: number | null
   jenisAkomodasi: number | null
   kelasAkomodasi: number | null
   mktj: runtime.Decimal | null
@@ -42,6 +43,7 @@ export type RawDataAvgAggregateOutputType = {
 export type RawDataSumAggregateOutputType = {
   id: number | null
   dataUploadId: number | null
+  sourceRow: number | null
   jenisAkomodasi: number | null
   kelasAkomodasi: number | null
   mktj: runtime.Decimal | null
@@ -55,6 +57,7 @@ export type RawDataSumAggregateOutputType = {
 export type RawDataMinAggregateOutputType = {
   id: number | null
   dataUploadId: number | null
+  sourceRow: number | null
   jenisAkomodasi: number | null
   kelasAkomodasi: number | null
   mktj: runtime.Decimal | null
@@ -70,6 +73,7 @@ export type RawDataMinAggregateOutputType = {
 export type RawDataMaxAggregateOutputType = {
   id: number | null
   dataUploadId: number | null
+  sourceRow: number | null
   jenisAkomodasi: number | null
   kelasAkomodasi: number | null
   mktj: runtime.Decimal | null
@@ -85,6 +89,7 @@ export type RawDataMaxAggregateOutputType = {
 export type RawDataCountAggregateOutputType = {
   id: number
   dataUploadId: number
+  sourceRow: number
   jenisAkomodasi: number
   kelasAkomodasi: number
   mktj: number
@@ -102,6 +107,7 @@ export type RawDataCountAggregateOutputType = {
 export type RawDataAvgAggregateInputType = {
   id?: true
   dataUploadId?: true
+  sourceRow?: true
   jenisAkomodasi?: true
   kelasAkomodasi?: true
   mktj?: true
@@ -115,6 +121,7 @@ export type RawDataAvgAggregateInputType = {
 export type RawDataSumAggregateInputType = {
   id?: true
   dataUploadId?: true
+  sourceRow?: true
   jenisAkomodasi?: true
   kelasAkomodasi?: true
   mktj?: true
@@ -128,6 +135,7 @@ export type RawDataSumAggregateInputType = {
 export type RawDataMinAggregateInputType = {
   id?: true
   dataUploadId?: true
+  sourceRow?: true
   jenisAkomodasi?: true
   kelasAkomodasi?: true
   mktj?: true
@@ -143,6 +151,7 @@ export type RawDataMinAggregateInputType = {
 export type RawDataMaxAggregateInputType = {
   id?: true
   dataUploadId?: true
+  sourceRow?: true
   jenisAkomodasi?: true
   kelasAkomodasi?: true
   mktj?: true
@@ -158,6 +167,7 @@ export type RawDataMaxAggregateInputType = {
 export type RawDataCountAggregateInputType = {
   id?: true
   dataUploadId?: true
+  sourceRow?: true
   jenisAkomodasi?: true
   kelasAkomodasi?: true
   mktj?: true
@@ -260,6 +270,7 @@ export type RawDataGroupByArgs<ExtArgs extends runtime.Types.Extensions.Internal
 export type RawDataGroupByOutputType = {
   id: number
   dataUploadId: number
+  sourceRow: number
   jenisAkomodasi: number
   kelasAkomodasi: number
   mktj: runtime.Decimal
@@ -298,6 +309,7 @@ export type RawDataWhereInput = {
   NOT?: Prisma.RawDataWhereInput | Prisma.RawDataWhereInput[]
   id?: Prisma.IntFilter<"RawData"> | number
   dataUploadId?: Prisma.IntFilter<"RawData"> | number
+  sourceRow?: Prisma.IntFilter<"RawData"> | number
   jenisAkomodasi?: Prisma.IntFilter<"RawData"> | number
   kelasAkomodasi?: Prisma.IntFilter<"RawData"> | number
   mktj?: Prisma.DecimalFilter<"RawData"> | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -315,6 +327,7 @@ export type RawDataWhereInput = {
 export type RawDataOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   dataUploadId?: Prisma.SortOrder
+  sourceRow?: Prisma.SortOrder
   jenisAkomodasi?: Prisma.SortOrder
   kelasAkomodasi?: Prisma.SortOrder
   mktj?: Prisma.SortOrder
@@ -331,10 +344,12 @@ export type RawDataOrderByWithRelationInput = {
 
 export type RawDataWhereUniqueInput = Prisma.AtLeast<{
   id?: number
+  dataUploadId_sourceRow?: Prisma.RawDataDataUploadIdSourceRowCompoundUniqueInput
   AND?: Prisma.RawDataWhereInput | Prisma.RawDataWhereInput[]
   OR?: Prisma.RawDataWhereInput[]
   NOT?: Prisma.RawDataWhereInput | Prisma.RawDataWhereInput[]
   dataUploadId?: Prisma.IntFilter<"RawData"> | number
+  sourceRow?: Prisma.IntFilter<"RawData"> | number
   jenisAkomodasi?: Prisma.IntFilter<"RawData"> | number
   kelasAkomodasi?: Prisma.IntFilter<"RawData"> | number
   mktj?: Prisma.DecimalFilter<"RawData"> | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -347,11 +362,12 @@ export type RawDataWhereUniqueInput = Prisma.AtLeast<{
   updatedAt?: Prisma.DateTimeFilter<"RawData"> | Date | string
   dataUpload?: Prisma.XOR<Prisma.DataUploadScalarRelationFilter, Prisma.DataUploadWhereInput>
   histories?: Prisma.RawDataHistoryListRelationFilter
-}, "id">
+}, "id" | "dataUploadId_sourceRow">
 
 export type RawDataOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   dataUploadId?: Prisma.SortOrder
+  sourceRow?: Prisma.SortOrder
   jenisAkomodasi?: Prisma.SortOrder
   kelasAkomodasi?: Prisma.SortOrder
   mktj?: Prisma.SortOrder
@@ -375,6 +391,7 @@ export type RawDataScalarWhereWithAggregatesInput = {
   NOT?: Prisma.RawDataScalarWhereWithAggregatesInput | Prisma.RawDataScalarWhereWithAggregatesInput[]
   id?: Prisma.IntWithAggregatesFilter<"RawData"> | number
   dataUploadId?: Prisma.IntWithAggregatesFilter<"RawData"> | number
+  sourceRow?: Prisma.IntWithAggregatesFilter<"RawData"> | number
   jenisAkomodasi?: Prisma.IntWithAggregatesFilter<"RawData"> | number
   kelasAkomodasi?: Prisma.IntWithAggregatesFilter<"RawData"> | number
   mktj?: Prisma.DecimalWithAggregatesFilter<"RawData"> | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -388,6 +405,7 @@ export type RawDataScalarWhereWithAggregatesInput = {
 }
 
 export type RawDataCreateInput = {
+  sourceRow: number
   jenisAkomodasi: number
   kelasAkomodasi: number
   mktj: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -405,6 +423,7 @@ export type RawDataCreateInput = {
 export type RawDataUncheckedCreateInput = {
   id?: number
   dataUploadId: number
+  sourceRow: number
   jenisAkomodasi: number
   kelasAkomodasi: number
   mktj: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -419,6 +438,7 @@ export type RawDataUncheckedCreateInput = {
 }
 
 export type RawDataUpdateInput = {
+  sourceRow?: Prisma.IntFieldUpdateOperationsInput | number
   jenisAkomodasi?: Prisma.IntFieldUpdateOperationsInput | number
   kelasAkomodasi?: Prisma.IntFieldUpdateOperationsInput | number
   mktj?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -436,6 +456,7 @@ export type RawDataUpdateInput = {
 export type RawDataUncheckedUpdateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   dataUploadId?: Prisma.IntFieldUpdateOperationsInput | number
+  sourceRow?: Prisma.IntFieldUpdateOperationsInput | number
   jenisAkomodasi?: Prisma.IntFieldUpdateOperationsInput | number
   kelasAkomodasi?: Prisma.IntFieldUpdateOperationsInput | number
   mktj?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -452,6 +473,7 @@ export type RawDataUncheckedUpdateInput = {
 export type RawDataCreateManyInput = {
   id?: number
   dataUploadId: number
+  sourceRow: number
   jenisAkomodasi: number
   kelasAkomodasi: number
   mktj: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -465,6 +487,7 @@ export type RawDataCreateManyInput = {
 }
 
 export type RawDataUpdateManyMutationInput = {
+  sourceRow?: Prisma.IntFieldUpdateOperationsInput | number
   jenisAkomodasi?: Prisma.IntFieldUpdateOperationsInput | number
   kelasAkomodasi?: Prisma.IntFieldUpdateOperationsInput | number
   mktj?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -480,6 +503,7 @@ export type RawDataUpdateManyMutationInput = {
 export type RawDataUncheckedUpdateManyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   dataUploadId?: Prisma.IntFieldUpdateOperationsInput | number
+  sourceRow?: Prisma.IntFieldUpdateOperationsInput | number
   jenisAkomodasi?: Prisma.IntFieldUpdateOperationsInput | number
   kelasAkomodasi?: Prisma.IntFieldUpdateOperationsInput | number
   mktj?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -502,9 +526,15 @@ export type RawDataOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
 }
 
+export type RawDataDataUploadIdSourceRowCompoundUniqueInput = {
+  dataUploadId: number
+  sourceRow: number
+}
+
 export type RawDataCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   dataUploadId?: Prisma.SortOrder
+  sourceRow?: Prisma.SortOrder
   jenisAkomodasi?: Prisma.SortOrder
   kelasAkomodasi?: Prisma.SortOrder
   mktj?: Prisma.SortOrder
@@ -520,6 +550,7 @@ export type RawDataCountOrderByAggregateInput = {
 export type RawDataAvgOrderByAggregateInput = {
   id?: Prisma.SortOrder
   dataUploadId?: Prisma.SortOrder
+  sourceRow?: Prisma.SortOrder
   jenisAkomodasi?: Prisma.SortOrder
   kelasAkomodasi?: Prisma.SortOrder
   mktj?: Prisma.SortOrder
@@ -533,6 +564,7 @@ export type RawDataAvgOrderByAggregateInput = {
 export type RawDataMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   dataUploadId?: Prisma.SortOrder
+  sourceRow?: Prisma.SortOrder
   jenisAkomodasi?: Prisma.SortOrder
   kelasAkomodasi?: Prisma.SortOrder
   mktj?: Prisma.SortOrder
@@ -548,6 +580,7 @@ export type RawDataMaxOrderByAggregateInput = {
 export type RawDataMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   dataUploadId?: Prisma.SortOrder
+  sourceRow?: Prisma.SortOrder
   jenisAkomodasi?: Prisma.SortOrder
   kelasAkomodasi?: Prisma.SortOrder
   mktj?: Prisma.SortOrder
@@ -563,6 +596,7 @@ export type RawDataMinOrderByAggregateInput = {
 export type RawDataSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
   dataUploadId?: Prisma.SortOrder
+  sourceRow?: Prisma.SortOrder
   jenisAkomodasi?: Prisma.SortOrder
   kelasAkomodasi?: Prisma.SortOrder
   mktj?: Prisma.SortOrder
@@ -643,6 +677,7 @@ export type RawDataUpdateOneRequiredWithoutHistoriesNestedInput = {
 }
 
 export type RawDataCreateWithoutDataUploadInput = {
+  sourceRow: number
   jenisAkomodasi: number
   kelasAkomodasi: number
   mktj: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -658,6 +693,7 @@ export type RawDataCreateWithoutDataUploadInput = {
 
 export type RawDataUncheckedCreateWithoutDataUploadInput = {
   id?: number
+  sourceRow: number
   jenisAkomodasi: number
   kelasAkomodasi: number
   mktj: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -703,6 +739,7 @@ export type RawDataScalarWhereInput = {
   NOT?: Prisma.RawDataScalarWhereInput | Prisma.RawDataScalarWhereInput[]
   id?: Prisma.IntFilter<"RawData"> | number
   dataUploadId?: Prisma.IntFilter<"RawData"> | number
+  sourceRow?: Prisma.IntFilter<"RawData"> | number
   jenisAkomodasi?: Prisma.IntFilter<"RawData"> | number
   kelasAkomodasi?: Prisma.IntFilter<"RawData"> | number
   mktj?: Prisma.DecimalFilter<"RawData"> | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -716,6 +753,7 @@ export type RawDataScalarWhereInput = {
 }
 
 export type RawDataCreateWithoutHistoriesInput = {
+  sourceRow: number
   jenisAkomodasi: number
   kelasAkomodasi: number
   mktj: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -732,6 +770,7 @@ export type RawDataCreateWithoutHistoriesInput = {
 export type RawDataUncheckedCreateWithoutHistoriesInput = {
   id?: number
   dataUploadId: number
+  sourceRow: number
   jenisAkomodasi: number
   kelasAkomodasi: number
   mktj: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -761,6 +800,7 @@ export type RawDataUpdateToOneWithWhereWithoutHistoriesInput = {
 }
 
 export type RawDataUpdateWithoutHistoriesInput = {
+  sourceRow?: Prisma.IntFieldUpdateOperationsInput | number
   jenisAkomodasi?: Prisma.IntFieldUpdateOperationsInput | number
   kelasAkomodasi?: Prisma.IntFieldUpdateOperationsInput | number
   mktj?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -777,6 +817,7 @@ export type RawDataUpdateWithoutHistoriesInput = {
 export type RawDataUncheckedUpdateWithoutHistoriesInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   dataUploadId?: Prisma.IntFieldUpdateOperationsInput | number
+  sourceRow?: Prisma.IntFieldUpdateOperationsInput | number
   jenisAkomodasi?: Prisma.IntFieldUpdateOperationsInput | number
   kelasAkomodasi?: Prisma.IntFieldUpdateOperationsInput | number
   mktj?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -791,6 +832,7 @@ export type RawDataUncheckedUpdateWithoutHistoriesInput = {
 
 export type RawDataCreateManyDataUploadInput = {
   id?: number
+  sourceRow: number
   jenisAkomodasi: number
   kelasAkomodasi: number
   mktj: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -804,6 +846,7 @@ export type RawDataCreateManyDataUploadInput = {
 }
 
 export type RawDataUpdateWithoutDataUploadInput = {
+  sourceRow?: Prisma.IntFieldUpdateOperationsInput | number
   jenisAkomodasi?: Prisma.IntFieldUpdateOperationsInput | number
   kelasAkomodasi?: Prisma.IntFieldUpdateOperationsInput | number
   mktj?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -819,6 +862,7 @@ export type RawDataUpdateWithoutDataUploadInput = {
 
 export type RawDataUncheckedUpdateWithoutDataUploadInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
+  sourceRow?: Prisma.IntFieldUpdateOperationsInput | number
   jenisAkomodasi?: Prisma.IntFieldUpdateOperationsInput | number
   kelasAkomodasi?: Prisma.IntFieldUpdateOperationsInput | number
   mktj?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -834,6 +878,7 @@ export type RawDataUncheckedUpdateWithoutDataUploadInput = {
 
 export type RawDataUncheckedUpdateManyWithoutDataUploadInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
+  sourceRow?: Prisma.IntFieldUpdateOperationsInput | number
   jenisAkomodasi?: Prisma.IntFieldUpdateOperationsInput | number
   kelasAkomodasi?: Prisma.IntFieldUpdateOperationsInput | number
   mktj?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -880,6 +925,7 @@ export type RawDataCountOutputTypeCountHistoriesArgs<ExtArgs extends runtime.Typ
 export type RawDataSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   dataUploadId?: boolean
+  sourceRow?: boolean
   jenisAkomodasi?: boolean
   kelasAkomodasi?: boolean
   mktj?: boolean
@@ -898,6 +944,7 @@ export type RawDataSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
 export type RawDataSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   dataUploadId?: boolean
+  sourceRow?: boolean
   jenisAkomodasi?: boolean
   kelasAkomodasi?: boolean
   mktj?: boolean
@@ -914,6 +961,7 @@ export type RawDataSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
 export type RawDataSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   dataUploadId?: boolean
+  sourceRow?: boolean
   jenisAkomodasi?: boolean
   kelasAkomodasi?: boolean
   mktj?: boolean
@@ -930,6 +978,7 @@ export type RawDataSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
 export type RawDataSelectScalar = {
   id?: boolean
   dataUploadId?: boolean
+  sourceRow?: boolean
   jenisAkomodasi?: boolean
   kelasAkomodasi?: boolean
   mktj?: boolean
@@ -942,7 +991,7 @@ export type RawDataSelectScalar = {
   updatedAt?: boolean
 }
 
-export type RawDataOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "dataUploadId" | "jenisAkomodasi" | "kelasAkomodasi" | "mktj" | "mkts" | "mta" | "ta" | "mtnus" | "tnus" | "createdAt" | "updatedAt", ExtArgs["result"]["rawData"]>
+export type RawDataOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "dataUploadId" | "sourceRow" | "jenisAkomodasi" | "kelasAkomodasi" | "mktj" | "mkts" | "mta" | "ta" | "mtnus" | "tnus" | "createdAt" | "updatedAt", ExtArgs["result"]["rawData"]>
 export type RawDataInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   dataUpload?: boolean | Prisma.DataUploadDefaultArgs<ExtArgs>
   histories?: boolean | Prisma.RawData$historiesArgs<ExtArgs>
@@ -964,6 +1013,7 @@ export type $RawDataPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
     dataUploadId: number
+    sourceRow: number
     jenisAkomodasi: number
     kelasAkomodasi: number
     mktj: runtime.Decimal
@@ -1401,6 +1451,7 @@ export interface Prisma__RawDataClient<T, Null = never, ExtArgs extends runtime.
 export interface RawDataFieldRefs {
   readonly id: Prisma.FieldRef<"RawData", 'Int'>
   readonly dataUploadId: Prisma.FieldRef<"RawData", 'Int'>
+  readonly sourceRow: Prisma.FieldRef<"RawData", 'Int'>
   readonly jenisAkomodasi: Prisma.FieldRef<"RawData", 'Int'>
   readonly kelasAkomodasi: Prisma.FieldRef<"RawData", 'Int'>
   readonly mktj: Prisma.FieldRef<"RawData", 'Decimal'>

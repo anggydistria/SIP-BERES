@@ -14,9 +14,15 @@ import {
 } from '@mantine/core';
 import { Dropzone, MIME_TYPES } from '@mantine/dropzone';
 import { useState } from 'react';
-
-import { previewExcel } from '@/lib/api/data-upload';
-import type { ExcelPreviewResponse } from '@/types/data-upload';
+import Link from 'next/link';
+import {
+  previewExcel,
+  saveExcel,
+} from '@/lib/api/data-upload';
+import type {
+  ExcelPreviewResponse,
+  SaveExcelResponse,
+} from '@/types/data-upload';
 
 const MAX_FILE_SIZE = 20 * 1024 * 1024;
 
@@ -24,14 +30,22 @@ const numberFormatter = new Intl.NumberFormat('id-ID');
 
 export function ExcelUpload() {
   const [file, setFile] = useState<File | null>(null);
+
   const [preview, setPreview] =
     useState<ExcelPreviewResponse | null>(null);
+
   const [isLoading, setIsLoading] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+
   const [error, setError] = useState<string | null>(null);
+
+  const [saveResult, setSaveResult] =
+    useState<SaveExcelResponse | null>(null);
 
   function handleFile(fileToUpload: File) {
     setFile(fileToUpload);
     setPreview(null);
+    setSaveResult(null);
     setError(null);
   }
 
@@ -43,7 +57,7 @@ export function ExcelUpload() {
 
     setIsLoading(true);
     setError(null);
-
+    setSaveResult(null);
     try {
       const result = await previewExcel(file);
       setPreview(result);
@@ -59,7 +73,42 @@ export function ExcelUpload() {
       setIsLoading(false);
     }
   }
+  async function handleSave() {
+    if (!file || !preview) {
+      setError(
+        'File harus ditampilkan dalam preview terlebih dahulu'
+      );
 
+      return;
+    }
+
+    if (preview.invalidRows > 0) {
+      setError(
+        'Data yang tidak valid harus diperbaiki sebelum disimpan'
+      );
+
+      return;
+    }
+
+    setIsSaving(true);
+    setError(null);
+
+    try {
+      const result = await saveExcel(file);
+
+      setSaveResult(result);
+    } catch (caughtError) {
+      setSaveResult(null);
+
+      setError(
+        caughtError instanceof Error
+          ? caughtError.message
+          : 'Gagal menyimpan data Excel'
+      );
+    } finally {
+      setIsSaving(false);
+    }
+  }
   return (
     <Stack gap="lg">
       <div>
@@ -90,6 +139,7 @@ export function ExcelUpload() {
               setError(
                 'File harus berformat Excel dan maksimal 20 MB'
               );
+              setSaveResult(null);
             }}
           >
             <Stack
@@ -260,12 +310,48 @@ export function ExcelUpload() {
           )}
 
           <Group justify="flex-end">
-            <Button
-              disabled
-              title="Endpoint penyimpanan belum dibuat"
-            >
-              Simpan Data
-            </Button>
+            <Stack gap="sm">
+              {saveResult && (
+                <Alert
+                  color="green"
+                  title="Data berhasil disimpan"
+                >
+                  <Text size="sm">
+                    {saveResult.dataUpload.rowCount} baris
+                    data {saveResult.period.label} berhasil
+                    disimpan sebagai versi{' '}
+                    {saveResult.dataUpload.version}.
+                  </Text>
+                  <Group mt="md">
+                    <Button
+                      component={Link}
+                      href="/dashboard"
+                      variant="light"
+                      color="green"
+                    >
+                      Lihat Dashboard
+                    </Button>
+                  </Group>
+                </Alert>
+              )}
+
+              <Group justify="flex-end">
+                <Button
+                  color="green"
+                  onClick={handleSave}
+                  loading={isSaving}
+                  disabled={
+                    !file ||
+                    preview.invalidRows > 0 ||
+                    Boolean(saveResult)
+                  }
+                >
+                  {saveResult
+                    ? 'Data Tersimpan'
+                    : 'Simpan Data'}
+                </Button>
+              </Group>
+            </Stack>
           </Group>
         </>
       )}

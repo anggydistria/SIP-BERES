@@ -1,23 +1,24 @@
-import type { ExcelPreviewResponse } from '@/types/data-upload';
+import type {
+  ExcelPreviewResponse,
+  SaveExcelResponse,
+} from '@/types/data-upload';
 
 const API_URL =
   process.env.NEXT_PUBLIC_API_URL ??
   'http://localhost:3001/api';
 
-export async function previewExcel(
+async function sendExcelFile<T>(
+  endpoint: string,
   file: File
-): Promise<ExcelPreviewResponse> {
+): Promise<T> {
   const formData = new FormData();
 
   formData.append('file', file);
 
-  const response = await fetch(
-    `${API_URL}/data-uploads/preview`,
-    {
-      method: 'POST',
-      body: formData,
-    }
-  );
+  const response = await fetch(`${API_URL}${endpoint}`, {
+    method: 'POST',
+    body: formData,
+  });
 
   const responseText = await response.text();
 
@@ -40,8 +41,28 @@ export async function previewExcel(
       ? errorData.message.join(', ')
       : errorData.message;
 
-    throw new Error(message ?? 'Gagal membaca file Excel');
+    throw new Error(
+      message ?? 'Terjadi kesalahan pada server'
+    );
   }
 
-  return data as ExcelPreviewResponse;
+  return data as T;
+}
+
+export function previewExcel(
+  file: File
+): Promise<ExcelPreviewResponse> {
+  return sendExcelFile<ExcelPreviewResponse>(
+    '/data-uploads/preview',
+    file
+  );
+}
+
+export function saveExcel(
+  file: File
+): Promise<SaveExcelResponse> {
+  return sendExcelFile<SaveExcelResponse>(
+    '/data-uploads',
+    file
+  );
 }

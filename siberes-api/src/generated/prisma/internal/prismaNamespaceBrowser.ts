@@ -134,9 +134,13 @@ export const DataUploadScalarFieldEnum = {
   path: 'path',
   mimeType: 'mimeType',
   size: 'size',
+  sheetName: 'sheetName',
+  rowCount: 'rowCount',
   version: 'version',
   status: 'status',
-  uploadedAt: 'uploadedAt'
+  errorMessage: 'errorMessage',
+  uploadedAt: 'uploadedAt',
+  processedAt: 'processedAt'
 } as const
 
 export type DataUploadScalarFieldEnum = (typeof DataUploadScalarFieldEnum)[keyof typeof DataUploadScalarFieldEnum]
@@ -145,6 +149,7 @@ export type DataUploadScalarFieldEnum = (typeof DataUploadScalarFieldEnum)[keyof
 export const RawDataScalarFieldEnum = {
   id: 'id',
   dataUploadId: 'dataUploadId',
+  sourceRow: 'sourceRow',
   jenisAkomodasi: 'jenisAkomodasi',
   kelasAkomodasi: 'kelasAkomodasi',
   mktj: 'mktj',

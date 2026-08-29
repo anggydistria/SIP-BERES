@@ -1186,9 +1186,13 @@ export const DataUploadScalarFieldEnum = {
   path: 'path',
   mimeType: 'mimeType',
   size: 'size',
+  sheetName: 'sheetName',
+  rowCount: 'rowCount',
   version: 'version',
   status: 'status',
-  uploadedAt: 'uploadedAt'
+  errorMessage: 'errorMessage',
+  uploadedAt: 'uploadedAt',
+  processedAt: 'processedAt'
 } as const
 
 export type DataUploadScalarFieldEnum = (typeof DataUploadScalarFieldEnum)[keyof typeof DataUploadScalarFieldEnum]
@@ -1197,6 +1201,7 @@ export type DataUploadScalarFieldEnum = (typeof DataUploadScalarFieldEnum)[keyof
 export const RawDataScalarFieldEnum = {
   id: 'id',
   dataUploadId: 'dataUploadId',
+  sourceRow: 'sourceRow',
   jenisAkomodasi: 'jenisAkomodasi',
   kelasAkomodasi: 'kelasAkomodasi',
   mktj: 'mktj',
@@ -1365,20 +1370,6 @@ export type EnumBrsStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$Prisma
  * Reference to a field of type 'BrsStatus[]'
  */
 export type ListEnumBrsStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BrsStatus[]'>
-    
-
-
-/**
- * Reference to a field of type 'BigInt'
- */
-export type BigIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BigInt'>
-    
-
-
-/**
- * Reference to a field of type 'BigInt[]'
- */
-export type ListBigIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BigInt[]'>
     
 
 
