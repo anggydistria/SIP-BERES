@@ -1,7 +1,4 @@
-import {
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import {
   AlignmentType,
   BorderStyle,
@@ -89,17 +86,12 @@ export class BrsDocumentService {
   constructor(
     private readonly prisma: PrismaService,
 
-    private readonly analyticsService:
-      BrsAnalyticsService,
+    private readonly analyticsService: BrsAnalyticsService,
 
-    private readonly narrativeService:
-      BrsNarrativeService,
+    private readonly narrativeService: BrsNarrativeService,
   ) {}
 
-  async generate(
-    bulan: number,
-    tahun: number,
-  ): Promise<GeneratedBrsDocument> {
+  async generate(bulan: number, tahun: number): Promise<GeneratedBrsDocument> {
     const brs = await this.prisma.brs.findUnique({
       where: {
         jenisBrs_bulan_tahun: {
@@ -116,34 +108,21 @@ export class BrsDocumentService {
       );
     }
 
-    const [analytics, narrative] =
-      await Promise.all([
-        this.analyticsService.calculate(
-          bulan,
-          tahun,
-        ),
+    const [analytics, narrative] = await Promise.all([
+      this.analyticsService.calculate(bulan, tahun),
 
-        this.narrativeService.build(
-          bulan,
-          tahun,
-        ),
-      ]);
+      this.narrativeService.build(bulan, tahun),
+    ]);
 
-    if (
-      !analytics.availability.currentAvailable
-    ) {
-      throw new NotFoundException(
-        'Data bulan berjalan belum tersedia',
-      );
+    if (!analytics.availability.currentAvailable) {
+      throw new NotFoundException('Data bulan berjalan belum tersedia');
     }
 
-    const periodLabel =
-      `${MONTH_NAMES[bulan - 1]} ${tahun}`;
+    const periodLabel = `${MONTH_NAMES[bulan - 1]} ${tahun}`;
 
     const document = new Document({
       creator: 'SIBERES',
-      title:
-        `Perkembangan Pariwisata Kota Samarinda ${periodLabel}`,
+      title: `Perkembangan Pariwisata Kota Samarinda ${periodLabel}`,
 
       description:
         'Berita Resmi Statistik Perkembangan Pariwisata Kota Samarinda',
@@ -232,10 +211,7 @@ export class BrsDocumentService {
           },
 
           footers: {
-            default: this.createFooter(
-              periodLabel,
-              brs.nomorBrs,
-            ),
+            default: this.createFooter(periodLabel, brs.nomorBrs),
           },
 
           children: [
@@ -250,40 +226,25 @@ export class BrsDocumentService {
               children: [new PageBreak()],
             }),
 
-            ...this.createSummarySection(
-              narrative,
-            ),
+            ...this.createSummarySection(narrative),
 
-            ...this.createTpkSection(
-              analytics,
-              narrative,
-            ),
+            ...this.createTpkSection(analytics, narrative),
 
-            ...this.createRlmtSection(
-              analytics,
-              narrative,
-            ),
+            ...this.createRlmtSection(analytics, narrative),
 
-            ...this.createWarningsSection(
-              narrative,
-            ),
+            ...this.createWarningsSection(narrative),
           ],
         },
       ],
     });
 
-    const buffer = await Packer.toBuffer(
-      document,
-    );
+    const buffer = await Packer.toBuffer(document);
 
-    const safePeriod = periodLabel
-      .replaceAll(' ', '-')
-      .toLowerCase();
+    const safePeriod = periodLabel.replaceAll(' ', '-').toLowerCase();
 
     return {
       buffer,
-      filename:
-        `BRS-Pariwisata-Kota-Samarinda-${safePeriod}.docx`,
+      filename: `BRS-Pariwisata-Kota-Samarinda-${safePeriod}.docx`,
     };
   }
 
@@ -371,11 +332,9 @@ export class BrsDocumentService {
 
         children: [
           new TextRun({
-            text:
-              `Berita Resmi Statistik ${
-                nomorBrs ??
-                'Nomor BRS belum ditentukan'
-              }`,
+            text: `Berita Resmi Statistik ${
+              nomorBrs ?? 'Nomor BRS belum ditentukan'
+            }`,
             size: 20,
           }),
         ],
@@ -389,12 +348,9 @@ export class BrsDocumentService {
 
         children: [
           new TextRun({
-            text:
-              tanggalPublikasi
-                ? this.formatDate(
-                    tanggalPublikasi,
-                  )
-                : 'Tanggal rilis belum ditentukan',
+            text: tanggalPublikasi
+              ? this.formatDate(tanggalPublikasi)
+              : 'Tanggal rilis belum ditentukan',
             size: 20,
           }),
         ],
@@ -434,24 +390,15 @@ export class BrsDocumentService {
     ];
   }
 
-  private createSummarySection(
-    narrative: BrsNarrativeResponse,
-  ) {
+  private createSummarySection(narrative: BrsNarrativeResponse) {
     return [
       new Paragraph({
         style: 'BRSHeading1',
 
-        children: [
-          new TextRun(
-            'Ringkasan Perkembangan Pariwisata',
-          ),
-        ],
+        children: [new TextRun('Ringkasan Perkembangan Pariwisata')],
       }),
 
-      ...narrative.highlights.map(
-        (highlight) =>
-          this.bodyParagraph(highlight),
-      ),
+      ...narrative.highlights.map((highlight) => this.bodyParagraph(highlight)),
     ];
   }
 
@@ -463,16 +410,11 @@ export class BrsDocumentService {
       new Paragraph({
         style: 'BRSHeading1',
 
-        children: [
-          new TextRun(
-            '1. Tingkat Penghunian Kamar Hotel',
-          ),
-        ],
+        children: [new TextRun('1. Tingkat Penghunian Kamar Hotel')],
       }),
 
-      ...narrative.sections.tpk.paragraphs.map(
-        (paragraph) =>
-          this.bodyParagraph(paragraph),
+      ...narrative.sections.tpk.paragraphs.map((paragraph) =>
+        this.bodyParagraph(paragraph),
       ),
 
       new Paragraph({
@@ -504,28 +446,21 @@ export class BrsDocumentService {
         ],
       }),
 
-      ...narrative.sections.rlmt.paragraphs.map(
-        (paragraph) =>
-          this.bodyParagraph(paragraph),
+      ...narrative.sections.rlmt.paragraphs.map((paragraph) =>
+        this.bodyParagraph(paragraph),
       ),
 
       new Paragraph({
         style: 'BRSHeading2',
 
-        children: [
-          new TextRun(
-            'Tabel 2. Rata-Rata Lama Menginap Tamu',
-          ),
-        ],
+        children: [new TextRun('Tabel 2. Rata-Rata Lama Menginap Tamu')],
       }),
 
       this.createRlmtTable(analytics),
     ];
   }
 
-  private createTpkHistoryTable(
-    analytics: BrsAnalyticsResponse,
-  ): Table {
+  private createTpkHistoryTable(analytics: BrsAnalyticsResponse): Table {
     const header = new TableRow({
       tableHeader: true,
 
@@ -536,67 +471,63 @@ export class BrsDocumentService {
         'Bintang 4',
         'Bintang 5',
         'Total',
-      ].map((text) =>
-        this.tableCell(text, true, 'F4B183'),
-      ),
+      ].map((text) => this.tableCell(text, true, 'F4B183')),
     });
 
-    const rows = analytics.history.map(
-      (period) => {
-        const values = new Map(
-          period.tpkClassifications.map(
-            (item) => [
-              item.key,
-              item.value,
-            ],
-          ),
-        );
+    const rows = analytics.history.map((period) => {
+      const values = new Map(
+        period.tpkClassifications.map((item) => [item.key, item.value]),
+      );
 
-        return new TableRow({
-          children: [
-            this.tableCell(
-              `${MONTH_NAMES[period.bulan - 1]} ${period.tahun}`,
-            ),
+      return new TableRow({
+        children: [
+          this.tableCell(`${MONTH_NAMES[period.bulan - 1]} ${period.tahun}`),
 
-            this.tableCell(
-              this.formatNumber(
-                values.get('BINTANG_1_2') ??
-                  null,
-              ),
-            ),
+          this.tableCell(this.formatNumber(values.get('BINTANG_1_2') ?? null)),
 
-            this.tableCell(
-              this.formatNumber(
-                values.get('BINTANG_3') ??
-                  null,
-              ),
-            ),
+          this.tableCell(this.formatNumber(values.get('BINTANG_3') ?? null)),
 
-            this.tableCell(
-              this.formatNumber(
-                values.get('BINTANG_4') ??
-                  null,
-              ),
-            ),
+          this.tableCell(this.formatNumber(values.get('BINTANG_4') ?? null)),
 
-            this.tableCell(
-              this.formatNumber(
-                values.get('BINTANG_5') ??
-                  null,
-              ),
-            ),
+          this.tableCell(this.formatNumber(values.get('BINTANG_5') ?? null)),
 
-            this.tableCell(
-              this.formatNumber(
-                period.tpkTotal,
-              ),
-              true,
-            ),
-          ],
-        });
-      },
+          this.tableCell(this.formatNumber(period.tpkTotal), true),
+        ],
+      });
+    });
+    const comparisonByKey = new Map(
+      analytics.tpk.classifications.map((item) => [item.key, item]),
     );
 
+    const previousMonth = this.shiftPeriod(
+      analytics.period.bulan,
+      analytics.period.tahun,
+      -1,
+    );
+
+    const previousYear = this.shiftPeriod(
+      analytics.period.bulan,
+      analytics.period.tahun,
+      -12,
+    );
+
+    const changeRows = [
+      this.tpkChangeRow(
+        `Perubahan terhadap ${
+          MONTH_NAMES[previousMonth.bulan - 1]
+        } ${previousMonth.tahun} (poin persen)`,
+        comparisonByKey,
+        'mtmChange',
+      ),
+
+      this.tpkChangeRow(
+        `Perubahan terhadap ${
+          MONTH_NAMES[previousYear.bulan - 1]
+        } ${previousYear.tahun} (poin persen)`,
+        comparisonByKey,
+        'yoyChange',
+      ),
+    ];
     return new Table({
       width: {
         size: 100,
@@ -605,13 +536,37 @@ export class BrsDocumentService {
 
       borders: TABLE_BORDERS,
 
-      rows: [header, ...rows],
+      rows: [header, ...rows, ...changeRows],
     });
   }
+  private tpkChangeRow(
+    label: string,
+    comparisons: Map<string, MetricComparison>,
+    field: 'mtmChange' | 'yoyChange',
+  ): TableRow {
+    const keys = [
+      'BINTANG_1_2',
+      'BINTANG_3',
+      'BINTANG_4',
+      'BINTANG_5',
+      'TOTAL_BINTANG',
+    ];
 
-  private createRlmtTable(
-    analytics: BrsAnalyticsResponse,
-  ): Table {
+    return new TableRow({
+      children: [
+        this.tableCell(label, true, 'FFF2CC'),
+
+        ...keys.map((key) =>
+          this.tableCell(
+            this.formatNumber(comparisons.get(key)?.[field] ?? null),
+            true,
+            'FFF2CC',
+          ),
+        ),
+      ],
+    });
+  }
+  private createRlmtTable(analytics: BrsAnalyticsResponse): Table {
     const header = new TableRow({
       tableHeader: true,
 
@@ -622,27 +577,15 @@ export class BrsDocumentService {
         'Bulan Berjalan',
         'YoY',
         'MtM',
-      ].map((text) =>
-        this.tableCell(text, true, 'F4B183'),
-      ),
+      ].map((text) => this.tableCell(text, true, 'F4B183')),
     });
 
     const rows = [
-      this.rlmtRow(
-        'Tamu Asing',
-        analytics.rlmt.asing,
-      ),
+      this.rlmtRow('Tamu Asing', analytics.rlmt.asing),
 
-      this.rlmtRow(
-        'Tamu Nusantara',
-        analytics.rlmt.nusantara,
-      ),
+      this.rlmtRow('Tamu Nusantara', analytics.rlmt.nusantara),
 
-      this.rlmtRow(
-        'Total',
-        analytics.rlmt.total,
-        true,
-      ),
+      this.rlmtRow('Total', analytics.rlmt.total, true),
     ];
 
     return new Table({
@@ -666,47 +609,20 @@ export class BrsDocumentService {
       children: [
         this.tableCell(label, bold),
 
-        this.tableCell(
-          this.formatNumber(
-            metric.previousYear,
-          ),
-          bold,
-        ),
+        this.tableCell(this.formatNumber(metric.previousYear), bold),
 
-        this.tableCell(
-          this.formatNumber(
-            metric.previousMonth,
-          ),
-          bold,
-        ),
+        this.tableCell(this.formatNumber(metric.previousMonth), bold),
 
-        this.tableCell(
-          this.formatNumber(
-            metric.current,
-          ),
-          bold,
-        ),
+        this.tableCell(this.formatNumber(metric.current), bold),
 
-        this.tableCell(
-          this.formatSignedNumber(
-            metric.yoyChange,
-          ),
-          bold,
-        ),
+        this.tableCell(this.formatSignedNumber(metric.yoyChange), bold),
 
-        this.tableCell(
-          this.formatSignedNumber(
-            metric.mtmChange,
-          ),
-          bold,
-        ),
+        this.tableCell(this.formatSignedNumber(metric.mtmChange), bold),
       ],
     });
   }
 
-  private createWarningsSection(
-    narrative: BrsNarrativeResponse,
-  ) {
+  private createWarningsSection(narrative: BrsNarrativeResponse) {
     if (narrative.warnings.length === 0) {
       return [];
     }
@@ -715,11 +631,7 @@ export class BrsDocumentService {
       new Paragraph({
         style: 'BRSHeading2',
 
-        children: [
-          new TextRun(
-            'Catatan Kelengkapan Data',
-          ),
-        ],
+        children: [new TextRun('Catatan Kelengkapan Data')],
       }),
 
       ...narrative.warnings.map(
@@ -741,10 +653,7 @@ export class BrsDocumentService {
     ];
   }
 
-  private createFooter(
-    periodLabel: string,
-    nomorBrs: string | null,
-  ): Footer {
+  private createFooter(periodLabel: string, nomorBrs: string | null): Footer {
     return new Footer({
       children: [
         new Paragraph({
@@ -752,25 +661,19 @@ export class BrsDocumentService {
 
           children: [
             new TextRun({
-              text:
-                `Perkembangan Pariwisata Kota Samarinda ${periodLabel}`,
+              text: `Perkembangan Pariwisata Kota Samarinda ${periodLabel}`,
               size: 18,
               color: '666666',
             }),
 
             new TextRun({
-              text:
-                ` | ${
-                  nomorBrs ?? 'DRAFT'
-                } | Halaman `,
+              text: ` | ${nomorBrs ?? 'DRAFT'} | Halaman `,
               size: 18,
               color: '666666',
             }),
 
             new TextRun({
-              children: [
-                PageNumber.CURRENT,
-              ],
+              children: [PageNumber.CURRENT],
               size: 18,
               color: '666666',
             }),
@@ -780,9 +683,7 @@ export class BrsDocumentService {
     });
   }
 
-  private bodyParagraph(
-    text: string,
-  ): Paragraph {
+  private bodyParagraph(text: string): Paragraph {
     return new Paragraph({
       alignment: AlignmentType.JUSTIFIED,
 
@@ -800,11 +701,7 @@ export class BrsDocumentService {
     });
   }
 
-  private tableCell(
-    text: string,
-    bold = false,
-    fill?: string,
-  ): TableCell {
+  private tableCell(text: string, bold = false, fill?: string): TableCell {
     return new TableCell({
       verticalAlign: VerticalAlign.CENTER,
 
@@ -837,9 +734,7 @@ export class BrsDocumentService {
     });
   }
 
-  private formatNumber(
-    value: number | null,
-  ): string {
+  private formatNumber(value: number | null): string {
     if (value === null) {
       return '–';
     }
@@ -850,15 +745,12 @@ export class BrsDocumentService {
     }).format(value);
   }
 
-  private formatSignedNumber(
-    value: number | null,
-  ): string {
+  private formatSignedNumber(value: number | null): string {
     if (value === null) {
       return '–';
     }
 
-    const formatted =
-      this.formatNumber(Math.abs(value));
+    const formatted = this.formatNumber(Math.abs(value));
 
     if (value > 0) {
       return `+${formatted}`;
@@ -871,17 +763,20 @@ export class BrsDocumentService {
     return formatted;
   }
 
-  private formatDate(
-    value: Date,
-  ): string {
-    return new Intl.DateTimeFormat(
-      'id-ID',
-      {
-        day: 'numeric',
-        month: 'long',
-        year: 'numeric',
-        timeZone: 'UTC',
-      },
-    ).format(value);
+  private formatDate(value: Date): string {
+    return new Intl.DateTimeFormat('id-ID', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+      timeZone: 'UTC',
+    }).format(value);
+  }
+  private shiftPeriod(bulan: number, tahun: number, offset: number) {
+    const date = new Date(Date.UTC(tahun, bulan - 1 + offset, 1));
+
+    return {
+      bulan: date.getUTCMonth() + 1,
+      tahun: date.getUTCFullYear(),
+    };
   }
 }

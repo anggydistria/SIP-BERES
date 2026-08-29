@@ -123,16 +123,20 @@ export class BrsNarrativeService {
     const tpk = analytics.tpk.total.current;
 
     if (tpk !== null) {
+      const changes = this.highlightChanges(analytics.tpk.total);
+
       highlights.push(
-        `Tingkat Penghunian Kamar (TPK) hotel klasifikasi bintang di Kota Samarinda pada ${periodLabel} sebesar ${this.formatNumber(tpk)} persen.`,
+        `Tingkat Penghunian Kamar (TPK) hotel klasifikasi bintang di Kota Samarinda pada ${periodLabel} sebesar ${this.formatNumber(tpk)} persen${changes}.`,
       );
     }
 
     const rlmt = analytics.rlmt.total.current;
 
     if (rlmt !== null) {
+      const changes = this.highlightChanges(analytics.rlmt.total);
+
       highlights.push(
-        `Rata-rata lama menginap tamu hotel klasifikasi bintang di Kota Samarinda pada ${periodLabel} mencapai ${this.formatNumber(rlmt)} hari.`,
+        `Rata-rata lama menginap tamu hotel klasifikasi bintang di Kota Samarinda pada ${periodLabel} mencapai ${this.formatNumber(rlmt)} hari${changes}.`,
       );
     }
 
@@ -201,7 +205,77 @@ export class BrsNarrativeService {
         ),
       );
     });
+    const historyExtremes = this.historyExtremes(
+      analytics.history
+        .filter((item) => item.available && item.tpkTotal !== null)
+        .map((item) => ({
+          label: this.periodLabel(item.bulan, item.tahun),
+          value: item.tpkTotal as number,
+        })),
+    );
 
+    if (analytics.availability.canGenerateFinal && historyExtremes) {
+      const firstPeriod = analytics.history[0];
+
+      paragraphs.push(
+        `Selama periode ${this.periodLabel(
+          firstPeriod.bulan,
+          firstPeriod.tahun,
+        )} sampai dengan ${periodLabel}, TPK hotel klasifikasi bintang tertinggi terjadi pada ${
+          historyExtremes.highest.label
+        }, yaitu sebesar ${this.formatNumber(
+          historyExtremes.highest.value,
+        )} persen. TPK terendah terjadi pada ${
+          historyExtremes.lowest.label
+        }, yaitu sebesar ${this.formatNumber(
+          historyExtremes.lowest.value,
+        )} persen.`,
+      );
+    }
+    if (analytics.availability.canGenerateFinal) {
+      const foreignExtremes = this.historyExtremes(
+        analytics.history
+          .filter((item) => item.rlmtAsing !== null)
+          .map((item) => ({
+            label: this.periodLabel(item.bulan, item.tahun),
+            value: item.rlmtAsing as number,
+          })),
+      );
+
+      const domesticExtremes = this.historyExtremes(
+        analytics.history
+          .filter((item) => item.rlmtNusantara !== null)
+          .map((item) => ({
+            label: this.periodLabel(item.bulan, item.tahun),
+            value: item.rlmtNusantara as number,
+          })),
+      );
+
+      if (foreignExtremes && domesticExtremes) {
+        const firstPeriod = analytics.history[0];
+
+        paragraphs.push(
+          `Selama periode ${this.periodLabel(
+            firstPeriod.bulan,
+            firstPeriod.tahun,
+          )} sampai dengan ${periodLabel}, rata-rata lama menginap tamu asing tertinggi terjadi pada ${
+            foreignExtremes.highest.label
+          }, yaitu ${this.formatNumber(
+            foreignExtremes.highest.value,
+          )} hari, dan terendah pada ${
+            foreignExtremes.lowest.label
+          }, yaitu ${this.formatNumber(
+            foreignExtremes.lowest.value,
+          )} hari. Untuk tamu nusantara, nilai tertinggi terjadi pada ${
+            domesticExtremes.highest.label
+          }, yaitu ${this.formatNumber(
+            domesticExtremes.highest.value,
+          )} hari, dan terendah pada ${
+            domesticExtremes.lowest.label
+          }, yaitu ${this.formatNumber(domesticExtremes.lowest.value)} hari.`,
+        );
+      }
+    }
     return paragraphs;
   }
 
@@ -391,6 +465,57 @@ export class BrsNarrativeService {
     return warnings;
   }
 
+  private highlightChanges(metric: MetricComparison): string {
+    const changes: string[] = [];
+
+    if (metric.mtmChange !== null) {
+      changes.push(
+        `${this.statusPhrase(metric.mtmStatus)} ${this.formatAbsolute(
+          metric.mtmChange,
+        )} poin secara month-to-month`,
+      );
+    }
+
+    if (metric.yoyChange !== null) {
+      changes.push(
+        `${this.statusPhrase(metric.yoyStatus)} ${this.formatAbsolute(
+          metric.yoyChange,
+        )} poin secara year-on-year`,
+      );
+    }
+
+    return changes.length > 0 ? `, ${changes.join(', dan ')}` : '';
+  }
+
+  private historyExtremes(
+    values: Array<{
+      label: string;
+      value: number;
+    }>,
+  ): {
+    highest: {
+      label: string;
+      value: number;
+    };
+    lowest: {
+      label: string;
+      value: number;
+    };
+  } | null {
+    if (values.length === 0) {
+      return null;
+    }
+
+    return {
+      highest: values.reduce((result, item) =>
+        item.value > result.value ? item : result,
+      ),
+
+      lowest: values.reduce((result, item) =>
+        item.value < result.value ? item : result,
+      ),
+    };
+  }
   private statusPhrase(status: ChangeStatus): string {
     switch (status) {
       case 'NAIK':
