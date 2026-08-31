@@ -1,11 +1,5 @@
-import { Container } from '@mantine/core';
-
-import { ExcelUpload } from '@/components/data-upload/ExcelUpload';
+import { redirect } from 'next/navigation';
 
 export default function DataUploadPage() {
-  return (
-    <Container size="xl" py="xl">
-      <ExcelUpload />
-    </Container>
-  );
+  redirect('/brs/upload');
 }

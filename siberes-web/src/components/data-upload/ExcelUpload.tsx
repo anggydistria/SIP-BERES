@@ -325,11 +325,11 @@ export function ExcelUpload() {
                   <Group mt="md">
                     <Button
                       component={Link}
-                      href="/dashboard"
+                      href="/brs"
                       variant="light"
                       color="green"
                     >
-                      Lihat Dashboard
+                      Lihat Daftar BRS
                     </Button>
                   </Group>
                 </Alert>

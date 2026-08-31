@@ -1,4 +1,4 @@
-import type { Brs, CreateBrsPayload } from '@/types/brs';
+import type { Brs, BrsListParams, BrsListResponse, CreateBrsPayload } from '@/types/brs';
 
 const API_URL =
   process.env.NEXT_PUBLIC_API_URL ??
@@ -30,12 +30,31 @@ async function parseResponse<T>(
   return data as T;
 }
 
-export async function getBrsList(): Promise<Brs[]> {
-  const response = await fetch(`${API_URL}/brs`, {
-    cache: 'no-store',
-  });
+export async function getBrsList(
+  params: BrsListParams = {}
+): Promise<BrsListResponse> {
+  const searchParams = new URLSearchParams();
 
-  return parseResponse<Brs[]>(response);
+  searchParams.set('page', String(params.page ?? 1));
+
+  searchParams.set('limit', String(params.limit ?? 10));
+
+  if (params.bulan !== undefined) {
+    searchParams.set('bulan', String(params.bulan));
+  }
+
+  if (params.tahun !== undefined) {
+    searchParams.set('tahun', String(params.tahun));
+  }
+
+  const response = await fetch(
+    `${API_URL}/brs?${searchParams.toString()}`,
+    {
+      cache: 'no-store',
+    }
+  );
+
+  return parseResponse<BrsListResponse>(response);
 }
 
 export async function createBrs(

@@ -8,6 +8,7 @@ import {
 import { CreateBrsDto } from '../dto/create-brs.dto';
 import { UpdateBrsDto } from '../dto/update-brs.dto';
 import { PrismaService } from '../../prisma/prisma.service';
+import { FindBrsQueryDto } from '../dto/find-brs-query.dto';
 
 @Injectable()
 export class BrsService {
@@ -45,19 +46,55 @@ export class BrsService {
     });
   }
 
-  async findAll() {
-    return this.prisma.brs.findMany({
-      orderBy: [
-        {
-          tahun: 'desc',
-        },
-        {
-          bulan: 'desc',
-        },
-      ],
-    });
-  }
+  async findAll(query: FindBrsQueryDto) {
+    const page = query.page ?? 1;
+    const limit = query.limit ?? 10;
 
+    const where = {
+      jenisBrs: 'PARIWISATA',
+
+      ...(query.bulan !== undefined && {
+        bulan: query.bulan,
+      }),
+
+      ...(query.tahun !== undefined && {
+        tahun: query.tahun,
+      }),
+    };
+
+    const [data, total] = await this.prisma.$transaction([
+      this.prisma.brs.findMany({
+        where,
+
+        orderBy: [
+          {
+            tahun: 'desc',
+          },
+          {
+            bulan: 'desc',
+          },
+        ],
+
+        skip: (page - 1) * limit,
+        take: limit,
+      }),
+
+      this.prisma.brs.count({
+        where,
+      }),
+    ]);
+
+    return {
+      data,
+
+      meta: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit),
+      },
+    };
+  }
   async findOne(id: number) {
     const brs = await this.prisma.brs.findUnique({
       where: { id },

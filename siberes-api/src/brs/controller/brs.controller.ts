@@ -6,11 +6,13 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  Query,
 } from '@nestjs/common';
 
 import { BrsService } from '../service/brs.service';
 import { CreateBrsDto } from '../dto/create-brs.dto';
 import { UpdateBrsDto } from '../dto/update-brs.dto';
+import { FindBrsQueryDto } from '../dto/find-brs-query.dto';
 
 @Controller('brs')
 export class BrsController {
@@ -22,9 +24,9 @@ export class BrsController {
   }
 
   @Get()
-  findAll() {
-    return this.brsService.findAll();
-  }
+  findAll(@Query() query: FindBrsQueryDto) {
+    return this.brsService.findAll(query);
+  } 
 
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number) {
