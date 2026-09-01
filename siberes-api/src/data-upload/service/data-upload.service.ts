@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+} from '@nestjs/common';
 import * as XLSX from 'xlsx';
 import { randomUUID } from 'node:crypto';
 import { mkdir, unlink, writeFile } from 'node:fs/promises';
@@ -227,19 +231,35 @@ export class DataUploadService {
       },
     });
 
-    const latestUpload = await this.prisma.dataUpload.findFirst({
+    if (brs.status === 'FINAL') {
+      throw new ConflictException(
+        'Data Excel tidak dapat diganti karena BRS sudah final',
+      );
+    }
+
+    if (brs.status === 'FINAL_SUBMITTED') {
+      throw new ConflictException(
+        'Data Excel tidak dapat diganti selama calon BRS final menunggu review',
+      );
+    }
+
+    const existingUploads = await this.prisma.dataUpload.findMany({
       where: {
         brsId: brs.id,
       },
+
       orderBy: {
         version: 'desc',
       },
+
       select: {
+        id: true,
         version: true,
+        path: true,
       },
     });
 
-    const nextVersion = (latestUpload?.version ?? 0) + 1;
+    const nextVersion = (existingUploads[0]?.version ?? 0) + 1;
 
     const fileExtension = extname(file.originalname).toLowerCase();
 
@@ -264,28 +284,23 @@ export class DataUploadService {
 
     try {
       const dataUpload = await this.prisma.$transaction(async (transaction) => {
-        await transaction.dataUpload.updateMany({
-          where: {
-            brsId: brs.id,
-            status: 'ACTIVE',
-          },
-          data: {
-            status: 'SUPERSEDED',
-          },
-        });
-
-        return transaction.dataUpload.create({
+        /*
+         * File dan raw data baru dibuat dahulu.
+         */
+        const createdUpload = await transaction.dataUpload.create({
           data: {
             brsId: brs.id,
             uploadedById: developmentUser.id,
 
             originalName: file.originalname,
+
             storedName,
             path: relativePath,
             mimeType: file.mimetype,
             size: file.size,
 
             sheetName: preview.sheetName,
+
             rowCount: preview.validRows,
 
             version: nextVersion,
@@ -295,8 +310,11 @@ export class DataUploadService {
             rawData: {
               create: preview.data.map((row) => ({
                 sourceRow: row.sourceRow,
+
                 jenisAkomodasi: row.jenisAkomodasi,
+
                 kelasAkomodasi: row.kelasAkomodasi,
+
                 mktj: row.mktj,
                 mkts: row.mkts,
                 mta: row.mta,
@@ -307,7 +325,46 @@ export class DataUploadService {
             },
           },
         });
+
+        /*
+         * Setelah data baru berhasil dibuat,
+         * hapus seluruh upload sebelumnya.
+         *
+         * RawData lama ikut terhapus karena
+         * relasinya menggunakan onDelete: Cascade.
+         */
+        if (existingUploads.length > 0) {
+          await transaction.dataUpload.deleteMany({
+            where: {
+              id: {
+                in: existingUploads.map((upload) => upload.id),
+              },
+            },
+          });
+        }
+
+        /*
+         * Perubahan sumber data membuat proses
+         * penyusunan harus dimulai dari draft lagi.
+         */
+        await transaction.brs.update({
+          where: {
+            id: brs.id,
+          },
+
+          data: {
+            status: 'DRAFT',
+          },
+        });
+
+        return createdUpload;
       });
+
+      await Promise.all(
+        existingUploads.map((upload) =>
+          unlink(join(process.cwd(), upload.path)).catch(() => undefined),
+        ),
+      );
 
       return {
         message: 'Data Excel berhasil disimpan',

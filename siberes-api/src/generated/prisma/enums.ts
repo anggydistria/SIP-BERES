@@ -11,10 +11,21 @@
 
 export const BrsStatus = {
   DRAFT: 'DRAFT',
+  DRAFT_READY: 'DRAFT_READY',
+  FINAL_SUBMITTED: 'FINAL_SUBMITTED',
+  FINAL_REJECTED: 'FINAL_REJECTED',
   FINAL: 'FINAL'
 } as const
 
 export type BrsStatus = (typeof BrsStatus)[keyof typeof BrsStatus]
+
+
+export const BrsReviewDecision = {
+  APPROVED: 'APPROVED',
+  REJECTED: 'REJECTED'
+} as const
+
+export type BrsReviewDecision = (typeof BrsReviewDecision)[keyof typeof BrsReviewDecision]
 
 
 export const UploadStatus = {

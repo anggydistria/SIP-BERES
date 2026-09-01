@@ -258,6 +258,9 @@ export type BrsWhereInput = {
   updatedAt?: Prisma.DateTimeFilter<"Brs"> | Date | string
   dataUploads?: Prisma.DataUploadListRelationFilter
   documents?: Prisma.DocumentBrsListRelationFilter
+  finalSubmission?: Prisma.XOR<Prisma.BrsFinalSubmissionNullableScalarRelationFilter, Prisma.BrsFinalSubmissionWhereInput> | null
+  reviewHistories?: Prisma.BrsReviewHistoryListRelationFilter
+  finalFile?: Prisma.XOR<Prisma.BrsFinalFileNullableScalarRelationFilter, Prisma.BrsFinalFileWhereInput> | null
 }
 
 export type BrsOrderByWithRelationInput = {
@@ -272,6 +275,9 @@ export type BrsOrderByWithRelationInput = {
   updatedAt?: Prisma.SortOrder
   dataUploads?: Prisma.DataUploadOrderByRelationAggregateInput
   documents?: Prisma.DocumentBrsOrderByRelationAggregateInput
+  finalSubmission?: Prisma.BrsFinalSubmissionOrderByWithRelationInput
+  reviewHistories?: Prisma.BrsReviewHistoryOrderByRelationAggregateInput
+  finalFile?: Prisma.BrsFinalFileOrderByWithRelationInput
 }
 
 export type BrsWhereUniqueInput = Prisma.AtLeast<{
@@ -290,6 +296,9 @@ export type BrsWhereUniqueInput = Prisma.AtLeast<{
   updatedAt?: Prisma.DateTimeFilter<"Brs"> | Date | string
   dataUploads?: Prisma.DataUploadListRelationFilter
   documents?: Prisma.DocumentBrsListRelationFilter
+  finalSubmission?: Prisma.XOR<Prisma.BrsFinalSubmissionNullableScalarRelationFilter, Prisma.BrsFinalSubmissionWhereInput> | null
+  reviewHistories?: Prisma.BrsReviewHistoryListRelationFilter
+  finalFile?: Prisma.XOR<Prisma.BrsFinalFileNullableScalarRelationFilter, Prisma.BrsFinalFileWhereInput> | null
 }, "id" | "jenisBrs_bulan_tahun">
 
 export type BrsOrderByWithAggregationInput = {
@@ -335,6 +344,9 @@ export type BrsCreateInput = {
   updatedAt?: Date | string
   dataUploads?: Prisma.DataUploadCreateNestedManyWithoutBrsInput
   documents?: Prisma.DocumentBrsCreateNestedManyWithoutBrsInput
+  finalSubmission?: Prisma.BrsFinalSubmissionCreateNestedOneWithoutBrsInput
+  reviewHistories?: Prisma.BrsReviewHistoryCreateNestedManyWithoutBrsInput
+  finalFile?: Prisma.BrsFinalFileCreateNestedOneWithoutBrsInput
 }
 
 export type BrsUncheckedCreateInput = {
@@ -349,6 +361,9 @@ export type BrsUncheckedCreateInput = {
   updatedAt?: Date | string
   dataUploads?: Prisma.DataUploadUncheckedCreateNestedManyWithoutBrsInput
   documents?: Prisma.DocumentBrsUncheckedCreateNestedManyWithoutBrsInput
+  finalSubmission?: Prisma.BrsFinalSubmissionUncheckedCreateNestedOneWithoutBrsInput
+  reviewHistories?: Prisma.BrsReviewHistoryUncheckedCreateNestedManyWithoutBrsInput
+  finalFile?: Prisma.BrsFinalFileUncheckedCreateNestedOneWithoutBrsInput
 }
 
 export type BrsUpdateInput = {
@@ -362,6 +377,9 @@ export type BrsUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   dataUploads?: Prisma.DataUploadUpdateManyWithoutBrsNestedInput
   documents?: Prisma.DocumentBrsUpdateManyWithoutBrsNestedInput
+  finalSubmission?: Prisma.BrsFinalSubmissionUpdateOneWithoutBrsNestedInput
+  reviewHistories?: Prisma.BrsReviewHistoryUpdateManyWithoutBrsNestedInput
+  finalFile?: Prisma.BrsFinalFileUpdateOneWithoutBrsNestedInput
 }
 
 export type BrsUncheckedUpdateInput = {
@@ -376,6 +394,9 @@ export type BrsUncheckedUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   dataUploads?: Prisma.DataUploadUncheckedUpdateManyWithoutBrsNestedInput
   documents?: Prisma.DocumentBrsUncheckedUpdateManyWithoutBrsNestedInput
+  finalSubmission?: Prisma.BrsFinalSubmissionUncheckedUpdateOneWithoutBrsNestedInput
+  reviewHistories?: Prisma.BrsReviewHistoryUncheckedUpdateManyWithoutBrsNestedInput
+  finalFile?: Prisma.BrsFinalFileUncheckedUpdateOneWithoutBrsNestedInput
 }
 
 export type BrsCreateManyInput = {
@@ -411,6 +432,11 @@ export type BrsUncheckedUpdateManyInput = {
   status?: Prisma.EnumBrsStatusFieldUpdateOperationsInput | $Enums.BrsStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type BrsScalarRelationFilter = {
+  is?: Prisma.BrsWhereInput
+  isNot?: Prisma.BrsWhereInput
 }
 
 export type BrsJenisBrsBulanTahunCompoundUniqueInput = {
@@ -467,13 +493,50 @@ export type BrsSumOrderByAggregateInput = {
   tahun?: Prisma.SortOrder
 }
 
-export type BrsScalarRelationFilter = {
-  is?: Prisma.BrsWhereInput
-  isNot?: Prisma.BrsWhereInput
+export type BrsCreateNestedOneWithoutFinalSubmissionInput = {
+  create?: Prisma.XOR<Prisma.BrsCreateWithoutFinalSubmissionInput, Prisma.BrsUncheckedCreateWithoutFinalSubmissionInput>
+  connectOrCreate?: Prisma.BrsCreateOrConnectWithoutFinalSubmissionInput
+  connect?: Prisma.BrsWhereUniqueInput
+}
+
+export type BrsUpdateOneRequiredWithoutFinalSubmissionNestedInput = {
+  create?: Prisma.XOR<Prisma.BrsCreateWithoutFinalSubmissionInput, Prisma.BrsUncheckedCreateWithoutFinalSubmissionInput>
+  connectOrCreate?: Prisma.BrsCreateOrConnectWithoutFinalSubmissionInput
+  upsert?: Prisma.BrsUpsertWithoutFinalSubmissionInput
+  connect?: Prisma.BrsWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.BrsUpdateToOneWithWhereWithoutFinalSubmissionInput, Prisma.BrsUpdateWithoutFinalSubmissionInput>, Prisma.BrsUncheckedUpdateWithoutFinalSubmissionInput>
 }
 
 export type EnumBrsStatusFieldUpdateOperationsInput = {
   set?: $Enums.BrsStatus
+}
+
+export type BrsCreateNestedOneWithoutReviewHistoriesInput = {
+  create?: Prisma.XOR<Prisma.BrsCreateWithoutReviewHistoriesInput, Prisma.BrsUncheckedCreateWithoutReviewHistoriesInput>
+  connectOrCreate?: Prisma.BrsCreateOrConnectWithoutReviewHistoriesInput
+  connect?: Prisma.BrsWhereUniqueInput
+}
+
+export type BrsUpdateOneRequiredWithoutReviewHistoriesNestedInput = {
+  create?: Prisma.XOR<Prisma.BrsCreateWithoutReviewHistoriesInput, Prisma.BrsUncheckedCreateWithoutReviewHistoriesInput>
+  connectOrCreate?: Prisma.BrsCreateOrConnectWithoutReviewHistoriesInput
+  upsert?: Prisma.BrsUpsertWithoutReviewHistoriesInput
+  connect?: Prisma.BrsWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.BrsUpdateToOneWithWhereWithoutReviewHistoriesInput, Prisma.BrsUpdateWithoutReviewHistoriesInput>, Prisma.BrsUncheckedUpdateWithoutReviewHistoriesInput>
+}
+
+export type BrsCreateNestedOneWithoutFinalFileInput = {
+  create?: Prisma.XOR<Prisma.BrsCreateWithoutFinalFileInput, Prisma.BrsUncheckedCreateWithoutFinalFileInput>
+  connectOrCreate?: Prisma.BrsCreateOrConnectWithoutFinalFileInput
+  connect?: Prisma.BrsWhereUniqueInput
+}
+
+export type BrsUpdateOneRequiredWithoutFinalFileNestedInput = {
+  create?: Prisma.XOR<Prisma.BrsCreateWithoutFinalFileInput, Prisma.BrsUncheckedCreateWithoutFinalFileInput>
+  connectOrCreate?: Prisma.BrsCreateOrConnectWithoutFinalFileInput
+  upsert?: Prisma.BrsUpsertWithoutFinalFileInput
+  connect?: Prisma.BrsWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.BrsUpdateToOneWithWhereWithoutFinalFileInput, Prisma.BrsUpdateWithoutFinalFileInput>, Prisma.BrsUncheckedUpdateWithoutFinalFileInput>
 }
 
 export type BrsCreateNestedOneWithoutDataUploadsInput = {
@@ -504,6 +567,240 @@ export type BrsUpdateOneRequiredWithoutDocumentsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.BrsUpdateToOneWithWhereWithoutDocumentsInput, Prisma.BrsUpdateWithoutDocumentsInput>, Prisma.BrsUncheckedUpdateWithoutDocumentsInput>
 }
 
+export type BrsCreateWithoutFinalSubmissionInput = {
+  jenisBrs?: string
+  bulan: number
+  tahun: number
+  nomorBrs?: string | null
+  tanggalPublikasi?: Date | string | null
+  status?: $Enums.BrsStatus
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  dataUploads?: Prisma.DataUploadCreateNestedManyWithoutBrsInput
+  documents?: Prisma.DocumentBrsCreateNestedManyWithoutBrsInput
+  reviewHistories?: Prisma.BrsReviewHistoryCreateNestedManyWithoutBrsInput
+  finalFile?: Prisma.BrsFinalFileCreateNestedOneWithoutBrsInput
+}
+
+export type BrsUncheckedCreateWithoutFinalSubmissionInput = {
+  id?: number
+  jenisBrs?: string
+  bulan: number
+  tahun: number
+  nomorBrs?: string | null
+  tanggalPublikasi?: Date | string | null
+  status?: $Enums.BrsStatus
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  dataUploads?: Prisma.DataUploadUncheckedCreateNestedManyWithoutBrsInput
+  documents?: Prisma.DocumentBrsUncheckedCreateNestedManyWithoutBrsInput
+  reviewHistories?: Prisma.BrsReviewHistoryUncheckedCreateNestedManyWithoutBrsInput
+  finalFile?: Prisma.BrsFinalFileUncheckedCreateNestedOneWithoutBrsInput
+}
+
+export type BrsCreateOrConnectWithoutFinalSubmissionInput = {
+  where: Prisma.BrsWhereUniqueInput
+  create: Prisma.XOR<Prisma.BrsCreateWithoutFinalSubmissionInput, Prisma.BrsUncheckedCreateWithoutFinalSubmissionInput>
+}
+
+export type BrsUpsertWithoutFinalSubmissionInput = {
+  update: Prisma.XOR<Prisma.BrsUpdateWithoutFinalSubmissionInput, Prisma.BrsUncheckedUpdateWithoutFinalSubmissionInput>
+  create: Prisma.XOR<Prisma.BrsCreateWithoutFinalSubmissionInput, Prisma.BrsUncheckedCreateWithoutFinalSubmissionInput>
+  where?: Prisma.BrsWhereInput
+}
+
+export type BrsUpdateToOneWithWhereWithoutFinalSubmissionInput = {
+  where?: Prisma.BrsWhereInput
+  data: Prisma.XOR<Prisma.BrsUpdateWithoutFinalSubmissionInput, Prisma.BrsUncheckedUpdateWithoutFinalSubmissionInput>
+}
+
+export type BrsUpdateWithoutFinalSubmissionInput = {
+  jenisBrs?: Prisma.StringFieldUpdateOperationsInput | string
+  bulan?: Prisma.IntFieldUpdateOperationsInput | number
+  tahun?: Prisma.IntFieldUpdateOperationsInput | number
+  nomorBrs?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  tanggalPublikasi?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  status?: Prisma.EnumBrsStatusFieldUpdateOperationsInput | $Enums.BrsStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  dataUploads?: Prisma.DataUploadUpdateManyWithoutBrsNestedInput
+  documents?: Prisma.DocumentBrsUpdateManyWithoutBrsNestedInput
+  reviewHistories?: Prisma.BrsReviewHistoryUpdateManyWithoutBrsNestedInput
+  finalFile?: Prisma.BrsFinalFileUpdateOneWithoutBrsNestedInput
+}
+
+export type BrsUncheckedUpdateWithoutFinalSubmissionInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  jenisBrs?: Prisma.StringFieldUpdateOperationsInput | string
+  bulan?: Prisma.IntFieldUpdateOperationsInput | number
+  tahun?: Prisma.IntFieldUpdateOperationsInput | number
+  nomorBrs?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  tanggalPublikasi?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  status?: Prisma.EnumBrsStatusFieldUpdateOperationsInput | $Enums.BrsStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  dataUploads?: Prisma.DataUploadUncheckedUpdateManyWithoutBrsNestedInput
+  documents?: Prisma.DocumentBrsUncheckedUpdateManyWithoutBrsNestedInput
+  reviewHistories?: Prisma.BrsReviewHistoryUncheckedUpdateManyWithoutBrsNestedInput
+  finalFile?: Prisma.BrsFinalFileUncheckedUpdateOneWithoutBrsNestedInput
+}
+
+export type BrsCreateWithoutReviewHistoriesInput = {
+  jenisBrs?: string
+  bulan: number
+  tahun: number
+  nomorBrs?: string | null
+  tanggalPublikasi?: Date | string | null
+  status?: $Enums.BrsStatus
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  dataUploads?: Prisma.DataUploadCreateNestedManyWithoutBrsInput
+  documents?: Prisma.DocumentBrsCreateNestedManyWithoutBrsInput
+  finalSubmission?: Prisma.BrsFinalSubmissionCreateNestedOneWithoutBrsInput
+  finalFile?: Prisma.BrsFinalFileCreateNestedOneWithoutBrsInput
+}
+
+export type BrsUncheckedCreateWithoutReviewHistoriesInput = {
+  id?: number
+  jenisBrs?: string
+  bulan: number
+  tahun: number
+  nomorBrs?: string | null
+  tanggalPublikasi?: Date | string | null
+  status?: $Enums.BrsStatus
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  dataUploads?: Prisma.DataUploadUncheckedCreateNestedManyWithoutBrsInput
+  documents?: Prisma.DocumentBrsUncheckedCreateNestedManyWithoutBrsInput
+  finalSubmission?: Prisma.BrsFinalSubmissionUncheckedCreateNestedOneWithoutBrsInput
+  finalFile?: Prisma.BrsFinalFileUncheckedCreateNestedOneWithoutBrsInput
+}
+
+export type BrsCreateOrConnectWithoutReviewHistoriesInput = {
+  where: Prisma.BrsWhereUniqueInput
+  create: Prisma.XOR<Prisma.BrsCreateWithoutReviewHistoriesInput, Prisma.BrsUncheckedCreateWithoutReviewHistoriesInput>
+}
+
+export type BrsUpsertWithoutReviewHistoriesInput = {
+  update: Prisma.XOR<Prisma.BrsUpdateWithoutReviewHistoriesInput, Prisma.BrsUncheckedUpdateWithoutReviewHistoriesInput>
+  create: Prisma.XOR<Prisma.BrsCreateWithoutReviewHistoriesInput, Prisma.BrsUncheckedCreateWithoutReviewHistoriesInput>
+  where?: Prisma.BrsWhereInput
+}
+
+export type BrsUpdateToOneWithWhereWithoutReviewHistoriesInput = {
+  where?: Prisma.BrsWhereInput
+  data: Prisma.XOR<Prisma.BrsUpdateWithoutReviewHistoriesInput, Prisma.BrsUncheckedUpdateWithoutReviewHistoriesInput>
+}
+
+export type BrsUpdateWithoutReviewHistoriesInput = {
+  jenisBrs?: Prisma.StringFieldUpdateOperationsInput | string
+  bulan?: Prisma.IntFieldUpdateOperationsInput | number
+  tahun?: Prisma.IntFieldUpdateOperationsInput | number
+  nomorBrs?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  tanggalPublikasi?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  status?: Prisma.EnumBrsStatusFieldUpdateOperationsInput | $Enums.BrsStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  dataUploads?: Prisma.DataUploadUpdateManyWithoutBrsNestedInput
+  documents?: Prisma.DocumentBrsUpdateManyWithoutBrsNestedInput
+  finalSubmission?: Prisma.BrsFinalSubmissionUpdateOneWithoutBrsNestedInput
+  finalFile?: Prisma.BrsFinalFileUpdateOneWithoutBrsNestedInput
+}
+
+export type BrsUncheckedUpdateWithoutReviewHistoriesInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  jenisBrs?: Prisma.StringFieldUpdateOperationsInput | string
+  bulan?: Prisma.IntFieldUpdateOperationsInput | number
+  tahun?: Prisma.IntFieldUpdateOperationsInput | number
+  nomorBrs?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  tanggalPublikasi?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  status?: Prisma.EnumBrsStatusFieldUpdateOperationsInput | $Enums.BrsStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  dataUploads?: Prisma.DataUploadUncheckedUpdateManyWithoutBrsNestedInput
+  documents?: Prisma.DocumentBrsUncheckedUpdateManyWithoutBrsNestedInput
+  finalSubmission?: Prisma.BrsFinalSubmissionUncheckedUpdateOneWithoutBrsNestedInput
+  finalFile?: Prisma.BrsFinalFileUncheckedUpdateOneWithoutBrsNestedInput
+}
+
+export type BrsCreateWithoutFinalFileInput = {
+  jenisBrs?: string
+  bulan: number
+  tahun: number
+  nomorBrs?: string | null
+  tanggalPublikasi?: Date | string | null
+  status?: $Enums.BrsStatus
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  dataUploads?: Prisma.DataUploadCreateNestedManyWithoutBrsInput
+  documents?: Prisma.DocumentBrsCreateNestedManyWithoutBrsInput
+  finalSubmission?: Prisma.BrsFinalSubmissionCreateNestedOneWithoutBrsInput
+  reviewHistories?: Prisma.BrsReviewHistoryCreateNestedManyWithoutBrsInput
+}
+
+export type BrsUncheckedCreateWithoutFinalFileInput = {
+  id?: number
+  jenisBrs?: string
+  bulan: number
+  tahun: number
+  nomorBrs?: string | null
+  tanggalPublikasi?: Date | string | null
+  status?: $Enums.BrsStatus
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  dataUploads?: Prisma.DataUploadUncheckedCreateNestedManyWithoutBrsInput
+  documents?: Prisma.DocumentBrsUncheckedCreateNestedManyWithoutBrsInput
+  finalSubmission?: Prisma.BrsFinalSubmissionUncheckedCreateNestedOneWithoutBrsInput
+  reviewHistories?: Prisma.BrsReviewHistoryUncheckedCreateNestedManyWithoutBrsInput
+}
+
+export type BrsCreateOrConnectWithoutFinalFileInput = {
+  where: Prisma.BrsWhereUniqueInput
+  create: Prisma.XOR<Prisma.BrsCreateWithoutFinalFileInput, Prisma.BrsUncheckedCreateWithoutFinalFileInput>
+}
+
+export type BrsUpsertWithoutFinalFileInput = {
+  update: Prisma.XOR<Prisma.BrsUpdateWithoutFinalFileInput, Prisma.BrsUncheckedUpdateWithoutFinalFileInput>
+  create: Prisma.XOR<Prisma.BrsCreateWithoutFinalFileInput, Prisma.BrsUncheckedCreateWithoutFinalFileInput>
+  where?: Prisma.BrsWhereInput
+}
+
+export type BrsUpdateToOneWithWhereWithoutFinalFileInput = {
+  where?: Prisma.BrsWhereInput
+  data: Prisma.XOR<Prisma.BrsUpdateWithoutFinalFileInput, Prisma.BrsUncheckedUpdateWithoutFinalFileInput>
+}
+
+export type BrsUpdateWithoutFinalFileInput = {
+  jenisBrs?: Prisma.StringFieldUpdateOperationsInput | string
+  bulan?: Prisma.IntFieldUpdateOperationsInput | number
+  tahun?: Prisma.IntFieldUpdateOperationsInput | number
+  nomorBrs?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  tanggalPublikasi?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  status?: Prisma.EnumBrsStatusFieldUpdateOperationsInput | $Enums.BrsStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  dataUploads?: Prisma.DataUploadUpdateManyWithoutBrsNestedInput
+  documents?: Prisma.DocumentBrsUpdateManyWithoutBrsNestedInput
+  finalSubmission?: Prisma.BrsFinalSubmissionUpdateOneWithoutBrsNestedInput
+  reviewHistories?: Prisma.BrsReviewHistoryUpdateManyWithoutBrsNestedInput
+}
+
+export type BrsUncheckedUpdateWithoutFinalFileInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  jenisBrs?: Prisma.StringFieldUpdateOperationsInput | string
+  bulan?: Prisma.IntFieldUpdateOperationsInput | number
+  tahun?: Prisma.IntFieldUpdateOperationsInput | number
+  nomorBrs?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  tanggalPublikasi?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  status?: Prisma.EnumBrsStatusFieldUpdateOperationsInput | $Enums.BrsStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  dataUploads?: Prisma.DataUploadUncheckedUpdateManyWithoutBrsNestedInput
+  documents?: Prisma.DocumentBrsUncheckedUpdateManyWithoutBrsNestedInput
+  finalSubmission?: Prisma.BrsFinalSubmissionUncheckedUpdateOneWithoutBrsNestedInput
+  reviewHistories?: Prisma.BrsReviewHistoryUncheckedUpdateManyWithoutBrsNestedInput
+}
+
 export type BrsCreateWithoutDataUploadsInput = {
   jenisBrs?: string
   bulan: number
@@ -514,6 +811,9 @@ export type BrsCreateWithoutDataUploadsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   documents?: Prisma.DocumentBrsCreateNestedManyWithoutBrsInput
+  finalSubmission?: Prisma.BrsFinalSubmissionCreateNestedOneWithoutBrsInput
+  reviewHistories?: Prisma.BrsReviewHistoryCreateNestedManyWithoutBrsInput
+  finalFile?: Prisma.BrsFinalFileCreateNestedOneWithoutBrsInput
 }
 
 export type BrsUncheckedCreateWithoutDataUploadsInput = {
@@ -527,6 +827,9 @@ export type BrsUncheckedCreateWithoutDataUploadsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   documents?: Prisma.DocumentBrsUncheckedCreateNestedManyWithoutBrsInput
+  finalSubmission?: Prisma.BrsFinalSubmissionUncheckedCreateNestedOneWithoutBrsInput
+  reviewHistories?: Prisma.BrsReviewHistoryUncheckedCreateNestedManyWithoutBrsInput
+  finalFile?: Prisma.BrsFinalFileUncheckedCreateNestedOneWithoutBrsInput
 }
 
 export type BrsCreateOrConnectWithoutDataUploadsInput = {
@@ -555,6 +858,9 @@ export type BrsUpdateWithoutDataUploadsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   documents?: Prisma.DocumentBrsUpdateManyWithoutBrsNestedInput
+  finalSubmission?: Prisma.BrsFinalSubmissionUpdateOneWithoutBrsNestedInput
+  reviewHistories?: Prisma.BrsReviewHistoryUpdateManyWithoutBrsNestedInput
+  finalFile?: Prisma.BrsFinalFileUpdateOneWithoutBrsNestedInput
 }
 
 export type BrsUncheckedUpdateWithoutDataUploadsInput = {
@@ -568,6 +874,9 @@ export type BrsUncheckedUpdateWithoutDataUploadsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   documents?: Prisma.DocumentBrsUncheckedUpdateManyWithoutBrsNestedInput
+  finalSubmission?: Prisma.BrsFinalSubmissionUncheckedUpdateOneWithoutBrsNestedInput
+  reviewHistories?: Prisma.BrsReviewHistoryUncheckedUpdateManyWithoutBrsNestedInput
+  finalFile?: Prisma.BrsFinalFileUncheckedUpdateOneWithoutBrsNestedInput
 }
 
 export type BrsCreateWithoutDocumentsInput = {
@@ -580,6 +889,9 @@ export type BrsCreateWithoutDocumentsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   dataUploads?: Prisma.DataUploadCreateNestedManyWithoutBrsInput
+  finalSubmission?: Prisma.BrsFinalSubmissionCreateNestedOneWithoutBrsInput
+  reviewHistories?: Prisma.BrsReviewHistoryCreateNestedManyWithoutBrsInput
+  finalFile?: Prisma.BrsFinalFileCreateNestedOneWithoutBrsInput
 }
 
 export type BrsUncheckedCreateWithoutDocumentsInput = {
@@ -593,6 +905,9 @@ export type BrsUncheckedCreateWithoutDocumentsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   dataUploads?: Prisma.DataUploadUncheckedCreateNestedManyWithoutBrsInput
+  finalSubmission?: Prisma.BrsFinalSubmissionUncheckedCreateNestedOneWithoutBrsInput
+  reviewHistories?: Prisma.BrsReviewHistoryUncheckedCreateNestedManyWithoutBrsInput
+  finalFile?: Prisma.BrsFinalFileUncheckedCreateNestedOneWithoutBrsInput
 }
 
 export type BrsCreateOrConnectWithoutDocumentsInput = {
@@ -621,6 +936,9 @@ export type BrsUpdateWithoutDocumentsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   dataUploads?: Prisma.DataUploadUpdateManyWithoutBrsNestedInput
+  finalSubmission?: Prisma.BrsFinalSubmissionUpdateOneWithoutBrsNestedInput
+  reviewHistories?: Prisma.BrsReviewHistoryUpdateManyWithoutBrsNestedInput
+  finalFile?: Prisma.BrsFinalFileUpdateOneWithoutBrsNestedInput
 }
 
 export type BrsUncheckedUpdateWithoutDocumentsInput = {
@@ -634,6 +952,9 @@ export type BrsUncheckedUpdateWithoutDocumentsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   dataUploads?: Prisma.DataUploadUncheckedUpdateManyWithoutBrsNestedInput
+  finalSubmission?: Prisma.BrsFinalSubmissionUncheckedUpdateOneWithoutBrsNestedInput
+  reviewHistories?: Prisma.BrsReviewHistoryUncheckedUpdateManyWithoutBrsNestedInput
+  finalFile?: Prisma.BrsFinalFileUncheckedUpdateOneWithoutBrsNestedInput
 }
 
 
@@ -644,11 +965,13 @@ export type BrsUncheckedUpdateWithoutDocumentsInput = {
 export type BrsCountOutputType = {
   dataUploads: number
   documents: number
+  reviewHistories: number
 }
 
 export type BrsCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   dataUploads?: boolean | BrsCountOutputTypeCountDataUploadsArgs
   documents?: boolean | BrsCountOutputTypeCountDocumentsArgs
+  reviewHistories?: boolean | BrsCountOutputTypeCountReviewHistoriesArgs
 }
 
 /**
@@ -675,6 +998,13 @@ export type BrsCountOutputTypeCountDocumentsArgs<ExtArgs extends runtime.Types.E
   where?: Prisma.DocumentBrsWhereInput
 }
 
+/**
+ * BrsCountOutputType without action
+ */
+export type BrsCountOutputTypeCountReviewHistoriesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.BrsReviewHistoryWhereInput
+}
+
 
 export type BrsSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -688,6 +1018,9 @@ export type BrsSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = ru
   updatedAt?: boolean
   dataUploads?: boolean | Prisma.Brs$dataUploadsArgs<ExtArgs>
   documents?: boolean | Prisma.Brs$documentsArgs<ExtArgs>
+  finalSubmission?: boolean | Prisma.Brs$finalSubmissionArgs<ExtArgs>
+  reviewHistories?: boolean | Prisma.Brs$reviewHistoriesArgs<ExtArgs>
+  finalFile?: boolean | Prisma.Brs$finalFileArgs<ExtArgs>
   _count?: boolean | Prisma.BrsCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["brs"]>
 
@@ -731,6 +1064,9 @@ export type BrsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
 export type BrsInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   dataUploads?: boolean | Prisma.Brs$dataUploadsArgs<ExtArgs>
   documents?: boolean | Prisma.Brs$documentsArgs<ExtArgs>
+  finalSubmission?: boolean | Prisma.Brs$finalSubmissionArgs<ExtArgs>
+  reviewHistories?: boolean | Prisma.Brs$reviewHistoriesArgs<ExtArgs>
+  finalFile?: boolean | Prisma.Brs$finalFileArgs<ExtArgs>
   _count?: boolean | Prisma.BrsCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type BrsIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -741,6 +1077,9 @@ export type $BrsPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   objects: {
     dataUploads: Prisma.$DataUploadPayload<ExtArgs>[]
     documents: Prisma.$DocumentBrsPayload<ExtArgs>[]
+    finalSubmission: Prisma.$BrsFinalSubmissionPayload<ExtArgs> | null
+    reviewHistories: Prisma.$BrsReviewHistoryPayload<ExtArgs>[]
+    finalFile: Prisma.$BrsFinalFilePayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -1148,6 +1487,9 @@ export interface Prisma__BrsClient<T, Null = never, ExtArgs extends runtime.Type
   readonly [Symbol.toStringTag]: "PrismaPromise"
   dataUploads<T extends Prisma.Brs$dataUploadsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Brs$dataUploadsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DataUploadPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   documents<T extends Prisma.Brs$documentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Brs$documentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DocumentBrsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  finalSubmission<T extends Prisma.Brs$finalSubmissionArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Brs$finalSubmissionArgs<ExtArgs>>): Prisma.Prisma__BrsFinalSubmissionClient<runtime.Types.Result.GetResult<Prisma.$BrsFinalSubmissionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  reviewHistories<T extends Prisma.Brs$reviewHistoriesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Brs$reviewHistoriesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BrsReviewHistoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  finalFile<T extends Prisma.Brs$finalFileArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Brs$finalFileArgs<ExtArgs>>): Prisma.Prisma__BrsFinalFileClient<runtime.Types.Result.GetResult<Prisma.$BrsFinalFilePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1624,6 +1966,68 @@ export type Brs$documentsArgs<ExtArgs extends runtime.Types.Extensions.InternalA
   take?: number
   skip?: number
   distinct?: Prisma.DocumentBrsScalarFieldEnum | Prisma.DocumentBrsScalarFieldEnum[]
+}
+
+/**
+ * Brs.finalSubmission
+ */
+export type Brs$finalSubmissionArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the BrsFinalSubmission
+   */
+  select?: Prisma.BrsFinalSubmissionSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the BrsFinalSubmission
+   */
+  omit?: Prisma.BrsFinalSubmissionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BrsFinalSubmissionInclude<ExtArgs> | null
+  where?: Prisma.BrsFinalSubmissionWhereInput
+}
+
+/**
+ * Brs.reviewHistories
+ */
+export type Brs$reviewHistoriesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the BrsReviewHistory
+   */
+  select?: Prisma.BrsReviewHistorySelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the BrsReviewHistory
+   */
+  omit?: Prisma.BrsReviewHistoryOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BrsReviewHistoryInclude<ExtArgs> | null
+  where?: Prisma.BrsReviewHistoryWhereInput
+  orderBy?: Prisma.BrsReviewHistoryOrderByWithRelationInput | Prisma.BrsReviewHistoryOrderByWithRelationInput[]
+  cursor?: Prisma.BrsReviewHistoryWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.BrsReviewHistoryScalarFieldEnum | Prisma.BrsReviewHistoryScalarFieldEnum[]
+}
+
+/**
+ * Brs.finalFile
+ */
+export type Brs$finalFileArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the BrsFinalFile
+   */
+  select?: Prisma.BrsFinalFileSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the BrsFinalFile
+   */
+  omit?: Prisma.BrsFinalFileOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BrsFinalFileInclude<ExtArgs> | null
+  where?: Prisma.BrsFinalFileWhereInput
 }
 
 /**

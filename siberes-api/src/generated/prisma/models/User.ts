@@ -237,6 +237,10 @@ export type UserWhereInput = {
   rawDataChanges?: Prisma.RawDataHistoryListRelationFilter
   templates?: Prisma.TemplateBrsListRelationFilter
   documents?: Prisma.DocumentBrsListRelationFilter
+  finalSubmissions?: Prisma.BrsFinalSubmissionListRelationFilter
+  submittedReviews?: Prisma.BrsReviewHistoryListRelationFilter
+  reviewedReviews?: Prisma.BrsReviewHistoryListRelationFilter
+  approvedFinalFiles?: Prisma.BrsFinalFileListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
@@ -252,6 +256,10 @@ export type UserOrderByWithRelationInput = {
   rawDataChanges?: Prisma.RawDataHistoryOrderByRelationAggregateInput
   templates?: Prisma.TemplateBrsOrderByRelationAggregateInput
   documents?: Prisma.DocumentBrsOrderByRelationAggregateInput
+  finalSubmissions?: Prisma.BrsFinalSubmissionOrderByRelationAggregateInput
+  submittedReviews?: Prisma.BrsReviewHistoryOrderByRelationAggregateInput
+  reviewedReviews?: Prisma.BrsReviewHistoryOrderByRelationAggregateInput
+  approvedFinalFiles?: Prisma.BrsFinalFileOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -270,6 +278,10 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   rawDataChanges?: Prisma.RawDataHistoryListRelationFilter
   templates?: Prisma.TemplateBrsListRelationFilter
   documents?: Prisma.DocumentBrsListRelationFilter
+  finalSubmissions?: Prisma.BrsFinalSubmissionListRelationFilter
+  submittedReviews?: Prisma.BrsReviewHistoryListRelationFilter
+  reviewedReviews?: Prisma.BrsReviewHistoryListRelationFilter
+  approvedFinalFiles?: Prisma.BrsFinalFileListRelationFilter
 }, "id" | "username">
 
 export type UserOrderByWithAggregationInput = {
@@ -312,6 +324,10 @@ export type UserCreateInput = {
   rawDataChanges?: Prisma.RawDataHistoryCreateNestedManyWithoutChangedByInput
   templates?: Prisma.TemplateBrsCreateNestedManyWithoutCreatedByInput
   documents?: Prisma.DocumentBrsCreateNestedManyWithoutCreatedByInput
+  finalSubmissions?: Prisma.BrsFinalSubmissionCreateNestedManyWithoutSubmittedByInput
+  submittedReviews?: Prisma.BrsReviewHistoryCreateNestedManyWithoutSubmittedByInput
+  reviewedReviews?: Prisma.BrsReviewHistoryCreateNestedManyWithoutReviewedByInput
+  approvedFinalFiles?: Prisma.BrsFinalFileCreateNestedManyWithoutApprovedByInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -327,6 +343,10 @@ export type UserUncheckedCreateInput = {
   rawDataChanges?: Prisma.RawDataHistoryUncheckedCreateNestedManyWithoutChangedByInput
   templates?: Prisma.TemplateBrsUncheckedCreateNestedManyWithoutCreatedByInput
   documents?: Prisma.DocumentBrsUncheckedCreateNestedManyWithoutCreatedByInput
+  finalSubmissions?: Prisma.BrsFinalSubmissionUncheckedCreateNestedManyWithoutSubmittedByInput
+  submittedReviews?: Prisma.BrsReviewHistoryUncheckedCreateNestedManyWithoutSubmittedByInput
+  reviewedReviews?: Prisma.BrsReviewHistoryUncheckedCreateNestedManyWithoutReviewedByInput
+  approvedFinalFiles?: Prisma.BrsFinalFileUncheckedCreateNestedManyWithoutApprovedByInput
 }
 
 export type UserUpdateInput = {
@@ -341,6 +361,10 @@ export type UserUpdateInput = {
   rawDataChanges?: Prisma.RawDataHistoryUpdateManyWithoutChangedByNestedInput
   templates?: Prisma.TemplateBrsUpdateManyWithoutCreatedByNestedInput
   documents?: Prisma.DocumentBrsUpdateManyWithoutCreatedByNestedInput
+  finalSubmissions?: Prisma.BrsFinalSubmissionUpdateManyWithoutSubmittedByNestedInput
+  submittedReviews?: Prisma.BrsReviewHistoryUpdateManyWithoutSubmittedByNestedInput
+  reviewedReviews?: Prisma.BrsReviewHistoryUpdateManyWithoutReviewedByNestedInput
+  approvedFinalFiles?: Prisma.BrsFinalFileUpdateManyWithoutApprovedByNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -356,6 +380,10 @@ export type UserUncheckedUpdateInput = {
   rawDataChanges?: Prisma.RawDataHistoryUncheckedUpdateManyWithoutChangedByNestedInput
   templates?: Prisma.TemplateBrsUncheckedUpdateManyWithoutCreatedByNestedInput
   documents?: Prisma.DocumentBrsUncheckedUpdateManyWithoutCreatedByNestedInput
+  finalSubmissions?: Prisma.BrsFinalSubmissionUncheckedUpdateManyWithoutSubmittedByNestedInput
+  submittedReviews?: Prisma.BrsReviewHistoryUncheckedUpdateManyWithoutSubmittedByNestedInput
+  reviewedReviews?: Prisma.BrsReviewHistoryUncheckedUpdateManyWithoutReviewedByNestedInput
+  approvedFinalFiles?: Prisma.BrsFinalFileUncheckedUpdateManyWithoutApprovedByNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -454,6 +482,20 @@ export type IntFieldUpdateOperationsInput = {
   divide?: number
 }
 
+export type UserCreateNestedOneWithoutFinalSubmissionsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutFinalSubmissionsInput, Prisma.UserUncheckedCreateWithoutFinalSubmissionsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutFinalSubmissionsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutFinalSubmissionsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutFinalSubmissionsInput, Prisma.UserUncheckedCreateWithoutFinalSubmissionsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutFinalSubmissionsInput
+  upsert?: Prisma.UserUpsertWithoutFinalSubmissionsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutFinalSubmissionsInput, Prisma.UserUpdateWithoutFinalSubmissionsInput>, Prisma.UserUncheckedUpdateWithoutFinalSubmissionsInput>
+}
+
 export type UserCreateNestedOneWithoutRolesInput = {
   create?: Prisma.XOR<Prisma.UserCreateWithoutRolesInput, Prisma.UserUncheckedCreateWithoutRolesInput>
   connectOrCreate?: Prisma.UserCreateOrConnectWithoutRolesInput
@@ -466,6 +508,48 @@ export type UserUpdateOneRequiredWithoutRolesNestedInput = {
   upsert?: Prisma.UserUpsertWithoutRolesInput
   connect?: Prisma.UserWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutRolesInput, Prisma.UserUpdateWithoutRolesInput>, Prisma.UserUncheckedUpdateWithoutRolesInput>
+}
+
+export type UserCreateNestedOneWithoutSubmittedReviewsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutSubmittedReviewsInput, Prisma.UserUncheckedCreateWithoutSubmittedReviewsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutSubmittedReviewsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserCreateNestedOneWithoutReviewedReviewsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutReviewedReviewsInput, Prisma.UserUncheckedCreateWithoutReviewedReviewsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutReviewedReviewsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutSubmittedReviewsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutSubmittedReviewsInput, Prisma.UserUncheckedCreateWithoutSubmittedReviewsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutSubmittedReviewsInput
+  upsert?: Prisma.UserUpsertWithoutSubmittedReviewsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutSubmittedReviewsInput, Prisma.UserUpdateWithoutSubmittedReviewsInput>, Prisma.UserUncheckedUpdateWithoutSubmittedReviewsInput>
+}
+
+export type UserUpdateOneRequiredWithoutReviewedReviewsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutReviewedReviewsInput, Prisma.UserUncheckedCreateWithoutReviewedReviewsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutReviewedReviewsInput
+  upsert?: Prisma.UserUpsertWithoutReviewedReviewsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutReviewedReviewsInput, Prisma.UserUpdateWithoutReviewedReviewsInput>, Prisma.UserUncheckedUpdateWithoutReviewedReviewsInput>
+}
+
+export type UserCreateNestedOneWithoutApprovedFinalFilesInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutApprovedFinalFilesInput, Prisma.UserUncheckedCreateWithoutApprovedFinalFilesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutApprovedFinalFilesInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutApprovedFinalFilesNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutApprovedFinalFilesInput, Prisma.UserUncheckedCreateWithoutApprovedFinalFilesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutApprovedFinalFilesInput
+  upsert?: Prisma.UserUpsertWithoutApprovedFinalFilesInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutApprovedFinalFilesInput, Prisma.UserUpdateWithoutApprovedFinalFilesInput>, Prisma.UserUncheckedUpdateWithoutApprovedFinalFilesInput>
 }
 
 export type UserCreateNestedOneWithoutUploadedDataInput = {
@@ -524,6 +608,92 @@ export type UserUpdateOneRequiredWithoutDocumentsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutDocumentsInput, Prisma.UserUpdateWithoutDocumentsInput>, Prisma.UserUncheckedUpdateWithoutDocumentsInput>
 }
 
+export type UserCreateWithoutFinalSubmissionsInput = {
+  name: string
+  username: string
+  passwordHash?: string | null
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  roles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
+  uploadedData?: Prisma.DataUploadCreateNestedManyWithoutUploadedByInput
+  rawDataChanges?: Prisma.RawDataHistoryCreateNestedManyWithoutChangedByInput
+  templates?: Prisma.TemplateBrsCreateNestedManyWithoutCreatedByInput
+  documents?: Prisma.DocumentBrsCreateNestedManyWithoutCreatedByInput
+  submittedReviews?: Prisma.BrsReviewHistoryCreateNestedManyWithoutSubmittedByInput
+  reviewedReviews?: Prisma.BrsReviewHistoryCreateNestedManyWithoutReviewedByInput
+  approvedFinalFiles?: Prisma.BrsFinalFileCreateNestedManyWithoutApprovedByInput
+}
+
+export type UserUncheckedCreateWithoutFinalSubmissionsInput = {
+  id?: number
+  name: string
+  username: string
+  passwordHash?: string | null
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  roles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
+  uploadedData?: Prisma.DataUploadUncheckedCreateNestedManyWithoutUploadedByInput
+  rawDataChanges?: Prisma.RawDataHistoryUncheckedCreateNestedManyWithoutChangedByInput
+  templates?: Prisma.TemplateBrsUncheckedCreateNestedManyWithoutCreatedByInput
+  documents?: Prisma.DocumentBrsUncheckedCreateNestedManyWithoutCreatedByInput
+  submittedReviews?: Prisma.BrsReviewHistoryUncheckedCreateNestedManyWithoutSubmittedByInput
+  reviewedReviews?: Prisma.BrsReviewHistoryUncheckedCreateNestedManyWithoutReviewedByInput
+  approvedFinalFiles?: Prisma.BrsFinalFileUncheckedCreateNestedManyWithoutApprovedByInput
+}
+
+export type UserCreateOrConnectWithoutFinalSubmissionsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutFinalSubmissionsInput, Prisma.UserUncheckedCreateWithoutFinalSubmissionsInput>
+}
+
+export type UserUpsertWithoutFinalSubmissionsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutFinalSubmissionsInput, Prisma.UserUncheckedUpdateWithoutFinalSubmissionsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutFinalSubmissionsInput, Prisma.UserUncheckedCreateWithoutFinalSubmissionsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutFinalSubmissionsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutFinalSubmissionsInput, Prisma.UserUncheckedUpdateWithoutFinalSubmissionsInput>
+}
+
+export type UserUpdateWithoutFinalSubmissionsInput = {
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  roles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
+  uploadedData?: Prisma.DataUploadUpdateManyWithoutUploadedByNestedInput
+  rawDataChanges?: Prisma.RawDataHistoryUpdateManyWithoutChangedByNestedInput
+  templates?: Prisma.TemplateBrsUpdateManyWithoutCreatedByNestedInput
+  documents?: Prisma.DocumentBrsUpdateManyWithoutCreatedByNestedInput
+  submittedReviews?: Prisma.BrsReviewHistoryUpdateManyWithoutSubmittedByNestedInput
+  reviewedReviews?: Prisma.BrsReviewHistoryUpdateManyWithoutReviewedByNestedInput
+  approvedFinalFiles?: Prisma.BrsFinalFileUpdateManyWithoutApprovedByNestedInput
+}
+
+export type UserUncheckedUpdateWithoutFinalSubmissionsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  roles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
+  uploadedData?: Prisma.DataUploadUncheckedUpdateManyWithoutUploadedByNestedInput
+  rawDataChanges?: Prisma.RawDataHistoryUncheckedUpdateManyWithoutChangedByNestedInput
+  templates?: Prisma.TemplateBrsUncheckedUpdateManyWithoutCreatedByNestedInput
+  documents?: Prisma.DocumentBrsUncheckedUpdateManyWithoutCreatedByNestedInput
+  submittedReviews?: Prisma.BrsReviewHistoryUncheckedUpdateManyWithoutSubmittedByNestedInput
+  reviewedReviews?: Prisma.BrsReviewHistoryUncheckedUpdateManyWithoutReviewedByNestedInput
+  approvedFinalFiles?: Prisma.BrsFinalFileUncheckedUpdateManyWithoutApprovedByNestedInput
+}
+
 export type UserCreateWithoutRolesInput = {
   name: string
   username: string
@@ -535,6 +705,10 @@ export type UserCreateWithoutRolesInput = {
   rawDataChanges?: Prisma.RawDataHistoryCreateNestedManyWithoutChangedByInput
   templates?: Prisma.TemplateBrsCreateNestedManyWithoutCreatedByInput
   documents?: Prisma.DocumentBrsCreateNestedManyWithoutCreatedByInput
+  finalSubmissions?: Prisma.BrsFinalSubmissionCreateNestedManyWithoutSubmittedByInput
+  submittedReviews?: Prisma.BrsReviewHistoryCreateNestedManyWithoutSubmittedByInput
+  reviewedReviews?: Prisma.BrsReviewHistoryCreateNestedManyWithoutReviewedByInput
+  approvedFinalFiles?: Prisma.BrsFinalFileCreateNestedManyWithoutApprovedByInput
 }
 
 export type UserUncheckedCreateWithoutRolesInput = {
@@ -549,6 +723,10 @@ export type UserUncheckedCreateWithoutRolesInput = {
   rawDataChanges?: Prisma.RawDataHistoryUncheckedCreateNestedManyWithoutChangedByInput
   templates?: Prisma.TemplateBrsUncheckedCreateNestedManyWithoutCreatedByInput
   documents?: Prisma.DocumentBrsUncheckedCreateNestedManyWithoutCreatedByInput
+  finalSubmissions?: Prisma.BrsFinalSubmissionUncheckedCreateNestedManyWithoutSubmittedByInput
+  submittedReviews?: Prisma.BrsReviewHistoryUncheckedCreateNestedManyWithoutSubmittedByInput
+  reviewedReviews?: Prisma.BrsReviewHistoryUncheckedCreateNestedManyWithoutReviewedByInput
+  approvedFinalFiles?: Prisma.BrsFinalFileUncheckedCreateNestedManyWithoutApprovedByInput
 }
 
 export type UserCreateOrConnectWithoutRolesInput = {
@@ -578,6 +756,10 @@ export type UserUpdateWithoutRolesInput = {
   rawDataChanges?: Prisma.RawDataHistoryUpdateManyWithoutChangedByNestedInput
   templates?: Prisma.TemplateBrsUpdateManyWithoutCreatedByNestedInput
   documents?: Prisma.DocumentBrsUpdateManyWithoutCreatedByNestedInput
+  finalSubmissions?: Prisma.BrsFinalSubmissionUpdateManyWithoutSubmittedByNestedInput
+  submittedReviews?: Prisma.BrsReviewHistoryUpdateManyWithoutSubmittedByNestedInput
+  reviewedReviews?: Prisma.BrsReviewHistoryUpdateManyWithoutReviewedByNestedInput
+  approvedFinalFiles?: Prisma.BrsFinalFileUpdateManyWithoutApprovedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutRolesInput = {
@@ -592,6 +774,268 @@ export type UserUncheckedUpdateWithoutRolesInput = {
   rawDataChanges?: Prisma.RawDataHistoryUncheckedUpdateManyWithoutChangedByNestedInput
   templates?: Prisma.TemplateBrsUncheckedUpdateManyWithoutCreatedByNestedInput
   documents?: Prisma.DocumentBrsUncheckedUpdateManyWithoutCreatedByNestedInput
+  finalSubmissions?: Prisma.BrsFinalSubmissionUncheckedUpdateManyWithoutSubmittedByNestedInput
+  submittedReviews?: Prisma.BrsReviewHistoryUncheckedUpdateManyWithoutSubmittedByNestedInput
+  reviewedReviews?: Prisma.BrsReviewHistoryUncheckedUpdateManyWithoutReviewedByNestedInput
+  approvedFinalFiles?: Prisma.BrsFinalFileUncheckedUpdateManyWithoutApprovedByNestedInput
+}
+
+export type UserCreateWithoutSubmittedReviewsInput = {
+  name: string
+  username: string
+  passwordHash?: string | null
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  roles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
+  uploadedData?: Prisma.DataUploadCreateNestedManyWithoutUploadedByInput
+  rawDataChanges?: Prisma.RawDataHistoryCreateNestedManyWithoutChangedByInput
+  templates?: Prisma.TemplateBrsCreateNestedManyWithoutCreatedByInput
+  documents?: Prisma.DocumentBrsCreateNestedManyWithoutCreatedByInput
+  finalSubmissions?: Prisma.BrsFinalSubmissionCreateNestedManyWithoutSubmittedByInput
+  reviewedReviews?: Prisma.BrsReviewHistoryCreateNestedManyWithoutReviewedByInput
+  approvedFinalFiles?: Prisma.BrsFinalFileCreateNestedManyWithoutApprovedByInput
+}
+
+export type UserUncheckedCreateWithoutSubmittedReviewsInput = {
+  id?: number
+  name: string
+  username: string
+  passwordHash?: string | null
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  roles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
+  uploadedData?: Prisma.DataUploadUncheckedCreateNestedManyWithoutUploadedByInput
+  rawDataChanges?: Prisma.RawDataHistoryUncheckedCreateNestedManyWithoutChangedByInput
+  templates?: Prisma.TemplateBrsUncheckedCreateNestedManyWithoutCreatedByInput
+  documents?: Prisma.DocumentBrsUncheckedCreateNestedManyWithoutCreatedByInput
+  finalSubmissions?: Prisma.BrsFinalSubmissionUncheckedCreateNestedManyWithoutSubmittedByInput
+  reviewedReviews?: Prisma.BrsReviewHistoryUncheckedCreateNestedManyWithoutReviewedByInput
+  approvedFinalFiles?: Prisma.BrsFinalFileUncheckedCreateNestedManyWithoutApprovedByInput
+}
+
+export type UserCreateOrConnectWithoutSubmittedReviewsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutSubmittedReviewsInput, Prisma.UserUncheckedCreateWithoutSubmittedReviewsInput>
+}
+
+export type UserCreateWithoutReviewedReviewsInput = {
+  name: string
+  username: string
+  passwordHash?: string | null
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  roles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
+  uploadedData?: Prisma.DataUploadCreateNestedManyWithoutUploadedByInput
+  rawDataChanges?: Prisma.RawDataHistoryCreateNestedManyWithoutChangedByInput
+  templates?: Prisma.TemplateBrsCreateNestedManyWithoutCreatedByInput
+  documents?: Prisma.DocumentBrsCreateNestedManyWithoutCreatedByInput
+  finalSubmissions?: Prisma.BrsFinalSubmissionCreateNestedManyWithoutSubmittedByInput
+  submittedReviews?: Prisma.BrsReviewHistoryCreateNestedManyWithoutSubmittedByInput
+  approvedFinalFiles?: Prisma.BrsFinalFileCreateNestedManyWithoutApprovedByInput
+}
+
+export type UserUncheckedCreateWithoutReviewedReviewsInput = {
+  id?: number
+  name: string
+  username: string
+  passwordHash?: string | null
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  roles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
+  uploadedData?: Prisma.DataUploadUncheckedCreateNestedManyWithoutUploadedByInput
+  rawDataChanges?: Prisma.RawDataHistoryUncheckedCreateNestedManyWithoutChangedByInput
+  templates?: Prisma.TemplateBrsUncheckedCreateNestedManyWithoutCreatedByInput
+  documents?: Prisma.DocumentBrsUncheckedCreateNestedManyWithoutCreatedByInput
+  finalSubmissions?: Prisma.BrsFinalSubmissionUncheckedCreateNestedManyWithoutSubmittedByInput
+  submittedReviews?: Prisma.BrsReviewHistoryUncheckedCreateNestedManyWithoutSubmittedByInput
+  approvedFinalFiles?: Prisma.BrsFinalFileUncheckedCreateNestedManyWithoutApprovedByInput
+}
+
+export type UserCreateOrConnectWithoutReviewedReviewsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutReviewedReviewsInput, Prisma.UserUncheckedCreateWithoutReviewedReviewsInput>
+}
+
+export type UserUpsertWithoutSubmittedReviewsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutSubmittedReviewsInput, Prisma.UserUncheckedUpdateWithoutSubmittedReviewsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutSubmittedReviewsInput, Prisma.UserUncheckedCreateWithoutSubmittedReviewsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutSubmittedReviewsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutSubmittedReviewsInput, Prisma.UserUncheckedUpdateWithoutSubmittedReviewsInput>
+}
+
+export type UserUpdateWithoutSubmittedReviewsInput = {
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  roles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
+  uploadedData?: Prisma.DataUploadUpdateManyWithoutUploadedByNestedInput
+  rawDataChanges?: Prisma.RawDataHistoryUpdateManyWithoutChangedByNestedInput
+  templates?: Prisma.TemplateBrsUpdateManyWithoutCreatedByNestedInput
+  documents?: Prisma.DocumentBrsUpdateManyWithoutCreatedByNestedInput
+  finalSubmissions?: Prisma.BrsFinalSubmissionUpdateManyWithoutSubmittedByNestedInput
+  reviewedReviews?: Prisma.BrsReviewHistoryUpdateManyWithoutReviewedByNestedInput
+  approvedFinalFiles?: Prisma.BrsFinalFileUpdateManyWithoutApprovedByNestedInput
+}
+
+export type UserUncheckedUpdateWithoutSubmittedReviewsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  roles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
+  uploadedData?: Prisma.DataUploadUncheckedUpdateManyWithoutUploadedByNestedInput
+  rawDataChanges?: Prisma.RawDataHistoryUncheckedUpdateManyWithoutChangedByNestedInput
+  templates?: Prisma.TemplateBrsUncheckedUpdateManyWithoutCreatedByNestedInput
+  documents?: Prisma.DocumentBrsUncheckedUpdateManyWithoutCreatedByNestedInput
+  finalSubmissions?: Prisma.BrsFinalSubmissionUncheckedUpdateManyWithoutSubmittedByNestedInput
+  reviewedReviews?: Prisma.BrsReviewHistoryUncheckedUpdateManyWithoutReviewedByNestedInput
+  approvedFinalFiles?: Prisma.BrsFinalFileUncheckedUpdateManyWithoutApprovedByNestedInput
+}
+
+export type UserUpsertWithoutReviewedReviewsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutReviewedReviewsInput, Prisma.UserUncheckedUpdateWithoutReviewedReviewsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutReviewedReviewsInput, Prisma.UserUncheckedCreateWithoutReviewedReviewsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutReviewedReviewsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutReviewedReviewsInput, Prisma.UserUncheckedUpdateWithoutReviewedReviewsInput>
+}
+
+export type UserUpdateWithoutReviewedReviewsInput = {
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  roles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
+  uploadedData?: Prisma.DataUploadUpdateManyWithoutUploadedByNestedInput
+  rawDataChanges?: Prisma.RawDataHistoryUpdateManyWithoutChangedByNestedInput
+  templates?: Prisma.TemplateBrsUpdateManyWithoutCreatedByNestedInput
+  documents?: Prisma.DocumentBrsUpdateManyWithoutCreatedByNestedInput
+  finalSubmissions?: Prisma.BrsFinalSubmissionUpdateManyWithoutSubmittedByNestedInput
+  submittedReviews?: Prisma.BrsReviewHistoryUpdateManyWithoutSubmittedByNestedInput
+  approvedFinalFiles?: Prisma.BrsFinalFileUpdateManyWithoutApprovedByNestedInput
+}
+
+export type UserUncheckedUpdateWithoutReviewedReviewsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  roles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
+  uploadedData?: Prisma.DataUploadUncheckedUpdateManyWithoutUploadedByNestedInput
+  rawDataChanges?: Prisma.RawDataHistoryUncheckedUpdateManyWithoutChangedByNestedInput
+  templates?: Prisma.TemplateBrsUncheckedUpdateManyWithoutCreatedByNestedInput
+  documents?: Prisma.DocumentBrsUncheckedUpdateManyWithoutCreatedByNestedInput
+  finalSubmissions?: Prisma.BrsFinalSubmissionUncheckedUpdateManyWithoutSubmittedByNestedInput
+  submittedReviews?: Prisma.BrsReviewHistoryUncheckedUpdateManyWithoutSubmittedByNestedInput
+  approvedFinalFiles?: Prisma.BrsFinalFileUncheckedUpdateManyWithoutApprovedByNestedInput
+}
+
+export type UserCreateWithoutApprovedFinalFilesInput = {
+  name: string
+  username: string
+  passwordHash?: string | null
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  roles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
+  uploadedData?: Prisma.DataUploadCreateNestedManyWithoutUploadedByInput
+  rawDataChanges?: Prisma.RawDataHistoryCreateNestedManyWithoutChangedByInput
+  templates?: Prisma.TemplateBrsCreateNestedManyWithoutCreatedByInput
+  documents?: Prisma.DocumentBrsCreateNestedManyWithoutCreatedByInput
+  finalSubmissions?: Prisma.BrsFinalSubmissionCreateNestedManyWithoutSubmittedByInput
+  submittedReviews?: Prisma.BrsReviewHistoryCreateNestedManyWithoutSubmittedByInput
+  reviewedReviews?: Prisma.BrsReviewHistoryCreateNestedManyWithoutReviewedByInput
+}
+
+export type UserUncheckedCreateWithoutApprovedFinalFilesInput = {
+  id?: number
+  name: string
+  username: string
+  passwordHash?: string | null
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  roles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
+  uploadedData?: Prisma.DataUploadUncheckedCreateNestedManyWithoutUploadedByInput
+  rawDataChanges?: Prisma.RawDataHistoryUncheckedCreateNestedManyWithoutChangedByInput
+  templates?: Prisma.TemplateBrsUncheckedCreateNestedManyWithoutCreatedByInput
+  documents?: Prisma.DocumentBrsUncheckedCreateNestedManyWithoutCreatedByInput
+  finalSubmissions?: Prisma.BrsFinalSubmissionUncheckedCreateNestedManyWithoutSubmittedByInput
+  submittedReviews?: Prisma.BrsReviewHistoryUncheckedCreateNestedManyWithoutSubmittedByInput
+  reviewedReviews?: Prisma.BrsReviewHistoryUncheckedCreateNestedManyWithoutReviewedByInput
+}
+
+export type UserCreateOrConnectWithoutApprovedFinalFilesInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutApprovedFinalFilesInput, Prisma.UserUncheckedCreateWithoutApprovedFinalFilesInput>
+}
+
+export type UserUpsertWithoutApprovedFinalFilesInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutApprovedFinalFilesInput, Prisma.UserUncheckedUpdateWithoutApprovedFinalFilesInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutApprovedFinalFilesInput, Prisma.UserUncheckedCreateWithoutApprovedFinalFilesInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutApprovedFinalFilesInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutApprovedFinalFilesInput, Prisma.UserUncheckedUpdateWithoutApprovedFinalFilesInput>
+}
+
+export type UserUpdateWithoutApprovedFinalFilesInput = {
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  roles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
+  uploadedData?: Prisma.DataUploadUpdateManyWithoutUploadedByNestedInput
+  rawDataChanges?: Prisma.RawDataHistoryUpdateManyWithoutChangedByNestedInput
+  templates?: Prisma.TemplateBrsUpdateManyWithoutCreatedByNestedInput
+  documents?: Prisma.DocumentBrsUpdateManyWithoutCreatedByNestedInput
+  finalSubmissions?: Prisma.BrsFinalSubmissionUpdateManyWithoutSubmittedByNestedInput
+  submittedReviews?: Prisma.BrsReviewHistoryUpdateManyWithoutSubmittedByNestedInput
+  reviewedReviews?: Prisma.BrsReviewHistoryUpdateManyWithoutReviewedByNestedInput
+}
+
+export type UserUncheckedUpdateWithoutApprovedFinalFilesInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  roles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
+  uploadedData?: Prisma.DataUploadUncheckedUpdateManyWithoutUploadedByNestedInput
+  rawDataChanges?: Prisma.RawDataHistoryUncheckedUpdateManyWithoutChangedByNestedInput
+  templates?: Prisma.TemplateBrsUncheckedUpdateManyWithoutCreatedByNestedInput
+  documents?: Prisma.DocumentBrsUncheckedUpdateManyWithoutCreatedByNestedInput
+  finalSubmissions?: Prisma.BrsFinalSubmissionUncheckedUpdateManyWithoutSubmittedByNestedInput
+  submittedReviews?: Prisma.BrsReviewHistoryUncheckedUpdateManyWithoutSubmittedByNestedInput
+  reviewedReviews?: Prisma.BrsReviewHistoryUncheckedUpdateManyWithoutReviewedByNestedInput
 }
 
 export type UserCreateWithoutUploadedDataInput = {
@@ -605,6 +1049,10 @@ export type UserCreateWithoutUploadedDataInput = {
   rawDataChanges?: Prisma.RawDataHistoryCreateNestedManyWithoutChangedByInput
   templates?: Prisma.TemplateBrsCreateNestedManyWithoutCreatedByInput
   documents?: Prisma.DocumentBrsCreateNestedManyWithoutCreatedByInput
+  finalSubmissions?: Prisma.BrsFinalSubmissionCreateNestedManyWithoutSubmittedByInput
+  submittedReviews?: Prisma.BrsReviewHistoryCreateNestedManyWithoutSubmittedByInput
+  reviewedReviews?: Prisma.BrsReviewHistoryCreateNestedManyWithoutReviewedByInput
+  approvedFinalFiles?: Prisma.BrsFinalFileCreateNestedManyWithoutApprovedByInput
 }
 
 export type UserUncheckedCreateWithoutUploadedDataInput = {
@@ -619,6 +1067,10 @@ export type UserUncheckedCreateWithoutUploadedDataInput = {
   rawDataChanges?: Prisma.RawDataHistoryUncheckedCreateNestedManyWithoutChangedByInput
   templates?: Prisma.TemplateBrsUncheckedCreateNestedManyWithoutCreatedByInput
   documents?: Prisma.DocumentBrsUncheckedCreateNestedManyWithoutCreatedByInput
+  finalSubmissions?: Prisma.BrsFinalSubmissionUncheckedCreateNestedManyWithoutSubmittedByInput
+  submittedReviews?: Prisma.BrsReviewHistoryUncheckedCreateNestedManyWithoutSubmittedByInput
+  reviewedReviews?: Prisma.BrsReviewHistoryUncheckedCreateNestedManyWithoutReviewedByInput
+  approvedFinalFiles?: Prisma.BrsFinalFileUncheckedCreateNestedManyWithoutApprovedByInput
 }
 
 export type UserCreateOrConnectWithoutUploadedDataInput = {
@@ -648,6 +1100,10 @@ export type UserUpdateWithoutUploadedDataInput = {
   rawDataChanges?: Prisma.RawDataHistoryUpdateManyWithoutChangedByNestedInput
   templates?: Prisma.TemplateBrsUpdateManyWithoutCreatedByNestedInput
   documents?: Prisma.DocumentBrsUpdateManyWithoutCreatedByNestedInput
+  finalSubmissions?: Prisma.BrsFinalSubmissionUpdateManyWithoutSubmittedByNestedInput
+  submittedReviews?: Prisma.BrsReviewHistoryUpdateManyWithoutSubmittedByNestedInput
+  reviewedReviews?: Prisma.BrsReviewHistoryUpdateManyWithoutReviewedByNestedInput
+  approvedFinalFiles?: Prisma.BrsFinalFileUpdateManyWithoutApprovedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutUploadedDataInput = {
@@ -662,6 +1118,10 @@ export type UserUncheckedUpdateWithoutUploadedDataInput = {
   rawDataChanges?: Prisma.RawDataHistoryUncheckedUpdateManyWithoutChangedByNestedInput
   templates?: Prisma.TemplateBrsUncheckedUpdateManyWithoutCreatedByNestedInput
   documents?: Prisma.DocumentBrsUncheckedUpdateManyWithoutCreatedByNestedInput
+  finalSubmissions?: Prisma.BrsFinalSubmissionUncheckedUpdateManyWithoutSubmittedByNestedInput
+  submittedReviews?: Prisma.BrsReviewHistoryUncheckedUpdateManyWithoutSubmittedByNestedInput
+  reviewedReviews?: Prisma.BrsReviewHistoryUncheckedUpdateManyWithoutReviewedByNestedInput
+  approvedFinalFiles?: Prisma.BrsFinalFileUncheckedUpdateManyWithoutApprovedByNestedInput
 }
 
 export type UserCreateWithoutRawDataChangesInput = {
@@ -675,6 +1135,10 @@ export type UserCreateWithoutRawDataChangesInput = {
   uploadedData?: Prisma.DataUploadCreateNestedManyWithoutUploadedByInput
   templates?: Prisma.TemplateBrsCreateNestedManyWithoutCreatedByInput
   documents?: Prisma.DocumentBrsCreateNestedManyWithoutCreatedByInput
+  finalSubmissions?: Prisma.BrsFinalSubmissionCreateNestedManyWithoutSubmittedByInput
+  submittedReviews?: Prisma.BrsReviewHistoryCreateNestedManyWithoutSubmittedByInput
+  reviewedReviews?: Prisma.BrsReviewHistoryCreateNestedManyWithoutReviewedByInput
+  approvedFinalFiles?: Prisma.BrsFinalFileCreateNestedManyWithoutApprovedByInput
 }
 
 export type UserUncheckedCreateWithoutRawDataChangesInput = {
@@ -689,6 +1153,10 @@ export type UserUncheckedCreateWithoutRawDataChangesInput = {
   uploadedData?: Prisma.DataUploadUncheckedCreateNestedManyWithoutUploadedByInput
   templates?: Prisma.TemplateBrsUncheckedCreateNestedManyWithoutCreatedByInput
   documents?: Prisma.DocumentBrsUncheckedCreateNestedManyWithoutCreatedByInput
+  finalSubmissions?: Prisma.BrsFinalSubmissionUncheckedCreateNestedManyWithoutSubmittedByInput
+  submittedReviews?: Prisma.BrsReviewHistoryUncheckedCreateNestedManyWithoutSubmittedByInput
+  reviewedReviews?: Prisma.BrsReviewHistoryUncheckedCreateNestedManyWithoutReviewedByInput
+  approvedFinalFiles?: Prisma.BrsFinalFileUncheckedCreateNestedManyWithoutApprovedByInput
 }
 
 export type UserCreateOrConnectWithoutRawDataChangesInput = {
@@ -718,6 +1186,10 @@ export type UserUpdateWithoutRawDataChangesInput = {
   uploadedData?: Prisma.DataUploadUpdateManyWithoutUploadedByNestedInput
   templates?: Prisma.TemplateBrsUpdateManyWithoutCreatedByNestedInput
   documents?: Prisma.DocumentBrsUpdateManyWithoutCreatedByNestedInput
+  finalSubmissions?: Prisma.BrsFinalSubmissionUpdateManyWithoutSubmittedByNestedInput
+  submittedReviews?: Prisma.BrsReviewHistoryUpdateManyWithoutSubmittedByNestedInput
+  reviewedReviews?: Prisma.BrsReviewHistoryUpdateManyWithoutReviewedByNestedInput
+  approvedFinalFiles?: Prisma.BrsFinalFileUpdateManyWithoutApprovedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutRawDataChangesInput = {
@@ -732,6 +1204,10 @@ export type UserUncheckedUpdateWithoutRawDataChangesInput = {
   uploadedData?: Prisma.DataUploadUncheckedUpdateManyWithoutUploadedByNestedInput
   templates?: Prisma.TemplateBrsUncheckedUpdateManyWithoutCreatedByNestedInput
   documents?: Prisma.DocumentBrsUncheckedUpdateManyWithoutCreatedByNestedInput
+  finalSubmissions?: Prisma.BrsFinalSubmissionUncheckedUpdateManyWithoutSubmittedByNestedInput
+  submittedReviews?: Prisma.BrsReviewHistoryUncheckedUpdateManyWithoutSubmittedByNestedInput
+  reviewedReviews?: Prisma.BrsReviewHistoryUncheckedUpdateManyWithoutReviewedByNestedInput
+  approvedFinalFiles?: Prisma.BrsFinalFileUncheckedUpdateManyWithoutApprovedByNestedInput
 }
 
 export type UserCreateWithoutTemplatesInput = {
@@ -745,6 +1221,10 @@ export type UserCreateWithoutTemplatesInput = {
   uploadedData?: Prisma.DataUploadCreateNestedManyWithoutUploadedByInput
   rawDataChanges?: Prisma.RawDataHistoryCreateNestedManyWithoutChangedByInput
   documents?: Prisma.DocumentBrsCreateNestedManyWithoutCreatedByInput
+  finalSubmissions?: Prisma.BrsFinalSubmissionCreateNestedManyWithoutSubmittedByInput
+  submittedReviews?: Prisma.BrsReviewHistoryCreateNestedManyWithoutSubmittedByInput
+  reviewedReviews?: Prisma.BrsReviewHistoryCreateNestedManyWithoutReviewedByInput
+  approvedFinalFiles?: Prisma.BrsFinalFileCreateNestedManyWithoutApprovedByInput
 }
 
 export type UserUncheckedCreateWithoutTemplatesInput = {
@@ -759,6 +1239,10 @@ export type UserUncheckedCreateWithoutTemplatesInput = {
   uploadedData?: Prisma.DataUploadUncheckedCreateNestedManyWithoutUploadedByInput
   rawDataChanges?: Prisma.RawDataHistoryUncheckedCreateNestedManyWithoutChangedByInput
   documents?: Prisma.DocumentBrsUncheckedCreateNestedManyWithoutCreatedByInput
+  finalSubmissions?: Prisma.BrsFinalSubmissionUncheckedCreateNestedManyWithoutSubmittedByInput
+  submittedReviews?: Prisma.BrsReviewHistoryUncheckedCreateNestedManyWithoutSubmittedByInput
+  reviewedReviews?: Prisma.BrsReviewHistoryUncheckedCreateNestedManyWithoutReviewedByInput
+  approvedFinalFiles?: Prisma.BrsFinalFileUncheckedCreateNestedManyWithoutApprovedByInput
 }
 
 export type UserCreateOrConnectWithoutTemplatesInput = {
@@ -788,6 +1272,10 @@ export type UserUpdateWithoutTemplatesInput = {
   uploadedData?: Prisma.DataUploadUpdateManyWithoutUploadedByNestedInput
   rawDataChanges?: Prisma.RawDataHistoryUpdateManyWithoutChangedByNestedInput
   documents?: Prisma.DocumentBrsUpdateManyWithoutCreatedByNestedInput
+  finalSubmissions?: Prisma.BrsFinalSubmissionUpdateManyWithoutSubmittedByNestedInput
+  submittedReviews?: Prisma.BrsReviewHistoryUpdateManyWithoutSubmittedByNestedInput
+  reviewedReviews?: Prisma.BrsReviewHistoryUpdateManyWithoutReviewedByNestedInput
+  approvedFinalFiles?: Prisma.BrsFinalFileUpdateManyWithoutApprovedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutTemplatesInput = {
@@ -802,6 +1290,10 @@ export type UserUncheckedUpdateWithoutTemplatesInput = {
   uploadedData?: Prisma.DataUploadUncheckedUpdateManyWithoutUploadedByNestedInput
   rawDataChanges?: Prisma.RawDataHistoryUncheckedUpdateManyWithoutChangedByNestedInput
   documents?: Prisma.DocumentBrsUncheckedUpdateManyWithoutCreatedByNestedInput
+  finalSubmissions?: Prisma.BrsFinalSubmissionUncheckedUpdateManyWithoutSubmittedByNestedInput
+  submittedReviews?: Prisma.BrsReviewHistoryUncheckedUpdateManyWithoutSubmittedByNestedInput
+  reviewedReviews?: Prisma.BrsReviewHistoryUncheckedUpdateManyWithoutReviewedByNestedInput
+  approvedFinalFiles?: Prisma.BrsFinalFileUncheckedUpdateManyWithoutApprovedByNestedInput
 }
 
 export type UserCreateWithoutDocumentsInput = {
@@ -815,6 +1307,10 @@ export type UserCreateWithoutDocumentsInput = {
   uploadedData?: Prisma.DataUploadCreateNestedManyWithoutUploadedByInput
   rawDataChanges?: Prisma.RawDataHistoryCreateNestedManyWithoutChangedByInput
   templates?: Prisma.TemplateBrsCreateNestedManyWithoutCreatedByInput
+  finalSubmissions?: Prisma.BrsFinalSubmissionCreateNestedManyWithoutSubmittedByInput
+  submittedReviews?: Prisma.BrsReviewHistoryCreateNestedManyWithoutSubmittedByInput
+  reviewedReviews?: Prisma.BrsReviewHistoryCreateNestedManyWithoutReviewedByInput
+  approvedFinalFiles?: Prisma.BrsFinalFileCreateNestedManyWithoutApprovedByInput
 }
 
 export type UserUncheckedCreateWithoutDocumentsInput = {
@@ -829,6 +1325,10 @@ export type UserUncheckedCreateWithoutDocumentsInput = {
   uploadedData?: Prisma.DataUploadUncheckedCreateNestedManyWithoutUploadedByInput
   rawDataChanges?: Prisma.RawDataHistoryUncheckedCreateNestedManyWithoutChangedByInput
   templates?: Prisma.TemplateBrsUncheckedCreateNestedManyWithoutCreatedByInput
+  finalSubmissions?: Prisma.BrsFinalSubmissionUncheckedCreateNestedManyWithoutSubmittedByInput
+  submittedReviews?: Prisma.BrsReviewHistoryUncheckedCreateNestedManyWithoutSubmittedByInput
+  reviewedReviews?: Prisma.BrsReviewHistoryUncheckedCreateNestedManyWithoutReviewedByInput
+  approvedFinalFiles?: Prisma.BrsFinalFileUncheckedCreateNestedManyWithoutApprovedByInput
 }
 
 export type UserCreateOrConnectWithoutDocumentsInput = {
@@ -858,6 +1358,10 @@ export type UserUpdateWithoutDocumentsInput = {
   uploadedData?: Prisma.DataUploadUpdateManyWithoutUploadedByNestedInput
   rawDataChanges?: Prisma.RawDataHistoryUpdateManyWithoutChangedByNestedInput
   templates?: Prisma.TemplateBrsUpdateManyWithoutCreatedByNestedInput
+  finalSubmissions?: Prisma.BrsFinalSubmissionUpdateManyWithoutSubmittedByNestedInput
+  submittedReviews?: Prisma.BrsReviewHistoryUpdateManyWithoutSubmittedByNestedInput
+  reviewedReviews?: Prisma.BrsReviewHistoryUpdateManyWithoutReviewedByNestedInput
+  approvedFinalFiles?: Prisma.BrsFinalFileUpdateManyWithoutApprovedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutDocumentsInput = {
@@ -872,6 +1376,10 @@ export type UserUncheckedUpdateWithoutDocumentsInput = {
   uploadedData?: Prisma.DataUploadUncheckedUpdateManyWithoutUploadedByNestedInput
   rawDataChanges?: Prisma.RawDataHistoryUncheckedUpdateManyWithoutChangedByNestedInput
   templates?: Prisma.TemplateBrsUncheckedUpdateManyWithoutCreatedByNestedInput
+  finalSubmissions?: Prisma.BrsFinalSubmissionUncheckedUpdateManyWithoutSubmittedByNestedInput
+  submittedReviews?: Prisma.BrsReviewHistoryUncheckedUpdateManyWithoutSubmittedByNestedInput
+  reviewedReviews?: Prisma.BrsReviewHistoryUncheckedUpdateManyWithoutReviewedByNestedInput
+  approvedFinalFiles?: Prisma.BrsFinalFileUncheckedUpdateManyWithoutApprovedByNestedInput
 }
 
 
@@ -885,6 +1393,10 @@ export type UserCountOutputType = {
   rawDataChanges: number
   templates: number
   documents: number
+  finalSubmissions: number
+  submittedReviews: number
+  reviewedReviews: number
+  approvedFinalFiles: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -893,6 +1405,10 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   rawDataChanges?: boolean | UserCountOutputTypeCountRawDataChangesArgs
   templates?: boolean | UserCountOutputTypeCountTemplatesArgs
   documents?: boolean | UserCountOutputTypeCountDocumentsArgs
+  finalSubmissions?: boolean | UserCountOutputTypeCountFinalSubmissionsArgs
+  submittedReviews?: boolean | UserCountOutputTypeCountSubmittedReviewsArgs
+  reviewedReviews?: boolean | UserCountOutputTypeCountReviewedReviewsArgs
+  approvedFinalFiles?: boolean | UserCountOutputTypeCountApprovedFinalFilesArgs
 }
 
 /**
@@ -940,6 +1456,34 @@ export type UserCountOutputTypeCountDocumentsArgs<ExtArgs extends runtime.Types.
   where?: Prisma.DocumentBrsWhereInput
 }
 
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountFinalSubmissionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.BrsFinalSubmissionWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountSubmittedReviewsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.BrsReviewHistoryWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountReviewedReviewsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.BrsReviewHistoryWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountApprovedFinalFilesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.BrsFinalFileWhereInput
+}
+
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -954,6 +1498,10 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   rawDataChanges?: boolean | Prisma.User$rawDataChangesArgs<ExtArgs>
   templates?: boolean | Prisma.User$templatesArgs<ExtArgs>
   documents?: boolean | Prisma.User$documentsArgs<ExtArgs>
+  finalSubmissions?: boolean | Prisma.User$finalSubmissionsArgs<ExtArgs>
+  submittedReviews?: boolean | Prisma.User$submittedReviewsArgs<ExtArgs>
+  reviewedReviews?: boolean | Prisma.User$reviewedReviewsArgs<ExtArgs>
+  approvedFinalFiles?: boolean | Prisma.User$approvedFinalFilesArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -994,6 +1542,10 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   rawDataChanges?: boolean | Prisma.User$rawDataChangesArgs<ExtArgs>
   templates?: boolean | Prisma.User$templatesArgs<ExtArgs>
   documents?: boolean | Prisma.User$documentsArgs<ExtArgs>
+  finalSubmissions?: boolean | Prisma.User$finalSubmissionsArgs<ExtArgs>
+  submittedReviews?: boolean | Prisma.User$submittedReviewsArgs<ExtArgs>
+  reviewedReviews?: boolean | Prisma.User$reviewedReviewsArgs<ExtArgs>
+  approvedFinalFiles?: boolean | Prisma.User$approvedFinalFilesArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -1007,6 +1559,10 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     rawDataChanges: Prisma.$RawDataHistoryPayload<ExtArgs>[]
     templates: Prisma.$TemplateBrsPayload<ExtArgs>[]
     documents: Prisma.$DocumentBrsPayload<ExtArgs>[]
+    finalSubmissions: Prisma.$BrsFinalSubmissionPayload<ExtArgs>[]
+    submittedReviews: Prisma.$BrsReviewHistoryPayload<ExtArgs>[]
+    reviewedReviews: Prisma.$BrsReviewHistoryPayload<ExtArgs>[]
+    approvedFinalFiles: Prisma.$BrsFinalFilePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -1415,6 +1971,10 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   rawDataChanges<T extends Prisma.User$rawDataChangesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$rawDataChangesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RawDataHistoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   templates<T extends Prisma.User$templatesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$templatesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TemplateBrsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   documents<T extends Prisma.User$documentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$documentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DocumentBrsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  finalSubmissions<T extends Prisma.User$finalSubmissionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$finalSubmissionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BrsFinalSubmissionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  submittedReviews<T extends Prisma.User$submittedReviewsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$submittedReviewsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BrsReviewHistoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  reviewedReviews<T extends Prisma.User$reviewedReviewsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$reviewedReviewsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BrsReviewHistoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  approvedFinalFiles<T extends Prisma.User$approvedFinalFilesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$approvedFinalFilesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BrsFinalFilePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1961,6 +2521,102 @@ export type User$documentsArgs<ExtArgs extends runtime.Types.Extensions.Internal
   take?: number
   skip?: number
   distinct?: Prisma.DocumentBrsScalarFieldEnum | Prisma.DocumentBrsScalarFieldEnum[]
+}
+
+/**
+ * User.finalSubmissions
+ */
+export type User$finalSubmissionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the BrsFinalSubmission
+   */
+  select?: Prisma.BrsFinalSubmissionSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the BrsFinalSubmission
+   */
+  omit?: Prisma.BrsFinalSubmissionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BrsFinalSubmissionInclude<ExtArgs> | null
+  where?: Prisma.BrsFinalSubmissionWhereInput
+  orderBy?: Prisma.BrsFinalSubmissionOrderByWithRelationInput | Prisma.BrsFinalSubmissionOrderByWithRelationInput[]
+  cursor?: Prisma.BrsFinalSubmissionWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.BrsFinalSubmissionScalarFieldEnum | Prisma.BrsFinalSubmissionScalarFieldEnum[]
+}
+
+/**
+ * User.submittedReviews
+ */
+export type User$submittedReviewsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the BrsReviewHistory
+   */
+  select?: Prisma.BrsReviewHistorySelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the BrsReviewHistory
+   */
+  omit?: Prisma.BrsReviewHistoryOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BrsReviewHistoryInclude<ExtArgs> | null
+  where?: Prisma.BrsReviewHistoryWhereInput
+  orderBy?: Prisma.BrsReviewHistoryOrderByWithRelationInput | Prisma.BrsReviewHistoryOrderByWithRelationInput[]
+  cursor?: Prisma.BrsReviewHistoryWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.BrsReviewHistoryScalarFieldEnum | Prisma.BrsReviewHistoryScalarFieldEnum[]
+}
+
+/**
+ * User.reviewedReviews
+ */
+export type User$reviewedReviewsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the BrsReviewHistory
+   */
+  select?: Prisma.BrsReviewHistorySelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the BrsReviewHistory
+   */
+  omit?: Prisma.BrsReviewHistoryOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BrsReviewHistoryInclude<ExtArgs> | null
+  where?: Prisma.BrsReviewHistoryWhereInput
+  orderBy?: Prisma.BrsReviewHistoryOrderByWithRelationInput | Prisma.BrsReviewHistoryOrderByWithRelationInput[]
+  cursor?: Prisma.BrsReviewHistoryWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.BrsReviewHistoryScalarFieldEnum | Prisma.BrsReviewHistoryScalarFieldEnum[]
+}
+
+/**
+ * User.approvedFinalFiles
+ */
+export type User$approvedFinalFilesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the BrsFinalFile
+   */
+  select?: Prisma.BrsFinalFileSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the BrsFinalFile
+   */
+  omit?: Prisma.BrsFinalFileOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BrsFinalFileInclude<ExtArgs> | null
+  where?: Prisma.BrsFinalFileWhereInput
+  orderBy?: Prisma.BrsFinalFileOrderByWithRelationInput | Prisma.BrsFinalFileOrderByWithRelationInput[]
+  cursor?: Prisma.BrsFinalFileWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.BrsFinalFileScalarFieldEnum | Prisma.BrsFinalFileScalarFieldEnum[]
 }
 
 /**

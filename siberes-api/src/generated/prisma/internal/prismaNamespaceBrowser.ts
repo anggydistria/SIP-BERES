@@ -52,9 +52,12 @@ export const AnyNull = runtime.AnyNull
 
 export const ModelName = {
   User: 'User',
+  BrsFinalSubmission: 'BrsFinalSubmission',
   Role: 'Role',
   UserRole: 'UserRole',
   Brs: 'Brs',
+  BrsReviewHistory: 'BrsReviewHistory',
+  BrsFinalFile: 'BrsFinalFile',
   DataUpload: 'DataUpload',
   RawData: 'RawData',
   RawDataHistory: 'RawDataHistory',
@@ -91,6 +94,24 @@ export const UserScalarFieldEnum = {
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
 
 
+export const BrsFinalSubmissionScalarFieldEnum = {
+  id: 'id',
+  brsId: 'brsId',
+  submittedById: 'submittedById',
+  originalName: 'originalName',
+  temporaryName: 'temporaryName',
+  temporaryPath: 'temporaryPath',
+  mimeType: 'mimeType',
+  size: 'size',
+  proposedNomorBrs: 'proposedNomorBrs',
+  proposedTanggalPublikasi: 'proposedTanggalPublikasi',
+  version: 'version',
+  submittedAt: 'submittedAt'
+} as const
+
+export type BrsFinalSubmissionScalarFieldEnum = (typeof BrsFinalSubmissionScalarFieldEnum)[keyof typeof BrsFinalSubmissionScalarFieldEnum]
+
+
 export const RoleScalarFieldEnum = {
   id: 'id',
   name: 'name'
@@ -123,6 +144,39 @@ export const BrsScalarFieldEnum = {
 } as const
 
 export type BrsScalarFieldEnum = (typeof BrsScalarFieldEnum)[keyof typeof BrsScalarFieldEnum]
+
+
+export const BrsReviewHistoryScalarFieldEnum = {
+  id: 'id',
+  brsId: 'brsId',
+  submittedById: 'submittedById',
+  reviewedById: 'reviewedById',
+  submissionVersion: 'submissionVersion',
+  originalName: 'originalName',
+  proposedNomorBrs: 'proposedNomorBrs',
+  proposedTanggalPublikasi: 'proposedTanggalPublikasi',
+  decision: 'decision',
+  note: 'note',
+  submittedAt: 'submittedAt',
+  reviewedAt: 'reviewedAt'
+} as const
+
+export type BrsReviewHistoryScalarFieldEnum = (typeof BrsReviewHistoryScalarFieldEnum)[keyof typeof BrsReviewHistoryScalarFieldEnum]
+
+
+export const BrsFinalFileScalarFieldEnum = {
+  id: 'id',
+  brsId: 'brsId',
+  approvedById: 'approvedById',
+  originalName: 'originalName',
+  storedName: 'storedName',
+  path: 'path',
+  mimeType: 'mimeType',
+  size: 'size',
+  approvedAt: 'approvedAt'
+} as const
+
+export type BrsFinalFileScalarFieldEnum = (typeof BrsFinalFileScalarFieldEnum)[keyof typeof BrsFinalFileScalarFieldEnum]
 
 
 export const DataUploadScalarFieldEnum = {

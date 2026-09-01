@@ -15,7 +15,15 @@ datasource db {
 
 enum BrsStatus {
   DRAFT
+  DRAFT_READY
+  FINAL_SUBMITTED
+  FINAL_REJECTED
   FINAL
+}
+
+enum BrsReviewDecision {
+  APPROVED
+  REJECTED
 }
 
 enum UploadStatus {
@@ -31,6 +39,9 @@ enum DocumentType {
   REVISION
 }
 
+
+
+
 model User {
   id           Int     @id @default(autoincrement())
   name         String
@@ -40,15 +51,52 @@ model User {
 
   roles UserRole[]
 
-  uploadedData   DataUpload[]     @relation("UploadedBy")
-  rawDataChanges RawDataHistory[] @relation("RawDataChangedBy")
-  templates      TemplateBrs[]    @relation("TemplateCreatedBy")
-  documents      DocumentBrs[]    @relation("DocumentCreatedBy")
+  uploadedData DataUpload[]@relation("UploadedBy")
+
+  rawDataChanges RawDataHistory[]@relation("RawDataChangedBy")
+
+  templates TemplateBrs[]@relation("TemplateCreatedBy")
+
+  documents DocumentBrs[]@relation("DocumentCreatedBy")
+
+  finalSubmissions BrsFinalSubmission[]@relation("FinalSubmissionSubmittedBy")
+
+  submittedReviews BrsReviewHistory[]  @relation("FinalReviewSubmittedBy")
+
+  reviewedReviews BrsReviewHistory[]@relation("FinalReviewReviewedBy")
+
+  approvedFinalFiles BrsFinalFile[]@relation("FinalFileApprovedBy")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@map("users")
+}
+
+model BrsFinalSubmission {
+  id Int @id @default(autoincrement())
+
+  brsId         Int @unique
+  submittedById Int
+
+  originalName  String
+  temporaryName String
+  temporaryPath String
+  mimeType      String
+  size          Int
+
+  proposedNomorBrs         String
+  proposedTanggalPublikasi DateTime? @db.Date
+
+  version     Int
+  submittedAt DateTime @default(now())
+
+  brs Brs @relation(fields: [brsId],references: [id],onDelete: Cascade)
+
+  submittedBy User @relation("FinalSubmissionSubmittedBy",fields: [submittedById],references: [id])
+
+  @@index([submittedById])
+  @@map("brs_final_submissions")
 }
 
 model Role {
@@ -96,10 +144,65 @@ model Brs {
 
   dataUploads DataUpload[]
   documents   DocumentBrs[]
+finalSubmission BrsFinalSubmission?
+reviewHistories BrsReviewHistory[]
+finalFile        BrsFinalFile?
 
   @@unique([jenisBrs, bulan, tahun])
   @@index([tahun, bulan])
   @@map("brs")
+}
+
+ 
+
+model BrsReviewHistory {
+  id Int @id @default(autoincrement())
+
+  brsId         Int
+  submittedById Int
+  reviewedById  Int
+
+  submissionVersion Int
+  originalName      String
+
+  proposedNomorBrs         String
+  proposedTanggalPublikasi DateTime? @db.Date
+
+  decision BrsReviewDecision
+  note     String?
+
+  submittedAt DateTime
+  reviewedAt  DateTime @default(now())
+
+  brs Brs @relation( fields: [brsId],references: [id],onDelete: Cascade)
+
+  submittedBy User @relation("FinalReviewSubmittedBy",fields: [submittedById],references: [id])
+
+  reviewedBy User @relation( "FinalReviewReviewedBy",fields: [reviewedById],references: [id])
+
+  @@map("brs_review_histories")
+}
+
+model BrsFinalFile {
+  id Int @id @default(autoincrement())
+
+  brsId        Int @unique
+  approvedById Int
+
+  originalName String
+  storedName   String
+  path         String
+  mimeType     String
+  size         Int
+
+  approvedAt DateTime @default(now())
+
+  brs Brs @relation( fields: [brsId],references: [id],onDelete: Cascade)
+
+  approvedBy User @relation("FinalFileApprovedBy",fields: [approvedById],references: [id])
+
+  @@index([approvedById])
+  @@map("brs_final_files")
 }
 
 model DataUpload {

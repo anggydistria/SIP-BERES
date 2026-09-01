@@ -398,9 +398,12 @@ type FieldRefInputType<Model, FieldType> = Model extends never ? never : FieldRe
 
 export const ModelName = {
   User: 'User',
+  BrsFinalSubmission: 'BrsFinalSubmission',
   Role: 'Role',
   UserRole: 'UserRole',
   Brs: 'Brs',
+  BrsReviewHistory: 'BrsReviewHistory',
+  BrsFinalFile: 'BrsFinalFile',
   DataUpload: 'DataUpload',
   RawData: 'RawData',
   RawDataHistory: 'RawDataHistory',
@@ -421,7 +424,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "role" | "userRole" | "brs" | "dataUpload" | "rawData" | "rawDataHistory" | "templateBrs" | "documentBrs"
+    modelProps: "user" | "brsFinalSubmission" | "role" | "userRole" | "brs" | "brsReviewHistory" | "brsFinalFile" | "dataUpload" | "rawData" | "rawDataHistory" | "templateBrs" | "documentBrs"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -496,6 +499,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.UserCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.UserCountAggregateOutputType> | number
+        }
+      }
+    }
+    BrsFinalSubmission: {
+      payload: Prisma.$BrsFinalSubmissionPayload<ExtArgs>
+      fields: Prisma.BrsFinalSubmissionFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.BrsFinalSubmissionFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BrsFinalSubmissionPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.BrsFinalSubmissionFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BrsFinalSubmissionPayload>
+        }
+        findFirst: {
+          args: Prisma.BrsFinalSubmissionFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BrsFinalSubmissionPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.BrsFinalSubmissionFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BrsFinalSubmissionPayload>
+        }
+        findMany: {
+          args: Prisma.BrsFinalSubmissionFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BrsFinalSubmissionPayload>[]
+        }
+        create: {
+          args: Prisma.BrsFinalSubmissionCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BrsFinalSubmissionPayload>
+        }
+        createMany: {
+          args: Prisma.BrsFinalSubmissionCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.BrsFinalSubmissionCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BrsFinalSubmissionPayload>[]
+        }
+        delete: {
+          args: Prisma.BrsFinalSubmissionDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BrsFinalSubmissionPayload>
+        }
+        update: {
+          args: Prisma.BrsFinalSubmissionUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BrsFinalSubmissionPayload>
+        }
+        deleteMany: {
+          args: Prisma.BrsFinalSubmissionDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.BrsFinalSubmissionUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.BrsFinalSubmissionUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BrsFinalSubmissionPayload>[]
+        }
+        upsert: {
+          args: Prisma.BrsFinalSubmissionUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BrsFinalSubmissionPayload>
+        }
+        aggregate: {
+          args: Prisma.BrsFinalSubmissionAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateBrsFinalSubmission>
+        }
+        groupBy: {
+          args: Prisma.BrsFinalSubmissionGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.BrsFinalSubmissionGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.BrsFinalSubmissionCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.BrsFinalSubmissionCountAggregateOutputType> | number
         }
       }
     }
@@ -718,6 +795,154 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.BrsCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.BrsCountAggregateOutputType> | number
+        }
+      }
+    }
+    BrsReviewHistory: {
+      payload: Prisma.$BrsReviewHistoryPayload<ExtArgs>
+      fields: Prisma.BrsReviewHistoryFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.BrsReviewHistoryFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BrsReviewHistoryPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.BrsReviewHistoryFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BrsReviewHistoryPayload>
+        }
+        findFirst: {
+          args: Prisma.BrsReviewHistoryFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BrsReviewHistoryPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.BrsReviewHistoryFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BrsReviewHistoryPayload>
+        }
+        findMany: {
+          args: Prisma.BrsReviewHistoryFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BrsReviewHistoryPayload>[]
+        }
+        create: {
+          args: Prisma.BrsReviewHistoryCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BrsReviewHistoryPayload>
+        }
+        createMany: {
+          args: Prisma.BrsReviewHistoryCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.BrsReviewHistoryCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BrsReviewHistoryPayload>[]
+        }
+        delete: {
+          args: Prisma.BrsReviewHistoryDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BrsReviewHistoryPayload>
+        }
+        update: {
+          args: Prisma.BrsReviewHistoryUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BrsReviewHistoryPayload>
+        }
+        deleteMany: {
+          args: Prisma.BrsReviewHistoryDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.BrsReviewHistoryUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.BrsReviewHistoryUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BrsReviewHistoryPayload>[]
+        }
+        upsert: {
+          args: Prisma.BrsReviewHistoryUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BrsReviewHistoryPayload>
+        }
+        aggregate: {
+          args: Prisma.BrsReviewHistoryAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateBrsReviewHistory>
+        }
+        groupBy: {
+          args: Prisma.BrsReviewHistoryGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.BrsReviewHistoryGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.BrsReviewHistoryCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.BrsReviewHistoryCountAggregateOutputType> | number
+        }
+      }
+    }
+    BrsFinalFile: {
+      payload: Prisma.$BrsFinalFilePayload<ExtArgs>
+      fields: Prisma.BrsFinalFileFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.BrsFinalFileFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BrsFinalFilePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.BrsFinalFileFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BrsFinalFilePayload>
+        }
+        findFirst: {
+          args: Prisma.BrsFinalFileFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BrsFinalFilePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.BrsFinalFileFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BrsFinalFilePayload>
+        }
+        findMany: {
+          args: Prisma.BrsFinalFileFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BrsFinalFilePayload>[]
+        }
+        create: {
+          args: Prisma.BrsFinalFileCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BrsFinalFilePayload>
+        }
+        createMany: {
+          args: Prisma.BrsFinalFileCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.BrsFinalFileCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BrsFinalFilePayload>[]
+        }
+        delete: {
+          args: Prisma.BrsFinalFileDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BrsFinalFilePayload>
+        }
+        update: {
+          args: Prisma.BrsFinalFileUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BrsFinalFilePayload>
+        }
+        deleteMany: {
+          args: Prisma.BrsFinalFileDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.BrsFinalFileUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.BrsFinalFileUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BrsFinalFilePayload>[]
+        }
+        upsert: {
+          args: Prisma.BrsFinalFileUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BrsFinalFilePayload>
+        }
+        aggregate: {
+          args: Prisma.BrsFinalFileAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateBrsFinalFile>
+        }
+        groupBy: {
+          args: Prisma.BrsFinalFileGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.BrsFinalFileGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.BrsFinalFileCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.BrsFinalFileCountAggregateOutputType> | number
         }
       }
     }
@@ -1143,6 +1368,24 @@ export const UserScalarFieldEnum = {
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
 
 
+export const BrsFinalSubmissionScalarFieldEnum = {
+  id: 'id',
+  brsId: 'brsId',
+  submittedById: 'submittedById',
+  originalName: 'originalName',
+  temporaryName: 'temporaryName',
+  temporaryPath: 'temporaryPath',
+  mimeType: 'mimeType',
+  size: 'size',
+  proposedNomorBrs: 'proposedNomorBrs',
+  proposedTanggalPublikasi: 'proposedTanggalPublikasi',
+  version: 'version',
+  submittedAt: 'submittedAt'
+} as const
+
+export type BrsFinalSubmissionScalarFieldEnum = (typeof BrsFinalSubmissionScalarFieldEnum)[keyof typeof BrsFinalSubmissionScalarFieldEnum]
+
+
 export const RoleScalarFieldEnum = {
   id: 'id',
   name: 'name'
@@ -1175,6 +1418,39 @@ export const BrsScalarFieldEnum = {
 } as const
 
 export type BrsScalarFieldEnum = (typeof BrsScalarFieldEnum)[keyof typeof BrsScalarFieldEnum]
+
+
+export const BrsReviewHistoryScalarFieldEnum = {
+  id: 'id',
+  brsId: 'brsId',
+  submittedById: 'submittedById',
+  reviewedById: 'reviewedById',
+  submissionVersion: 'submissionVersion',
+  originalName: 'originalName',
+  proposedNomorBrs: 'proposedNomorBrs',
+  proposedTanggalPublikasi: 'proposedTanggalPublikasi',
+  decision: 'decision',
+  note: 'note',
+  submittedAt: 'submittedAt',
+  reviewedAt: 'reviewedAt'
+} as const
+
+export type BrsReviewHistoryScalarFieldEnum = (typeof BrsReviewHistoryScalarFieldEnum)[keyof typeof BrsReviewHistoryScalarFieldEnum]
+
+
+export const BrsFinalFileScalarFieldEnum = {
+  id: 'id',
+  brsId: 'brsId',
+  approvedById: 'approvedById',
+  originalName: 'originalName',
+  storedName: 'storedName',
+  path: 'path',
+  mimeType: 'mimeType',
+  size: 'size',
+  approvedAt: 'approvedAt'
+} as const
+
+export type BrsFinalFileScalarFieldEnum = (typeof BrsFinalFileScalarFieldEnum)[keyof typeof BrsFinalFileScalarFieldEnum]
 
 
 export const DataUploadScalarFieldEnum = {
@@ -1370,6 +1646,20 @@ export type EnumBrsStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$Prisma
  * Reference to a field of type 'BrsStatus[]'
  */
 export type ListEnumBrsStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BrsStatus[]'>
+    
+
+
+/**
+ * Reference to a field of type 'BrsReviewDecision'
+ */
+export type EnumBrsReviewDecisionFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BrsReviewDecision'>
+    
+
+
+/**
+ * Reference to a field of type 'BrsReviewDecision[]'
+ */
+export type ListEnumBrsReviewDecisionFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BrsReviewDecision[]'>
     
 
 
@@ -1594,9 +1884,12 @@ export interface PrismaClientOptionsWithAdapter extends PrismaClientBaseOptions 
 export type PrismaClientOptions = PrismaClientOptionsWithAccelerateUrl | PrismaClientOptionsWithAdapter
 export type GlobalOmitConfig = {
   user?: Prisma.UserOmit
+  brsFinalSubmission?: Prisma.BrsFinalSubmissionOmit
   role?: Prisma.RoleOmit
   userRole?: Prisma.UserRoleOmit
   brs?: Prisma.BrsOmit
+  brsReviewHistory?: Prisma.BrsReviewHistoryOmit
+  brsFinalFile?: Prisma.BrsFinalFileOmit
   dataUpload?: Prisma.DataUploadOmit
   rawData?: Prisma.RawDataOmit
   rawDataHistory?: Prisma.RawDataHistoryOmit

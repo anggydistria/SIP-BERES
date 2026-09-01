@@ -45,6 +45,11 @@ export { Prisma }
  */
 export type User = Prisma.UserModel
 /**
+ * Model BrsFinalSubmission
+ * 
+ */
+export type BrsFinalSubmission = Prisma.BrsFinalSubmissionModel
+/**
  * Model Role
  * 
  */
@@ -59,6 +64,16 @@ export type UserRole = Prisma.UserRoleModel
  * 
  */
 export type Brs = Prisma.BrsModel
+/**
+ * Model BrsReviewHistory
+ * 
+ */
+export type BrsReviewHistory = Prisma.BrsReviewHistoryModel
+/**
+ * Model BrsFinalFile
+ * 
+ */
+export type BrsFinalFile = Prisma.BrsFinalFileModel
 /**
  * Model DataUpload
  * 

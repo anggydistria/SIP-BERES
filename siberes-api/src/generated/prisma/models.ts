@@ -9,9 +9,12 @@
  * 🟢 You can import this file directly.
  */
 export type * from './models/User'
+export type * from './models/BrsFinalSubmission'
 export type * from './models/Role'
 export type * from './models/UserRole'
 export type * from './models/Brs'
+export type * from './models/BrsReviewHistory'
+export type * from './models/BrsFinalFile'
 export type * from './models/DataUpload'
 export type * from './models/RawData'
 export type * from './models/RawDataHistory'
