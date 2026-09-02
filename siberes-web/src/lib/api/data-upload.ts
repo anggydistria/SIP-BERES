@@ -66,3 +66,50 @@ export function saveExcel(
     file
   );
 }
+
+export async function downloadActiveExcel(id: number) {
+  const response = await fetch(
+    `${API_URL}/data-uploads/${id}/file`
+  );
+
+  if (!response.ok) {
+    const data = (await response
+      .json()
+      .catch(() => null)) as {
+      message?: string | string[];
+    } | null;
+
+    const message = Array.isArray(data?.message)
+      ? data.message.join(', ')
+      : data?.message;
+
+    throw new Error(message ?? 'File Excel gagal diunduh');
+  }
+
+  const blob = await response.blob();
+
+  const disposition = response.headers.get(
+    'Content-Disposition'
+  );
+
+  const match = disposition?.match(
+    /filename\*=UTF-8''([^;]+)/
+  );
+
+  const filename = match?.[1]
+    ? decodeURIComponent(match[1])
+    : 'data-brs.xlsx';
+
+  const objectUrl = URL.createObjectURL(blob);
+
+  const anchor = document.createElement('a');
+
+  anchor.href = objectUrl;
+  anchor.download = filename;
+
+  document.body.appendChild(anchor);
+  anchor.click();
+  anchor.remove();
+
+  URL.revokeObjectURL(objectUrl);
+}

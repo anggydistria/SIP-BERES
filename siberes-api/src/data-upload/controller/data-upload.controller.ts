@@ -1,7 +1,11 @@
 import {
   BadRequestException,
   Controller,
+  Get,
+  Param,
+  ParseIntPipe,
   Post,
+  StreamableFile,
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
@@ -42,6 +46,21 @@ const excelFileInterceptor = FileInterceptor('file', {
 export class DataUploadController {
   constructor(private readonly dataUploadService: DataUploadService) {}
 
+  @Get(':id/file')
+  async getActiveFile(
+    @Param('id', ParseIntPipe)
+    id: number,
+  ) {
+    const result = await this.dataUploadService.getActiveFile(id);
+
+    return new StreamableFile(result.buffer, {
+      type: result.mimeType,
+
+      disposition: `attachment; filename*=UTF-8''${encodeURIComponent(
+        result.filename,
+      )}`,
+    });
+  }
   @Post('preview')
   @UseInterceptors(
     FileInterceptor('file', {

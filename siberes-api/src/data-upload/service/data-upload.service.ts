@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import * as XLSX from 'xlsx';
 import { randomUUID } from 'node:crypto';
-import { mkdir, unlink, writeFile } from 'node:fs/promises';
+import { mkdir, unlink, writeFile, readFile } from 'node:fs/promises';
 import { extname, join } from 'node:path';
 
 import { PrismaService } from '../../prisma/prisma.service';
@@ -385,6 +385,37 @@ export class DataUploadService {
     }
   }
 
+  async getActiveFile(id: number) {
+    const upload = await this.prisma.dataUpload.findFirst({
+      where: {
+        id,
+        status: 'ACTIVE',
+      },
+    });
+
+    if (!upload) {
+      throw new BadRequestException('File Excel aktif tidak ditemukan');
+    }
+
+    let buffer: Buffer;
+
+    try {
+      buffer = await readFile(join(process.cwd(), upload.path));
+    } catch {
+      throw new BadRequestException(
+        'File Excel tidak ditemukan di penyimpanan',
+      );
+    }
+
+    return {
+      buffer,
+      filename: upload.originalName,
+
+      mimeType:
+        upload.mimeType ??
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    };
+  }
   private readWorkbook(buffer: Buffer): XLSX.WorkBook {
     try {
       return XLSX.read(buffer, {

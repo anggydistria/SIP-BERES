@@ -97,7 +97,112 @@ export class BrsService {
   }
   async findOne(id: number) {
     const brs = await this.prisma.brs.findUnique({
-      where: { id },
+      where: {
+        id,
+      },
+
+      include: {
+        /*
+         * Hanya mengambil Excel aktif.
+         */
+        dataUploads: {
+          where: {
+            status: 'ACTIVE',
+          },
+
+          take: 1,
+
+          select: {
+            id: true,
+            originalName: true,
+            version: true,
+            rowCount: true,
+            size: true,
+            uploadedAt: true,
+            processedAt: true,
+          },
+        },
+
+        /*
+         * Calon PDF yang sedang direview.
+         */
+        finalSubmission: {
+          select: {
+            id: true,
+            originalName: true,
+            size: true,
+            proposedNomorBrs: true,
+            proposedTanggalPublikasi: true,
+            version: true,
+            submittedAt: true,
+
+            submittedBy: {
+              select: {
+                id: true,
+                name: true,
+                username: true,
+              },
+            },
+          },
+        },
+
+        /*
+         * Seluruh riwayat approve dan reject.
+         */
+        reviewHistories: {
+          orderBy: {
+            reviewedAt: 'desc',
+          },
+
+          select: {
+            id: true,
+            submissionVersion: true,
+            originalName: true,
+            proposedNomorBrs: true,
+            proposedTanggalPublikasi: true,
+            decision: true,
+            note: true,
+            submittedAt: true,
+            reviewedAt: true,
+
+            submittedBy: {
+              select: {
+                id: true,
+                name: true,
+                username: true,
+              },
+            },
+
+            reviewedBy: {
+              select: {
+                id: true,
+                name: true,
+                username: true,
+              },
+            },
+          },
+        },
+
+        /*
+         * PDF final yang sudah disetujui.
+         */
+        finalFile: {
+          select: {
+            id: true,
+            originalName: true,
+            size: true,
+            approvedAt: true,
+
+            approvedBy: {
+              select: {
+                id: true,
+                name: true,
+                username: true,
+              },
+            },
+          },
+        },
+      },
     });
 
     if (!brs) {

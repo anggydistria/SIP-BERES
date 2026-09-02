@@ -1,4 +1,10 @@
-import type { Brs, BrsListParams, BrsListResponse, CreateBrsPayload } from '@/types/brs';
+import type {
+  Brs,
+  BrsDetail,
+  BrsListParams,
+  BrsListResponse,
+  CreateBrsPayload,
+} from '@/types/brs';
 
 const API_URL =
   process.env.NEXT_PUBLIC_API_URL ??
@@ -69,4 +75,34 @@ export async function createBrs(
   });
 
   return parseResponse<Brs>(response);
+}
+
+export async function getBrsDetail(
+  id: number
+): Promise<BrsDetail> {
+  const response = await fetch(`${API_URL}/brs/${id}`, {
+    cache: 'no-store',
+  });
+
+  const data = (await response.json()) as
+    | BrsDetail
+    | {
+        message?: string | string[];
+      };
+
+  if (!response.ok) {
+    const error = data as {
+      message?: string | string[];
+    };
+
+    const message = Array.isArray(error.message)
+      ? error.message.join(', ')
+      : error.message;
+
+    throw new Error(
+      message ?? 'Gagal mengambil detail BRS'
+    );
+  }
+
+  return data as BrsDetail;
 }

@@ -1,4 +1,5 @@
-import { Badge, Table, Text } from '@mantine/core';
+import { Badge, Button, Table, Text } from '@mantine/core';
+import Link from 'next/link';
 
 import type { Brs } from '@/types/brs';
 
@@ -17,6 +18,22 @@ const MONTH_NAMES = [
   'November',
   'Desember',
 ];
+
+const STATUS_LABELS: Record<Brs['status'], string> = {
+  DRAFT: 'Draft',
+  DRAFT_READY: 'Draft Siap',
+  FINAL_SUBMITTED: 'Menunggu Review',
+  FINAL_REJECTED: 'Ditolak',
+  FINAL: 'Final',
+};
+
+const STATUS_COLORS: Record<Brs['status'], string> = {
+  DRAFT: 'gray',
+  DRAFT_READY: 'blue',
+  FINAL_SUBMITTED: 'orange',
+  FINAL_REJECTED: 'red',
+  FINAL: 'green',
+};
 
 interface BrsTableProps {
   data: Brs[];
@@ -46,6 +63,7 @@ export function BrsTable({ data }: BrsTableProps) {
             <Table.Th>Nomor BRS</Table.Th>
             <Table.Th>Tanggal Publikasi</Table.Th>
             <Table.Th>Status</Table.Th>
+            <Table.Th>Aksi</Table.Th>
           </Table.Tr>
         </Table.Thead>
 
@@ -76,15 +94,21 @@ export function BrsTable({ data }: BrsTableProps) {
 
               <Table.Td>
                 <Badge
-                  color={
-                    brs.status === 'FINAL'
-                      ? 'green'
-                      : 'yellow'
-                  }
+                  color={STATUS_COLORS[brs.status]}
                   variant="light"
                 >
-                  {brs.status}
+                  {STATUS_LABELS[brs.status]}
                 </Badge>
+              </Table.Td>
+              <Table.Td>
+                <Button
+                  component={Link}
+                  href={`/brs/${brs.id}`}
+                  size="xs"
+                  variant="light"
+                >
+                  Detail
+                </Button>
               </Table.Td>
             </Table.Tr>
           ))}

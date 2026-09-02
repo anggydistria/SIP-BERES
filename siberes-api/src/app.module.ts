@@ -9,6 +9,7 @@ import { DataUploadModule } from './data-upload/data-upload.module';
 import { DashboardModule } from './dashboard/dashboard.module';
 import { BrsAnalyticsModule } from './brs-analytics/brs-analytics.module';
 import { BrsDocumentModule } from './brs-document/brs-document.module';
+import { BrsFinalModule } from './brs-final/brs-final.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -20,6 +21,7 @@ import { BrsDocumentModule } from './brs-document/brs-document.module';
     DashboardModule,
     BrsAnalyticsModule,
     BrsDocumentModule,
+    BrsFinalModule,
   ],
   controllers: [AppController],
   providers: [AppService],

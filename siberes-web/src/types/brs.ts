@@ -1,4 +1,11 @@
-export type BrsStatus = 'DRAFT' | 'FINAL';
+export type BrsStatus =
+  | 'DRAFT'
+  | 'DRAFT_READY'
+  | 'FINAL_SUBMITTED'
+  | 'FINAL_REJECTED'
+  | 'FINAL';
+
+export type BrsReviewDecision = 'APPROVED' | 'REJECTED';
 
 export interface Brs {
   id: number;
@@ -10,6 +17,62 @@ export interface Brs {
   status: BrsStatus;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface BrsPerson {
+  id: number;
+  name: string;
+  username: string;
+}
+
+export interface ActiveExcelUpload {
+  id: number;
+  originalName: string;
+  version: number;
+  rowCount: number;
+  size: number | null;
+  uploadedAt: string;
+  processedAt: string | null;
+}
+
+export interface FinalSubmission {
+  id: number;
+  originalName: string;
+  size: number;
+  proposedNomorBrs: string;
+  proposedTanggalPublikasi: string | null;
+  version: number;
+  submittedAt: string;
+  submittedBy: BrsPerson;
+}
+
+export interface BrsReviewHistory {
+  id: number;
+  submissionVersion: number;
+  originalName: string;
+  proposedNomorBrs: string;
+  proposedTanggalPublikasi: string | null;
+  decision: BrsReviewDecision;
+  note: string | null;
+  submittedAt: string;
+  reviewedAt: string;
+  submittedBy: BrsPerson;
+  reviewedBy: BrsPerson;
+}
+
+export interface BrsFinalFile {
+  id: number;
+  originalName: string;
+  size: number;
+  approvedAt: string;
+  approvedBy: BrsPerson;
+}
+
+export interface BrsDetail extends Brs {
+  dataUploads: ActiveExcelUpload[];
+  finalSubmission: FinalSubmission | null;
+  reviewHistories: BrsReviewHistory[];
+  finalFile: BrsFinalFile | null;
 }
 
 export interface BrsPaginationMeta {
