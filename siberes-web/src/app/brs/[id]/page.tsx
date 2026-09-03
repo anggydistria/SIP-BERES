@@ -218,8 +218,6 @@ export default function BrsDetailPage() {
 
   async function handleDownloadExcel() {
     const activeExcel = brs?.dataUploads[0];
-    const previewData = preview;
-    
 
     if (!activeExcel) {
       setError('Data Excel aktif belum tersedia.');
@@ -387,6 +385,7 @@ export default function BrsDetailPage() {
       </Container>
     );
   }
+  const previewData = preview;
 
   const activeExcel = brs.dataUploads[0] ?? null;
   const latestRejected = brs.reviewHistories.find(
@@ -625,13 +624,14 @@ export default function BrsDetailPage() {
             </Alert>
           ) : (
             <Stack gap="xl">
-              {previewData.narrative.warnings.length > 0 && (
+              {previewData.narrative.warnings.length >
+                0 && (
                 <Alert
                   color="yellow"
                   title="Kelengkapan data"
                 >
                   <Stack gap={4}>
-                    {preview.narrative.warnings.map(
+                    {previewData.narrative.warnings.map(
                       (warning, index) => (
                         <Text
                           size="sm"
@@ -650,14 +650,14 @@ export default function BrsDetailPage() {
                   Ringkasan Utama
                 </Title>
 
-                {preview.narrative.highlights.length ===
+                {previewData.narrative.highlights.length ===
                 0 ? (
                   <Text c="dimmed">
                     Ringkasan utama belum tersedia.
                   </Text>
                 ) : (
                   <Stack gap="sm">
-                    {preview.narrative.highlights.map(
+                    {previewData.narrative.highlights.map(
                       (highlight, index) => (
                         <Paper
                           key={`${highlight}-${index}`}
@@ -676,165 +676,173 @@ export default function BrsDetailPage() {
             </Stack>
           )}
         </Paper>
-        <div>
-          <Title order={3} mb="md">
-            {preview.narrative.sections.tpk.title}
-          </Title>
+        {previewData !== null && (
+          <div>
+            <Title order={3} mb="md">
+              {previewData.narrative.sections.tpk.title}
+            </Title>
 
-          <Stack gap="sm" mb="lg">
-            {preview.narrative.sections.tpk.paragraphs.map(
-              (paragraph, index) => (
-                <Text
-                  key={`tpk-${index}`}
-                  ta="justify"
-                  lh={1.7}
-                >
-                  {paragraph}
-                </Text>
-              )
-            )}
-          </Stack>
+            <Stack gap="sm" mb="lg">
+              {previewData.narrative.sections.tpk.paragraphs.map(
+                (paragraph, index) => (
+                  <Text
+                    key={`tpk-${index}`}
+                    ta="justify"
+                    lh={1.7}
+                  >
+                    {paragraph}
+                  </Text>
+                )
+              )}
+            </Stack>
 
-          <Table.ScrollContainer minWidth={900}>
-            <Table
-              striped
-              highlightOnHover
-              withTableBorder
-              withColumnBorders
-            >
-              <Table.Thead>
-                <Table.Tr>
-                  <Table.Th>Klasifikasi Hotel</Table.Th>
+            <Table.ScrollContainer minWidth={900}>
+              <Table
+                striped
+                highlightOnHover
+                withTableBorder
+                withColumnBorders
+              >
+                <Table.Thead>
+                  <Table.Tr>
+                    <Table.Th>Klasifikasi Hotel</Table.Th>
 
-                  <Table.Th ta="right">
-                    TPK Sekarang
-                  </Table.Th>
+                    <Table.Th ta="right">
+                      TPK Sekarang
+                    </Table.Th>
 
-                  <Table.Th ta="right">
-                    Bulan Sebelumnya
-                  </Table.Th>
+                    <Table.Th ta="right">
+                      Bulan Sebelumnya
+                    </Table.Th>
 
-                  <Table.Th ta="right">
-                    Tahun Sebelumnya
-                  </Table.Th>
+                    <Table.Th ta="right">
+                      Tahun Sebelumnya
+                    </Table.Th>
 
-                  <Table.Th>Perubahan Bulanan</Table.Th>
+                    <Table.Th>Perubahan Bulanan</Table.Th>
 
-                  <Table.Th>Perubahan Tahunan</Table.Th>
-                </Table.Tr>
-              </Table.Thead>
+                    <Table.Th>Perubahan Tahunan</Table.Th>
+                  </Table.Tr>
+                </Table.Thead>
 
-              <Table.Tbody>
-                <Table.Tr>
-                  <Table.Td fw={700}>
-                    Total Hotel Bintang
-                  </Table.Td>
+                <Table.Tbody>
+                  <Table.Tr>
+                    <Table.Td fw={700}>
+                      Total Hotel Bintang
+                    </Table.Td>
 
-                  <Table.Td ta="right">
-                    {formatPreviewNumber(
-                      preview.analytics.tpk.total.current,
-                      '%'
-                    )}
-                  </Table.Td>
+                    <Table.Td ta="right">
+                      {formatPreviewNumber(
+                        previewData.analytics.tpk.total
+                          .current,
+                        '%'
+                      )}
+                    </Table.Td>
 
-                  <Table.Td ta="right">
-                    {formatPreviewNumber(
-                      preview.analytics.tpk.total
-                        .previousMonth,
-                      '%'
-                    )}
-                  </Table.Td>
+                    <Table.Td ta="right">
+                      {formatPreviewNumber(
+                        previewData.analytics.tpk.total
+                          .previousMonth,
+                        '%'
+                      )}
+                    </Table.Td>
 
-                  <Table.Td ta="right">
-                    {formatPreviewNumber(
-                      preview.analytics.tpk.total
-                        .previousYear,
-                      '%'
-                    )}
-                  </Table.Td>
+                    <Table.Td ta="right">
+                      {formatPreviewNumber(
+                        previewData.analytics.tpk.total
+                          .previousYear,
+                        '%'
+                      )}
+                    </Table.Td>
 
-                  <Table.Td>
-                    <ChangeValue
-                      value={
-                        preview.analytics.tpk.total
-                          .mtmChange
-                      }
-                      status={
-                        preview.analytics.tpk.total
-                          .mtmStatus
-                      }
-                      suffix=" poin"
-                    />
-                  </Table.Td>
+                    <Table.Td>
+                      <ChangeValue
+                        value={
+                          previewData.analytics.tpk.total
+                            .mtmChange
+                        }
+                        status={
+                          previewData.analytics.tpk.total
+                            .mtmStatus
+                        }
+                        suffix=" poin"
+                      />
+                    </Table.Td>
 
-                  <Table.Td>
-                    <ChangeValue
-                      value={
-                        preview.analytics.tpk.total
-                          .yoyChange
-                      }
-                      status={
-                        preview.analytics.tpk.total
-                          .yoyStatus
-                      }
-                      suffix=" poin"
-                    />
-                  </Table.Td>
-                </Table.Tr>
+                    <Table.Td>
+                      <ChangeValue
+                        value={
+                          previewData.analytics.tpk.total
+                            .yoyChange
+                        }
+                        status={
+                          previewData.analytics.tpk.total
+                            .yoyStatus
+                        }
+                        suffix=" poin"
+                      />
+                    </Table.Td>
+                  </Table.Tr>
 
-                {preview.analytics.tpk.classifications
-                  .filter(
-                    (classification) =>
-                      classification.key !== 'TOTAL_BINTANG'
-                  )
-                  .map((classification) => (
-                    <Table.Tr key={classification.key}>
-                      <Table.Td>
-                        {classification.label}
-                      </Table.Td>
+                  {previewData.analytics.tpk.classifications
+                    .filter(
+                      (classification) =>
+                        classification.key !==
+                        'TOTAL_BINTANG'
+                    )
+                    .map((classification) => (
+                      <Table.Tr key={classification.key}>
+                        <Table.Td>
+                          {classification.label}
+                        </Table.Td>
 
-                      <Table.Td ta="right">
-                        {formatPreviewNumber(
-                          classification.current,
-                          '%'
-                        )}
-                      </Table.Td>
+                        <Table.Td ta="right">
+                          {formatPreviewNumber(
+                            classification.current,
+                            '%'
+                          )}
+                        </Table.Td>
 
-                      <Table.Td ta="right">
-                        {formatPreviewNumber(
-                          classification.previousMonth,
-                          '%'
-                        )}
-                      </Table.Td>
+                        <Table.Td ta="right">
+                          {formatPreviewNumber(
+                            classification.previousMonth,
+                            '%'
+                          )}
+                        </Table.Td>
 
-                      <Table.Td ta="right">
-                        {formatPreviewNumber(
-                          classification.previousYear,
-                          '%'
-                        )}
-                      </Table.Td>
+                        <Table.Td ta="right">
+                          {formatPreviewNumber(
+                            classification.previousYear,
+                            '%'
+                          )}
+                        </Table.Td>
 
-                      <Table.Td>
-                        <ChangeValue
-                          value={classification.mtmChange}
-                          status={classification.mtmStatus}
-                          suffix=" poin"
-                        />
-                      </Table.Td>
+                        <Table.Td>
+                          <ChangeValue
+                            value={classification.mtmChange}
+                            status={
+                              classification.mtmStatus
+                            }
+                            suffix=" poin"
+                          />
+                        </Table.Td>
 
-                      <Table.Td>
-                        <ChangeValue
-                          value={classification.yoyChange}
-                          status={classification.yoyStatus}
-                          suffix=" poin"
-                        />
-                      </Table.Td>
-                    </Table.Tr>
-                  ))}
-              </Table.Tbody>
-            </Table>
-          </Table.ScrollContainer>
-        </div>
+                        <Table.Td>
+                          <ChangeValue
+                            value={classification.yoyChange}
+                            status={
+                              classification.yoyStatus
+                            }
+                            suffix=" poin"
+                          />
+                        </Table.Td>
+                      </Table.Tr>
+                    ))}
+                </Table.Tbody>
+              </Table>
+            </Table.ScrollContainer>
+          </div>
+        )}
         <Paper withBorder p="lg" radius="md">
           <Group
             justify="space-between"
