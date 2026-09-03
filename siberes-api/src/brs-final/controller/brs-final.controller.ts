@@ -103,6 +103,25 @@ export class BrsFinalController {
     return this.pdfResponse(result.buffer, result.filename);
   }
 
+  @Get(':brsId/final-submission/preview')
+  async previewPendingFile(
+    @Param('brsId', ParseIntPipe)
+    brsId: number,
+  ) {
+    const result = await this.service.getPendingFile(brsId);
+
+    return this.pdfResponse(result.buffer, result.filename, 'inline');
+  }
+
+  @Get(':brsId/final-file/preview')
+  async previewFinalFile(
+    @Param('brsId', ParseIntPipe)
+    brsId: number,
+  ) {
+    const result = await this.service.getFinalFile(brsId);
+
+    return this.pdfResponse(result.buffer, result.filename, 'inline');
+  }
   /*
    * Mengunduh PDF BRS yang
    * sudah disetujui.
@@ -117,13 +136,15 @@ export class BrsFinalController {
     return this.pdfResponse(result.buffer, result.filename);
   }
 
-  private pdfResponse(buffer: Buffer, filename: string) {
+  private pdfResponse(
+    buffer: Buffer,
+    filename: string,
+    mode: 'attachment' | 'inline' = 'attachment',
+  ) {
     return new StreamableFile(buffer, {
       type: 'application/pdf',
 
-      disposition: `attachment; filename*=UTF-8''${encodeURIComponent(
-        filename,
-      )}`,
+      disposition: `${mode}; filename*=UTF-8''${encodeURIComponent(filename)}`,
     });
   }
 }

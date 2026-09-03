@@ -85,6 +85,11 @@ export function downloadPendingFinal(brsId: number) {
     'calon-brs-final.pdf'
   );
 }
+export function previewPendingFinal(brsId: number) {
+  openPdf(
+    `${API_URL}/brs/${brsId}/final-submission/preview`
+  );
+}
 
 /*
  * Mengunduh PDF BRS yang sudah disetujui.
@@ -95,7 +100,9 @@ export function downloadApprovedFinal(brsId: number) {
     'brs-final.pdf'
   );
 }
-
+export function previewApprovedFinal(brsId: number) {
+  openPdf(`${API_URL}/brs/${brsId}/final-file/preview`);
+}
 /*
  * Helper untuk request yang menghasilkan JSON.
  */
@@ -166,4 +173,15 @@ async function downloadFile(
   anchor.remove();
 
   URL.revokeObjectURL(objectUrl);
+}
+function openPdf(url: string) {
+  const previewWindow = window.open(url, '_blank');
+
+  if (!previewWindow) {
+    throw new Error(
+      'Preview diblokir oleh browser. Izinkan pop-up untuk membuka PDF.'
+    );
+  }
+
+  previewWindow.opener = null;
 }

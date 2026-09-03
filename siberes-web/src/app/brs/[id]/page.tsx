@@ -33,11 +33,13 @@ import { getDashboardSummary } from '@/lib/api/dashboard';
 import type { DashboardSummary } from '@/types/dashboard';
 import {
   approveFinalBrs,
+  downloadApprovedFinal,
   downloadPendingFinal,
   markDraftReady,
+  previewApprovedFinal,
+  previewPendingFinal,
   rejectFinalBrs,
   submitFinalBrs,
-  downloadApprovedFinal,
 } from '@/lib/api/brs-final';
 import { getBrsPreview } from '@/lib/api/brs-preview';
 
@@ -314,6 +316,15 @@ export default function BrsDetailPage() {
       setActionLoading(false);
     }
   }
+  function handlePreviewPending() {
+    setError(null);
+
+    try {
+      previewPendingFinal(brsId);
+    } catch (caughtError) {
+      setError(errorMessage(caughtError));
+    }
+  } 
   async function handleDownloadFinal() {
     setActionLoading(true);
     setError(null);
@@ -324,6 +335,15 @@ export default function BrsDetailPage() {
       setError(errorMessage(caughtError));
     } finally {
       setActionLoading(false);
+    }
+  }
+  function handlePreviewFinal() {
+    setError(null);
+
+    try {
+      previewApprovedFinal(brsId);
+    } catch (caughtError) {
+      setError(errorMessage(caughtError));
     }
   }
   async function handleReject() {
@@ -462,7 +482,7 @@ export default function BrsDetailPage() {
 
           <Tabs.Panel value="informasi" pt="lg">
             <Stack gap="lg">
-              <Paper withBorder p="lg" radius="md">
+              {/* <Paper withBorder p="lg" radius="md">
                 <Title order={4} mb="md">
                   Informasi BRS
                 </Title>
@@ -500,7 +520,7 @@ export default function BrsDetailPage() {
                     }
                   />
                 </SimpleGrid>
-              </Paper>
+              </Paper> */}
 
               <Paper withBorder p="lg" radius="md">
                 <Title order={4} mb={4}>
@@ -593,122 +613,123 @@ export default function BrsDetailPage() {
                   </SimpleGrid>
                 )}
               </Paper>
+              <Paper
+                withBorder
+                p={{
+                  base: 'md',
+                  sm: 'xl',
+                }}
+                radius="md"
+              >
+                <Group
+                  justify="space-between"
+                  align="flex-start"
+                  mb="xl"
+                >
+                  <div>
+                    <Text
+                      size="sm"
+                      fw={700}
+                      c="blue"
+                      tt="uppercase"
+                    >
+                      Preview BRS
+                    </Text>
+
+                    <Title order={2}>
+                      Perkembangan Pariwisata Kota Samarinda
+                    </Title>
+
+                    <Text size="lg" c="dimmed">
+                      {preview
+                        ? preview.narrative.period.label
+                        : `${MONTH_NAMES[brs.bulan]} ${brs.tahun}`}
+                    </Text>
+                  </div>
+
+                  {preview && (
+                    <Badge
+                      color={
+                        preview.narrative.readyForFinal
+                          ? 'green'
+                          : 'yellow'
+                      }
+                      variant="light"
+                      size="lg"
+                    >
+                      {preview.narrative.readyForFinal
+                        ? 'Data 13 Bulan Lengkap'
+                        : `${preview.analytics.availability.historyMonthsAvailable}/${preview.analytics.availability.historyMonthsRequired} Bulan`}
+                    </Badge>
+                  )}
+                </Group>
+
+                {previewData === null ? (
+                  <Alert
+                    color="yellow"
+                    title="Preview belum tersedia"
+                  >
+                    Data preview BRS belum dapat
+                    ditampilkan.
+                  </Alert>
+                ) : (
+                  <Stack gap="xl">
+                    {previewData.narrative.warnings.length >
+                      0 && (
+                      <Alert
+                        color="yellow"
+                        title="Kelengkapan data"
+                      >
+                        <Stack gap={4}>
+                          {previewData.narrative.warnings.map(
+                            (warning, index) => (
+                              <Text
+                                size="sm"
+                                key={`${warning}-${index}`}
+                              >
+                                {warning}
+                              </Text>
+                            )
+                          )}
+                        </Stack>
+                      </Alert>
+                    )}
+
+                    <div>
+                      <Title order={3} mb="md">
+                        Ringkasan Utama
+                      </Title>
+
+                      {previewData.narrative.highlights
+                        .length === 0 ? (
+                        <Text c="dimmed">
+                          Ringkasan utama belum tersedia.
+                        </Text>
+                      ) : (
+                        <Stack gap="sm">
+                          {previewData.narrative.highlights.map(
+                            (highlight, index) => (
+                              <Paper
+                                key={`${highlight}-${index}`}
+                                withBorder
+                                p="md"
+                                radius="md"
+                                bg="blue.0"
+                              >
+                                <Text>{highlight}</Text>
+                              </Paper>
+                            )
+                          )}
+                        </Stack>
+                      )}
+                    </div>
+                  </Stack>
+                )}
+              </Paper>
             </Stack>
           </Tabs.Panel>
 
           <Tabs.Panel value="preview" pt="lg">
-            <Paper
-              withBorder
-              p={{
-                base: 'md',
-                sm: 'xl',
-              }}
-              radius="md"
-            >
-              <Group
-                justify="space-between"
-                align="flex-start"
-                mb="xl"
-              >
-                <div>
-                  <Text
-                    size="sm"
-                    fw={700}
-                    c="blue"
-                    tt="uppercase"
-                  >
-                    Preview BRS
-                  </Text>
-
-                  <Title order={2}>
-                    Perkembangan Pariwisata Kota Samarinda
-                  </Title>
-
-                  <Text size="lg" c="dimmed">
-                    {preview
-                      ? preview.narrative.period.label
-                      : `${MONTH_NAMES[brs.bulan]} ${brs.tahun}`}
-                  </Text>
-                </div>
-
-                {preview && (
-                  <Badge
-                    color={
-                      preview.narrative.readyForFinal
-                        ? 'green'
-                        : 'yellow'
-                    }
-                    variant="light"
-                    size="lg"
-                  >
-                    {preview.narrative.readyForFinal
-                      ? 'Data 13 Bulan Lengkap'
-                      : `${preview.analytics.availability.historyMonthsAvailable}/${preview.analytics.availability.historyMonthsRequired} Bulan`}
-                  </Badge>
-                )}
-              </Group>
-
-              {previewData === null ? (
-                <Alert
-                  color="yellow"
-                  title="Preview belum tersedia"
-                >
-                  Data preview BRS belum dapat ditampilkan.
-                </Alert>
-              ) : (
-                <Stack gap="xl">
-                  {previewData.narrative.warnings.length >
-                    0 && (
-                    <Alert
-                      color="yellow"
-                      title="Kelengkapan data"
-                    >
-                      <Stack gap={4}>
-                        {previewData.narrative.warnings.map(
-                          (warning, index) => (
-                            <Text
-                              size="sm"
-                              key={`${warning}-${index}`}
-                            >
-                              {warning}
-                            </Text>
-                          )
-                        )}
-                      </Stack>
-                    </Alert>
-                  )}
-
-                  <div>
-                    <Title order={3} mb="md">
-                      Ringkasan Utama
-                    </Title>
-
-                    {previewData.narrative.highlights
-                      .length === 0 ? (
-                      <Text c="dimmed">
-                        Ringkasan utama belum tersedia.
-                      </Text>
-                    ) : (
-                      <Stack gap="sm">
-                        {previewData.narrative.highlights.map(
-                          (highlight, index) => (
-                            <Paper
-                              key={`${highlight}-${index}`}
-                              withBorder
-                              p="md"
-                              radius="md"
-                              bg="blue.0"
-                            >
-                              <Text>{highlight}</Text>
-                            </Paper>
-                          )
-                        )}
-                      </Stack>
-                    )}
-                  </div>
-                </Stack>
-              )}
-            </Paper>
             {previewData !== null && (
               <div>
                 <Title order={3} mb="md">
@@ -716,7 +737,7 @@ export default function BrsDetailPage() {
                 </Title>
 
                 <Stack gap="sm" mb="lg">
-                  {previewData.narrative.sections.tpk.paragraphs.map(
+                  {/* {previewData.narrative.sections.tpk.paragraphs.map(
                     (paragraph, index) => (
                       <Text
                         key={`tpk-${index}`}
@@ -726,7 +747,7 @@ export default function BrsDetailPage() {
                         {paragraph}
                       </Text>
                     )
-                  )}
+                  )} */}
                 </Stack>
 
                 <Table.ScrollContainer minWidth={900}>
@@ -898,7 +919,7 @@ export default function BrsDetailPage() {
                 </Title>
 
                 <Stack gap="sm" mb="lg">
-                  {previewData.narrative.sections.rlmt.paragraphs.map(
+                  {/* {previewData.narrative.sections.rlmt.paragraphs.map(
                     (paragraph, index) => (
                       <Text
                         key={`rlmt-${index}`}
@@ -908,7 +929,7 @@ export default function BrsDetailPage() {
                         {paragraph}
                       </Text>
                     )
-                  )}
+                  )} */}
                 </Stack>
 
                 <Table.ScrollContainer minWidth={900}>
@@ -1463,12 +1484,20 @@ export default function BrsDetailPage() {
                   <Group justify="flex-end">
                     <Button
                       variant="light"
+                      disabled={actionLoading}
+                      onClick={handlePreviewPending}
+                    >
+                      Preview PDF
+                    </Button>
+
+                    <Button
+                      variant="light"
                       loading={actionLoading}
                       onClick={() => {
                         void handleDownloadPending();
                       }}
                     >
-                      Unduh dan Periksa PDF
+                      Unduh PDF
                     </Button>
 
                     <Button
@@ -1651,6 +1680,15 @@ export default function BrsDetailPage() {
                 </SimpleGrid>
 
                 <Group justify="flex-end">
+                  <Button
+                    color="green"
+                    variant="light"
+                    disabled={actionLoading}
+                    onClick={handlePreviewFinal}
+                  >
+                    Preview BRS Final
+                  </Button>
+
                   <Button
                     color="green"
                     loading={actionLoading}
