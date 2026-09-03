@@ -218,6 +218,8 @@ export default function BrsDetailPage() {
 
   async function handleDownloadExcel() {
     const activeExcel = brs?.dataUploads[0];
+    const previewData = preview;
+    
 
     if (!activeExcel) {
       setError('Data Excel aktif belum tersedia.');
@@ -614,7 +616,7 @@ export default function BrsDetailPage() {
             )}
           </Group>
 
-          {!preview ? (
+          {previewData === null ? (
             <Alert
               color="yellow"
               title="Preview belum tersedia"
@@ -623,7 +625,7 @@ export default function BrsDetailPage() {
             </Alert>
           ) : (
             <Stack gap="xl">
-              {preview.narrative.warnings.length > 0 && (
+              {previewData.narrative.warnings.length > 0 && (
                 <Alert
                   color="yellow"
                   title="Kelengkapan data"
