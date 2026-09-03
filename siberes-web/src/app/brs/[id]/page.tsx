@@ -16,6 +16,7 @@ import {
   Modal,
   Textarea,
   Table,
+  Tabs,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import Link from 'next/link';
@@ -43,6 +44,7 @@ import { getBrsPreview } from '@/lib/api/brs-preview';
 import type {
   BrsPreviewData,
   ChangeStatus,
+  MetricComparison,
 } from '@/types/brs-preview';
 const MONTH_NAMES = [
   '',
@@ -441,387 +443,366 @@ export default function BrsDetailPage() {
           </Alert>
         )}
 
-        <Paper withBorder p="lg" radius="md">
-          <Title order={4} mb="md">
-            Informasi BRS
-          </Title>
-
-          <SimpleGrid
-            cols={{
-              base: 1,
-              sm: 2,
-              md: 4,
-            }}
-          >
-            <Info label="Tahun" value={String(brs.tahun)} />
-
-            <Info
-              label="Bulan"
-              value={MONTH_NAMES[brs.bulan]}
-            />
-
-            <Info
-              label="Nomor BRS"
-              value={brs.nomorBrs ?? 'Belum ditetapkan'}
-            />
-
-            <Info
-              label="Tanggal publikasi"
-              value={
-                brs.tanggalPublikasi
-                  ? formatDate(brs.tanggalPublikasi)
-                  : 'Belum ditetapkan'
-              }
-            />
-          </SimpleGrid>
-        </Paper>
-
-        <Paper withBorder p="lg" radius="md">
-          <Title order={4} mb={4}>
-            Ringkasan BRS
-          </Title>
-
-          <Text size="sm" c="dimmed" mb="lg">
-            Ringkasan indikator berdasarkan data Excel
-            aktif.
-          </Text>
-
-          {!summary ? (
-            <Alert
-              color="yellow"
-              title="Ringkasan belum tersedia"
-            >
-              Data indikator belum dapat ditampilkan.
-            </Alert>
-          ) : (
-            <SimpleGrid
-              cols={{
-                base: 1,
-                sm: 2,
-                md: 4,
-              }}
-            >
-              <IndicatorCard
-                label="Malam Kamar Tersedia"
-                value={formatNumber(
-                  summary.indicators.malamKamarTersedia
-                )}
-              />
-
-              <IndicatorCard
-                label="Malam Kamar Terjual"
-                value={formatNumber(
-                  summary.indicators.malamKamarTerjual
-                )}
-              />
-
-              <IndicatorCard
-                label="Tamu Asing"
-                value={formatNumber(
-                  summary.indicators.tamuAsing
-                )}
-              />
-
-              <IndicatorCard
-                label="Tamu Nusantara"
-                value={formatNumber(
-                  summary.indicators.tamuNusantara
-                )}
-              />
-
-              <IndicatorCard
-                label="TPK"
-                value={formatDecimal(
-                  summary.indicators.tingkatPenghunianKamar,
-                  '%'
-                )}
-              />
-
-              <IndicatorCard
-                label="Rata-rata Lama Menginap"
-                value={formatDecimal(
-                  summary.indicators.rataLamaMenginap,
-                  ' malam'
-                )}
-              />
-
-              <IndicatorCard
-                label="RLM Tamu Asing"
-                value={formatNullableDecimal(
-                  summary.indicators.rataLamaMenginapAsing,
-                  ' malam'
-                )}
-              />
-
-              <IndicatorCard
-                label="RLM Tamu Nusantara"
-                value={formatNullableDecimal(
-                  summary.indicators
-                    .rataLamaMenginapNusantara,
-                  ' malam'
-                )}
-              />
-            </SimpleGrid>
-          )}
-        </Paper>
-        <Paper
-          withBorder
-          p={{
-            base: 'md',
-            sm: 'xl',
-          }}
+        <Tabs
+          defaultValue="informasi"
+          variant="outline"
           radius="md"
         >
-          <Group
-            justify="space-between"
-            align="flex-start"
-            mb="xl"
-          >
-            <div>
-              <Text
-                size="sm"
-                fw={700}
-                c="blue"
-                tt="uppercase"
-              >
-                Preview BRS
-              </Text>
+          <Tabs.List>
+            <Tabs.Tab value="informasi">
+              Informasi dan Proses
+            </Tabs.Tab>
 
-              <Title order={2}>
-                Perkembangan Pariwisata Kota Samarinda
-              </Title>
+            <Tabs.Tab value="preview">Preview BRS</Tabs.Tab>
 
-              <Text size="lg" c="dimmed">
-                {preview
-                  ? preview.narrative.period.label
-                  : `${MONTH_NAMES[brs.bulan]} ${brs.tahun}`}
-              </Text>
-            </div>
+            <Tabs.Tab value="riwayat">
+              Riwayat Review
+            </Tabs.Tab>
+          </Tabs.List>
 
-            {preview && (
-              <Badge
-                color={
-                  preview.narrative.readyForFinal
-                    ? 'green'
-                    : 'yellow'
-                }
-                variant="light"
-                size="lg"
-              >
-                {preview.narrative.readyForFinal
-                  ? 'Data 13 Bulan Lengkap'
-                  : `${preview.analytics.availability.historyMonthsAvailable}/${preview.analytics.availability.historyMonthsRequired} Bulan`}
-              </Badge>
-            )}
-          </Group>
-
-          {previewData === null ? (
-            <Alert
-              color="yellow"
-              title="Preview belum tersedia"
-            >
-              Data preview BRS belum dapat ditampilkan.
-            </Alert>
-          ) : (
-            <Stack gap="xl">
-              {previewData.narrative.warnings.length >
-                0 && (
-                <Alert
-                  color="yellow"
-                  title="Kelengkapan data"
-                >
-                  <Stack gap={4}>
-                    {previewData.narrative.warnings.map(
-                      (warning, index) => (
-                        <Text
-                          size="sm"
-                          key={`${warning}-${index}`}
-                        >
-                          {warning}
-                        </Text>
-                      )
-                    )}
-                  </Stack>
-                </Alert>
-              )}
-
-              <div>
-                <Title order={3} mb="md">
-                  Ringkasan Utama
+          <Tabs.Panel value="informasi" pt="lg">
+            <Stack gap="lg">
+              <Paper withBorder p="lg" radius="md">
+                <Title order={4} mb="md">
+                  Informasi BRS
                 </Title>
 
-                {previewData.narrative.highlights.length ===
-                0 ? (
-                  <Text c="dimmed">
-                    Ringkasan utama belum tersedia.
-                  </Text>
-                ) : (
-                  <Stack gap="sm">
-                    {previewData.narrative.highlights.map(
-                      (highlight, index) => (
-                        <Paper
-                          key={`${highlight}-${index}`}
-                          withBorder
-                          p="md"
-                          radius="md"
-                          bg="blue.0"
-                        >
-                          <Text>{highlight}</Text>
-                        </Paper>
-                      )
-                    )}
-                  </Stack>
-                )}
-              </div>
-            </Stack>
-          )}
-        </Paper>
-        {previewData !== null && (
-          <div>
-            <Title order={3} mb="md">
-              {previewData.narrative.sections.tpk.title}
-            </Title>
+                <SimpleGrid
+                  cols={{
+                    base: 1,
+                    sm: 2,
+                    md: 4,
+                  }}
+                >
+                  <Info
+                    label="Tahun"
+                    value={String(brs.tahun)}
+                  />
 
-            <Stack gap="sm" mb="lg">
-              {previewData.narrative.sections.tpk.paragraphs.map(
-                (paragraph, index) => (
-                  <Text
-                    key={`tpk-${index}`}
-                    ta="justify"
-                    lh={1.7}
+                  <Info
+                    label="Bulan"
+                    value={MONTH_NAMES[brs.bulan]}
+                  />
+
+                  <Info
+                    label="Nomor BRS"
+                    value={
+                      brs.nomorBrs ?? 'Belum ditetapkan'
+                    }
+                  />
+
+                  <Info
+                    label="Tanggal publikasi"
+                    value={
+                      brs.tanggalPublikasi
+                        ? formatDate(brs.tanggalPublikasi)
+                        : 'Belum ditetapkan'
+                    }
+                  />
+                </SimpleGrid>
+              </Paper>
+
+              <Paper withBorder p="lg" radius="md">
+                <Title order={4} mb={4}>
+                  Ringkasan BRS
+                </Title>
+
+                <Text size="sm" c="dimmed" mb="lg">
+                  Ringkasan indikator berdasarkan data Excel
+                  aktif.
+                </Text>
+
+                {!summary ? (
+                  <Alert
+                    color="yellow"
+                    title="Ringkasan belum tersedia"
                   >
-                    {paragraph}
-                  </Text>
-                )
-              )}
+                    Data indikator belum dapat ditampilkan.
+                  </Alert>
+                ) : (
+                  <SimpleGrid
+                    cols={{
+                      base: 1,
+                      sm: 2,
+                      md: 4,
+                    }}
+                  >
+                    <IndicatorCard
+                      label="Malam Kamar Tersedia"
+                      value={formatNumber(
+                        summary.indicators
+                          .malamKamarTersedia
+                      )}
+                    />
+
+                    <IndicatorCard
+                      label="Malam Kamar Terjual"
+                      value={formatNumber(
+                        summary.indicators.malamKamarTerjual
+                      )}
+                    />
+
+                    <IndicatorCard
+                      label="Tamu Asing"
+                      value={formatNumber(
+                        summary.indicators.tamuAsing
+                      )}
+                    />
+
+                    <IndicatorCard
+                      label="Tamu Nusantara"
+                      value={formatNumber(
+                        summary.indicators.tamuNusantara
+                      )}
+                    />
+
+                    <IndicatorCard
+                      label="TPK"
+                      value={formatDecimal(
+                        summary.indicators
+                          .tingkatPenghunianKamar,
+                        '%'
+                      )}
+                    />
+
+                    <IndicatorCard
+                      label="Rata-rata Lama Menginap"
+                      value={formatDecimal(
+                        summary.indicators.rataLamaMenginap,
+                        ' malam'
+                      )}
+                    />
+
+                    <IndicatorCard
+                      label="RLM Tamu Asing"
+                      value={formatNullableDecimal(
+                        summary.indicators
+                          .rataLamaMenginapAsing,
+                        ' malam'
+                      )}
+                    />
+
+                    <IndicatorCard
+                      label="RLM Tamu Nusantara"
+                      value={formatNullableDecimal(
+                        summary.indicators
+                          .rataLamaMenginapNusantara,
+                        ' malam'
+                      )}
+                    />
+                  </SimpleGrid>
+                )}
+              </Paper>
             </Stack>
+          </Tabs.Panel>
 
-            <Table.ScrollContainer minWidth={900}>
-              <Table
-                striped
-                highlightOnHover
-                withTableBorder
-                withColumnBorders
+          <Tabs.Panel value="preview" pt="lg">
+            <Paper
+              withBorder
+              p={{
+                base: 'md',
+                sm: 'xl',
+              }}
+              radius="md"
+            >
+              <Group
+                justify="space-between"
+                align="flex-start"
+                mb="xl"
               >
-                <Table.Thead>
-                  <Table.Tr>
-                    <Table.Th>Klasifikasi Hotel</Table.Th>
+                <div>
+                  <Text
+                    size="sm"
+                    fw={700}
+                    c="blue"
+                    tt="uppercase"
+                  >
+                    Preview BRS
+                  </Text>
 
-                    <Table.Th ta="right">
-                      TPK Sekarang
-                    </Table.Th>
+                  <Title order={2}>
+                    Perkembangan Pariwisata Kota Samarinda
+                  </Title>
 
-                    <Table.Th ta="right">
-                      Bulan Sebelumnya
-                    </Table.Th>
+                  <Text size="lg" c="dimmed">
+                    {preview
+                      ? preview.narrative.period.label
+                      : `${MONTH_NAMES[brs.bulan]} ${brs.tahun}`}
+                  </Text>
+                </div>
 
-                    <Table.Th ta="right">
-                      Tahun Sebelumnya
-                    </Table.Th>
+                {preview && (
+                  <Badge
+                    color={
+                      preview.narrative.readyForFinal
+                        ? 'green'
+                        : 'yellow'
+                    }
+                    variant="light"
+                    size="lg"
+                  >
+                    {preview.narrative.readyForFinal
+                      ? 'Data 13 Bulan Lengkap'
+                      : `${preview.analytics.availability.historyMonthsAvailable}/${preview.analytics.availability.historyMonthsRequired} Bulan`}
+                  </Badge>
+                )}
+              </Group>
 
-                    <Table.Th>Perubahan Bulanan</Table.Th>
+              {previewData === null ? (
+                <Alert
+                  color="yellow"
+                  title="Preview belum tersedia"
+                >
+                  Data preview BRS belum dapat ditampilkan.
+                </Alert>
+              ) : (
+                <Stack gap="xl">
+                  {previewData.narrative.warnings.length >
+                    0 && (
+                    <Alert
+                      color="yellow"
+                      title="Kelengkapan data"
+                    >
+                      <Stack gap={4}>
+                        {previewData.narrative.warnings.map(
+                          (warning, index) => (
+                            <Text
+                              size="sm"
+                              key={`${warning}-${index}`}
+                            >
+                              {warning}
+                            </Text>
+                          )
+                        )}
+                      </Stack>
+                    </Alert>
+                  )}
 
-                    <Table.Th>Perubahan Tahunan</Table.Th>
-                  </Table.Tr>
-                </Table.Thead>
+                  <div>
+                    <Title order={3} mb="md">
+                      Ringkasan Utama
+                    </Title>
 
-                <Table.Tbody>
-                  <Table.Tr>
-                    <Table.Td fw={700}>
-                      Total Hotel Bintang
-                    </Table.Td>
+                    {previewData.narrative.highlights
+                      .length === 0 ? (
+                      <Text c="dimmed">
+                        Ringkasan utama belum tersedia.
+                      </Text>
+                    ) : (
+                      <Stack gap="sm">
+                        {previewData.narrative.highlights.map(
+                          (highlight, index) => (
+                            <Paper
+                              key={`${highlight}-${index}`}
+                              withBorder
+                              p="md"
+                              radius="md"
+                              bg="blue.0"
+                            >
+                              <Text>{highlight}</Text>
+                            </Paper>
+                          )
+                        )}
+                      </Stack>
+                    )}
+                  </div>
+                </Stack>
+              )}
+            </Paper>
+            {previewData !== null && (
+              <div>
+                <Title order={3} mb="md">
+                  {previewData.narrative.sections.tpk.title}
+                </Title>
 
-                    <Table.Td ta="right">
-                      {formatPreviewNumber(
-                        previewData.analytics.tpk.total
-                          .current,
-                        '%'
-                      )}
-                    </Table.Td>
-
-                    <Table.Td ta="right">
-                      {formatPreviewNumber(
-                        previewData.analytics.tpk.total
-                          .previousMonth,
-                        '%'
-                      )}
-                    </Table.Td>
-
-                    <Table.Td ta="right">
-                      {formatPreviewNumber(
-                        previewData.analytics.tpk.total
-                          .previousYear,
-                        '%'
-                      )}
-                    </Table.Td>
-
-                    <Table.Td>
-                      <ChangeValue
-                        value={
-                          previewData.analytics.tpk.total
-                            .mtmChange
-                        }
-                        status={
-                          previewData.analytics.tpk.total
-                            .mtmStatus
-                        }
-                        suffix=" poin"
-                      />
-                    </Table.Td>
-
-                    <Table.Td>
-                      <ChangeValue
-                        value={
-                          previewData.analytics.tpk.total
-                            .yoyChange
-                        }
-                        status={
-                          previewData.analytics.tpk.total
-                            .yoyStatus
-                        }
-                        suffix=" poin"
-                      />
-                    </Table.Td>
-                  </Table.Tr>
-
-                  {previewData.analytics.tpk.classifications
-                    .filter(
-                      (classification) =>
-                        classification.key !==
-                        'TOTAL_BINTANG'
+                <Stack gap="sm" mb="lg">
+                  {previewData.narrative.sections.tpk.paragraphs.map(
+                    (paragraph, index) => (
+                      <Text
+                        key={`tpk-${index}`}
+                        ta="justify"
+                        lh={1.7}
+                      >
+                        {paragraph}
+                      </Text>
                     )
-                    .map((classification) => (
-                      <Table.Tr key={classification.key}>
-                        <Table.Td>
-                          {classification.label}
+                  )}
+                </Stack>
+
+                <Table.ScrollContainer minWidth={900}>
+                  <Table
+                    striped
+                    highlightOnHover
+                    withTableBorder
+                    withColumnBorders
+                  >
+                    <Table.Thead>
+                      <Table.Tr>
+                        <Table.Th>
+                          Klasifikasi Hotel
+                        </Table.Th>
+
+                        <Table.Th ta="right">
+                          TPK Sekarang
+                        </Table.Th>
+
+                        <Table.Th ta="right">
+                          Bulan Sebelumnya
+                        </Table.Th>
+
+                        <Table.Th ta="right">
+                          Tahun Sebelumnya
+                        </Table.Th>
+
+                        <Table.Th>
+                          Perubahan Bulanan
+                        </Table.Th>
+
+                        <Table.Th>
+                          Perubahan Tahunan
+                        </Table.Th>
+                      </Table.Tr>
+                    </Table.Thead>
+
+                    <Table.Tbody>
+                      <Table.Tr>
+                        <Table.Td fw={700}>
+                          Total Hotel Bintang
                         </Table.Td>
 
                         <Table.Td ta="right">
                           {formatPreviewNumber(
-                            classification.current,
+                            previewData.analytics.tpk.total
+                              .current,
                             '%'
                           )}
                         </Table.Td>
 
                         <Table.Td ta="right">
                           {formatPreviewNumber(
-                            classification.previousMonth,
+                            previewData.analytics.tpk.total
+                              .previousMonth,
                             '%'
                           )}
                         </Table.Td>
 
                         <Table.Td ta="right">
                           {formatPreviewNumber(
-                            classification.previousYear,
+                            previewData.analytics.tpk.total
+                              .previousYear,
                             '%'
                           )}
                         </Table.Td>
 
                         <Table.Td>
                           <ChangeValue
-                            value={classification.mtmChange}
+                            value={
+                              previewData.analytics.tpk
+                                .total.mtmChange
+                            }
                             status={
-                              classification.mtmStatus
+                              previewData.analytics.tpk
+                                .total.mtmStatus
                             }
                             suffix=" poin"
                           />
@@ -829,487 +810,871 @@ export default function BrsDetailPage() {
 
                         <Table.Td>
                           <ChangeValue
-                            value={classification.yoyChange}
+                            value={
+                              previewData.analytics.tpk
+                                .total.yoyChange
+                            }
                             status={
-                              classification.yoyStatus
+                              previewData.analytics.tpk
+                                .total.yoyStatus
                             }
                             suffix=" poin"
                           />
                         </Table.Td>
                       </Table.Tr>
-                    ))}
-                </Table.Tbody>
-              </Table>
-            </Table.ScrollContainer>
-          </div>
-        )}
-        <Paper withBorder p="lg" radius="md">
-          <Group
-            justify="space-between"
-            align="flex-start"
-            mb="md"
-          >
-            <div>
-              <Title order={4}>
-                Data Excel dan Draft BRS
-              </Title>
 
-              <Text size="sm" c="dimmed">
-                Data Excel menjadi sumber pembuatan draft
-                BRS.
-              </Text>
-            </div>
+                      {previewData.analytics.tpk.classifications
+                        .filter(
+                          (classification) =>
+                            classification.key !==
+                            'TOTAL_BINTANG'
+                        )
+                        .map((classification) => (
+                          <Table.Tr
+                            key={classification.key}
+                          >
+                            <Table.Td>
+                              {classification.label}
+                            </Table.Td>
 
-            {activeExcel && (
-              <Badge color="green" variant="light">
-                {activeExcel.rowCount} baris
-              </Badge>
+                            <Table.Td ta="right">
+                              {formatPreviewNumber(
+                                classification.current,
+                                '%'
+                              )}
+                            </Table.Td>
+
+                            <Table.Td ta="right">
+                              {formatPreviewNumber(
+                                classification.previousMonth,
+                                '%'
+                              )}
+                            </Table.Td>
+
+                            <Table.Td ta="right">
+                              {formatPreviewNumber(
+                                classification.previousYear,
+                                '%'
+                              )}
+                            </Table.Td>
+
+                            <Table.Td>
+                              <ChangeValue
+                                value={
+                                  classification.mtmChange
+                                }
+                                status={
+                                  classification.mtmStatus
+                                }
+                                suffix=" poin"
+                              />
+                            </Table.Td>
+
+                            <Table.Td>
+                              <ChangeValue
+                                value={
+                                  classification.yoyChange
+                                }
+                                status={
+                                  classification.yoyStatus
+                                }
+                                suffix=" poin"
+                              />
+                            </Table.Td>
+                          </Table.Tr>
+                        ))}
+                    </Table.Tbody>
+                  </Table>
+                </Table.ScrollContainer>
+              </div>
             )}
-          </Group>
+            {previewData !== null && (
+              <div>
+                <Title order={3} mb="md">
+                  {
+                    previewData.narrative.sections.rlmt
+                      .title
+                  }
+                </Title>
 
-          {!activeExcel ? (
-            <Alert
-              color="yellow"
-              title="Data belum tersedia"
-            >
-              BRS ini belum mempunyai data Excel aktif.
-            </Alert>
-          ) : (
-            <Stack gap="md">
-              <SimpleGrid
-                cols={{
-                  base: 1,
-                  sm: 3,
-                }}
-              >
-                <Info
-                  label="Nama file"
-                  value={activeExcel.originalName}
-                />
+                <Stack gap="sm" mb="lg">
+                  {previewData.narrative.sections.rlmt.paragraphs.map(
+                    (paragraph, index) => (
+                      <Text
+                        key={`rlmt-${index}`}
+                        ta="justify"
+                        lh={1.7}
+                      >
+                        {paragraph}
+                      </Text>
+                    )
+                  )}
+                </Stack>
 
-                <Info
-                  label="Jumlah baris"
-                  value={String(activeExcel.rowCount)}
-                />
-
-                <Info
-                  label="Tanggal upload"
-                  value={formatDate(activeExcel.uploadedAt)}
-                />
-              </SimpleGrid>
-
-              <Group>
-                <Button
-                  variant="light"
-                  loading={actionLoading}
-                  onClick={() => {
-                    void handleDownloadExcel();
-                  }}
-                >
-                  Unduh Excel
-                </Button>
-
-                <Button
-                  variant="light"
-                  color="orange"
-                  loading={actionLoading}
-                  onClick={() => {
-                    void handleDownloadDraft();
-                  }}
-                >
-                  Unduh Draft Word
-                </Button>
-
-                {brs.status === 'DRAFT' && (
-                  <Button
-                    color="blue"
-                    loading={actionLoading}
-                    onClick={() => {
-                      void handleMarkDraftReady();
-                    }}
+                <Table.ScrollContainer minWidth={900}>
+                  <Table
+                    striped
+                    highlightOnHover
+                    withTableBorder
+                    withColumnBorders
                   >
-                    Draft Sudah Siap
-                  </Button>
-                )}
-              </Group>
+                    <Table.Thead>
+                      <Table.Tr>
+                        <Table.Th>Jenis Tamu</Table.Th>
 
-              {brs.status === 'DRAFT_READY' && (
-                <Alert
-                  color="blue"
-                  title="Draft sudah siap"
-                >
-                  Pengelola sudah dapat mengunggah calon PDF
-                  BRS final.
-                </Alert>
-              )}
-            </Stack>
-          )}
-        </Paper>
-        {(brs.status === 'DRAFT_READY' ||
-          brs.status === 'FINAL_REJECTED') && (
-          <Paper withBorder p="lg" radius="md">
-            {brs.status === 'FINAL_REJECTED' &&
-              latestRejected && (
-                <Alert
-                  color="red"
-                  title="Perbaikan diperlukan"
-                >
-                  <Text mb={4}>
-                    {latestRejected.note ??
-                      'Tidak ada catatan penolakan.'}
-                  </Text>
+                        <Table.Th ta="right">
+                          RLMT Sekarang
+                        </Table.Th>
 
-                  <Text size="xs" c="dimmed">
-                    Ditolak oleh{' '}
-                    {latestRejected.reviewedBy.name}
-                    {' pada '}
-                    {formatDateTime(
-                      latestRejected.reviewedAt
-                    )}
-                  </Text>
-                </Alert>
-              )}
-            <Title order={4} mb={4}>
-              Unggah Calon BRS Final
-            </Title>
+                        <Table.Th ta="right">
+                          Bulan Sebelumnya
+                        </Table.Th>
 
-            <Text size="sm" c="dimmed" mb="lg">
-              Unggah PDF yang sudah diperbaiki oleh Petugas
-              Pengelola untuk diperiksa Ketua BRS.
-            </Text>
+                        <Table.Th ta="right">
+                          Tahun Sebelumnya
+                        </Table.Th>
 
-            {brs.status === 'FINAL_REJECTED' && (
-              <Alert
-                color="red"
-                title="Pengajuan sebelumnya ditolak"
-                mb="md"
-              >
-                Silakan perbaiki BRS sesuai catatan Ketua,
-                kemudian unggah kembali PDF perbaikannya.
-              </Alert>
+                        <Table.Th>
+                          Perubahan Bulanan
+                        </Table.Th>
+
+                        <Table.Th>
+                          Perubahan Tahunan
+                        </Table.Th>
+                      </Table.Tr>
+                    </Table.Thead>
+
+                    <Table.Tbody>
+                      <RlmtRow
+                        label="Seluruh Tamu"
+                        metric={
+                          previewData.analytics.rlmt.total
+                        }
+                      />
+
+                      <RlmtRow
+                        label="Tamu Asing"
+                        metric={
+                          previewData.analytics.rlmt.asing
+                        }
+                      />
+
+                      <RlmtRow
+                        label="Tamu Nusantara"
+                        metric={
+                          previewData.analytics.rlmt
+                            .nusantara
+                        }
+                      />
+                    </Table.Tbody>
+                  </Table>
+                </Table.ScrollContainer>
+              </div>
             )}
 
-            <Stack gap="md">
-              <FileInput
-                label="File calon BRS final"
-                description="Format PDF, maksimal 20 MB"
-                placeholder="Pilih file PDF"
-                accept="application/pdf,.pdf"
-                value={finalFile}
-                onChange={setFinalFile}
-                clearable
-                required
-              />
+            {previewData !== null && (
+              <div>
+                <Title order={3} mb={4}>
+                  Perkembangan TPK Hotel Klasifikasi Bintang
+                </Title>
 
-              <SimpleGrid
-                cols={{
-                  base: 1,
-                  sm: 2,
-                }}
-              >
-                <TextInput
-                  label="Nomor BRS"
-                  placeholder="Contoh: 15/09/6472/Th. II"
-                  value={nomorBrs}
-                  onChange={(event) => {
-                    setNomorBrs(event.currentTarget.value);
-                  }}
-                  required
-                />
+                <Text size="sm" c="dimmed" mb="lg">
+                  Perkembangan Tingkat Penghunian Kamar
+                  selama 13 bulan terakhir.
+                </Text>
 
-                <TextInput
-                  type="date"
-                  label="Tanggal publikasi"
-                  value={tanggalPublikasi}
-                  onChange={(event) => {
-                    setTanggalPublikasi(
-                      event.currentTarget.value
-                    );
-                  }}
-                />
-              </SimpleGrid>
+                <Table.ScrollContainer minWidth={850}>
+                  <Table
+                    striped
+                    highlightOnHover
+                    withTableBorder
+                    withColumnBorders
+                  >
+                    <Table.Thead>
+                      <Table.Tr>
+                        <Table.Th>Periode</Table.Th>
 
-              <Group justify="flex-end">
-                <Button
-                  color="orange"
-                  loading={actionLoading}
-                  disabled={!finalFile || !nomorBrs.trim()}
-                  onClick={() => {
-                    void handleSubmitFinal();
-                  }}
-                >
-                  Kirim untuk Review
-                </Button>
-              </Group>
-            </Stack>
-          </Paper>
-        )}
-        {brs.status === 'FINAL_SUBMITTED' &&
-          brs.finalSubmission && (
+                        <Table.Th ta="right">
+                          Total Bintang
+                        </Table.Th>
+
+                        <Table.Th ta="right">
+                          Bintang 1 dan 2
+                        </Table.Th>
+
+                        <Table.Th ta="right">
+                          Bintang 3
+                        </Table.Th>
+
+                        <Table.Th ta="right">
+                          Bintang 4
+                        </Table.Th>
+
+                        <Table.Th ta="right">
+                          Bintang 5
+                        </Table.Th>
+                      </Table.Tr>
+                    </Table.Thead>
+
+                    <Table.Tbody>
+                      {previewData.analytics.history.map(
+                        (period) => (
+                          <Table.Tr
+                            key={`${period.tahun}-${period.bulan}`}
+                          >
+                            <Table.Td fw={600}>
+                              {MONTH_NAMES[period.bulan]}{' '}
+                              {period.tahun}
+                            </Table.Td>
+
+                            {!period.available ? (
+                              <Table.Td
+                                colSpan={5}
+                                ta="center"
+                              >
+                                <Text size="sm" c="dimmed">
+                                  Data belum tersedia
+                                </Text>
+                              </Table.Td>
+                            ) : (
+                              <>
+                                <Table.Td ta="right">
+                                  {formatPreviewNumber(
+                                    period.tpkTotal,
+                                    '%'
+                                  )}
+                                </Table.Td>
+
+                                <Table.Td ta="right">
+                                  {formatPreviewNumber(
+                                    getClassificationValue(
+                                      period.tpkClassifications,
+                                      'BINTANG_1_2'
+                                    ),
+                                    '%'
+                                  )}
+                                </Table.Td>
+
+                                <Table.Td ta="right">
+                                  {formatPreviewNumber(
+                                    getClassificationValue(
+                                      period.tpkClassifications,
+                                      'BINTANG_3'
+                                    ),
+                                    '%'
+                                  )}
+                                </Table.Td>
+
+                                <Table.Td ta="right">
+                                  {formatPreviewNumber(
+                                    getClassificationValue(
+                                      period.tpkClassifications,
+                                      'BINTANG_4'
+                                    ),
+                                    '%'
+                                  )}
+                                </Table.Td>
+
+                                <Table.Td ta="right">
+                                  {formatPreviewNumber(
+                                    getClassificationValue(
+                                      period.tpkClassifications,
+                                      'BINTANG_5'
+                                    ),
+                                    '%'
+                                  )}
+                                </Table.Td>
+                              </>
+                            )}
+                          </Table.Tr>
+                        )
+                      )}
+                    </Table.Tbody>
+                  </Table>
+                </Table.ScrollContainer>
+              </div>
+            )}
+            {previewData !== null && (
+              <div>
+                <Title order={3} mb={4}>
+                  Perkembangan Rata-Rata Lama Menginap Tamu
+                </Title>
+
+                <Text size="sm" c="dimmed" mb="lg">
+                  Perkembangan rata-rata lama menginap tamu
+                  selama 13 bulan terakhir.
+                </Text>
+
+                <Table.ScrollContainer minWidth={700}>
+                  <Table
+                    striped
+                    highlightOnHover
+                    withTableBorder
+                    withColumnBorders
+                  >
+                    <Table.Thead>
+                      <Table.Tr>
+                        <Table.Th>Periode</Table.Th>
+
+                        <Table.Th ta="right">
+                          Seluruh Tamu
+                        </Table.Th>
+
+                        <Table.Th ta="right">
+                          Tamu Asing
+                        </Table.Th>
+
+                        <Table.Th ta="right">
+                          Tamu Nusantara
+                        </Table.Th>
+                      </Table.Tr>
+                    </Table.Thead>
+
+                    <Table.Tbody>
+                      {previewData.analytics.history.map(
+                        (period) => (
+                          <Table.Tr
+                            key={`rlmt-${period.tahun}-${period.bulan}`}
+                          >
+                            <Table.Td fw={600}>
+                              {MONTH_NAMES[period.bulan]}{' '}
+                              {period.tahun}
+                            </Table.Td>
+
+                            {!period.available ? (
+                              <Table.Td
+                                colSpan={3}
+                                ta="center"
+                              >
+                                <Text size="sm" c="dimmed">
+                                  Data belum tersedia
+                                </Text>
+                              </Table.Td>
+                            ) : (
+                              <>
+                                <Table.Td ta="right">
+                                  {formatPreviewNumber(
+                                    period.rlmtTotal,
+                                    ' hari'
+                                  )}
+                                </Table.Td>
+
+                                <Table.Td ta="right">
+                                  {formatPreviewNumber(
+                                    period.rlmtAsing,
+                                    ' hari'
+                                  )}
+                                </Table.Td>
+
+                                <Table.Td ta="right">
+                                  {formatPreviewNumber(
+                                    period.rlmtNusantara,
+                                    ' hari'
+                                  )}
+                                </Table.Td>
+                              </>
+                            )}
+                          </Table.Tr>
+                        )
+                      )}
+                    </Table.Tbody>
+                  </Table>
+                </Table.ScrollContainer>
+              </div>
+            )}
+          </Tabs.Panel>
+
+          <Tabs.Panel value="riwayat" pt="lg">
             <Paper withBorder p="lg" radius="md">
               <Group
                 justify="space-between"
                 align="flex-start"
-                mb="lg"
+                mb="md"
               >
                 <div>
                   <Title order={4}>
-                    Review Calon BRS Final
+                    Data Excel dan Draft BRS
                   </Title>
 
                   <Text size="sm" c="dimmed">
-                    Periksa PDF sebelum memberikan
-                    keputusan.
+                    Data Excel menjadi sumber pembuatan
+                    draft BRS.
                   </Text>
                 </div>
 
-                <Badge color="orange" variant="light">
-                  Versi {brs.finalSubmission.version}
-                </Badge>
+                {activeExcel && (
+                  <Badge color="green" variant="light">
+                    {activeExcel.rowCount} baris
+                  </Badge>
+                )}
               </Group>
 
-              <SimpleGrid
-                cols={{
-                  base: 1,
-                  sm: 2,
-                }}
-                mb="lg"
-              >
-                <Info
-                  label="Nama file"
-                  value={brs.finalSubmission.originalName}
-                />
-
-                <Info
-                  label="Nomor BRS yang diajukan"
-                  value={
-                    brs.finalSubmission.proposedNomorBrs
-                  }
-                />
-
-                <Info
-                  label="Tanggal publikasi"
-                  value={
-                    brs.finalSubmission
-                      .proposedTanggalPublikasi
-                      ? formatDate(
-                          brs.finalSubmission
-                            .proposedTanggalPublikasi
-                        )
-                      : 'Belum ditentukan'
-                  }
-                />
-
-                <Info
-                  label="Diajukan oleh"
-                  value={
-                    brs.finalSubmission.submittedBy.name
-                  }
-                />
-              </SimpleGrid>
-
-              <Group justify="flex-end">
-                <Button
-                  variant="light"
-                  loading={actionLoading}
-                  onClick={() => {
-                    void handleDownloadPending();
-                  }}
+              {!activeExcel ? (
+                <Alert
+                  color="yellow"
+                  title="Data belum tersedia"
                 >
-                  Unduh dan Periksa PDF
-                </Button>
+                  BRS ini belum mempunyai data Excel aktif.
+                </Alert>
+              ) : (
+                <Stack gap="md">
+                  <SimpleGrid
+                    cols={{
+                      base: 1,
+                      sm: 3,
+                    }}
+                  >
+                    <Info
+                      label="Nama file"
+                      value={activeExcel.originalName}
+                    />
 
-                <Button
-                  color="red"
-                  variant="light"
-                  disabled={actionLoading}
-                  onClick={rejectModal.open}
-                >
-                  Tolak
-                </Button>
+                    <Info
+                      label="Jumlah baris"
+                      value={String(activeExcel.rowCount)}
+                    />
 
-                <Button
-                  color="green"
-                  loading={actionLoading}
-                  onClick={() => {
-                    void handleApprove();
-                  }}
-                >
-                  Setujui
-                </Button>
-              </Group>
+                    <Info
+                      label="Tanggal upload"
+                      value={formatDate(
+                        activeExcel.uploadedAt
+                      )}
+                    />
+                  </SimpleGrid>
 
+                  <Group>
+                    <Button
+                      variant="light"
+                      loading={actionLoading}
+                      onClick={() => {
+                        void handleDownloadExcel();
+                      }}
+                    >
+                      Unduh Excel
+                    </Button>
+
+                    <Button
+                      variant="light"
+                      color="orange"
+                      loading={actionLoading}
+                      onClick={() => {
+                        void handleDownloadDraft();
+                      }}
+                    >
+                      Unduh Draft Word
+                    </Button>
+
+                    {brs.status === 'DRAFT' && (
+                      <Button
+                        color="blue"
+                        loading={actionLoading}
+                        onClick={() => {
+                          void handleMarkDraftReady();
+                        }}
+                      >
+                        Draft Sudah Siap
+                      </Button>
+                    )}
+                  </Group>
+
+                  {brs.status === 'DRAFT_READY' && (
+                    <Alert
+                      color="blue"
+                      title="Draft sudah siap"
+                    >
+                      Pengelola sudah dapat mengunggah calon
+                      PDF BRS final.
+                    </Alert>
+                  )}
+                </Stack>
+              )}
+            </Paper>
+            {(brs.status === 'DRAFT_READY' ||
+              brs.status === 'FINAL_REJECTED') && (
               <Paper withBorder p="lg" radius="md">
+                {brs.status === 'FINAL_REJECTED' &&
+                  latestRejected && (
+                    <Alert
+                      color="red"
+                      title="Perbaikan diperlukan"
+                    >
+                      <Text mb={4}>
+                        {latestRejected.note ??
+                          'Tidak ada catatan penolakan.'}
+                      </Text>
+
+                      <Text size="xs" c="dimmed">
+                        Ditolak oleh{' '}
+                        {latestRejected.reviewedBy.name}
+                        {' pada '}
+                        {formatDateTime(
+                          latestRejected.reviewedAt
+                        )}
+                      </Text>
+                    </Alert>
+                  )}
                 <Title order={4} mb={4}>
-                  Riwayat Review BRS Final
+                  Unggah Calon BRS Final
                 </Title>
 
                 <Text size="sm" c="dimmed" mb="lg">
-                  Riwayat pengajuan, persetujuan, dan
-                  penolakan BRS final.
+                  Unggah PDF yang sudah diperbaiki oleh
+                  Petugas Pengelola untuk diperiksa Ketua
+                  BRS.
                 </Text>
 
-                {brs.reviewHistories.length === 0 ? (
-                  <Text c="dimmed" ta="center" py="lg">
-                    Belum ada riwayat review.
-                  </Text>
-                ) : (
-                  <Table.ScrollContainer minWidth={850}>
-                    <Table
-                      striped
-                      highlightOnHover
-                      withTableBorder
-                    >
-                      <Table.Thead>
-                        <Table.Tr>
-                          <Table.Th>Versi</Table.Th>
-                          <Table.Th>File</Table.Th>
-                          <Table.Th>Nomor BRS</Table.Th>
-                          <Table.Th>Pengelola</Table.Th>
-                          <Table.Th>Keputusan</Table.Th>
-                          <Table.Th>Catatan</Table.Th>
-                          <Table.Th>Waktu Review</Table.Th>
-                        </Table.Tr>
-                      </Table.Thead>
-
-                      <Table.Tbody>
-                        {brs.reviewHistories.map(
-                          (history) => (
-                            <Table.Tr key={history.id}>
-                              <Table.Td>
-                                {history.submissionVersion}
-                              </Table.Td>
-
-                              <Table.Td>
-                                {history.originalName}
-                              </Table.Td>
-
-                              <Table.Td>
-                                {history.proposedNomorBrs}
-                              </Table.Td>
-
-                              <Table.Td>
-                                {history.submittedBy.name}
-                              </Table.Td>
-
-                              <Table.Td>
-                                <Badge
-                                  color={
-                                    history.decision ===
-                                    'APPROVED'
-                                      ? 'green'
-                                      : 'red'
-                                  }
-                                  variant="light"
-                                >
-                                  {history.decision ===
-                                  'APPROVED'
-                                    ? 'Disetujui'
-                                    : 'Ditolak'}
-                                </Badge>
-                              </Table.Td>
-
-                              <Table.Td>
-                                {history.note ?? '-'}
-                              </Table.Td>
-
-                              <Table.Td>
-                                {formatDateTime(
-                                  history.reviewedAt
-                                )}
-                              </Table.Td>
-                            </Table.Tr>
-                          )
-                        )}
-                      </Table.Tbody>
-                    </Table>
-                  </Table.ScrollContainer>
+                {brs.status === 'FINAL_REJECTED' && (
+                  <Alert
+                    color="red"
+                    title="Pengajuan sebelumnya ditolak"
+                    mb="md"
+                  >
+                    Silakan perbaiki BRS sesuai catatan
+                    Ketua, kemudian unggah kembali PDF
+                    perbaikannya.
+                  </Alert>
                 )}
+
+                <Stack gap="md">
+                  <FileInput
+                    label="File calon BRS final"
+                    description="Format PDF, maksimal 20 MB"
+                    placeholder="Pilih file PDF"
+                    accept="application/pdf,.pdf"
+                    value={finalFile}
+                    onChange={setFinalFile}
+                    clearable
+                    required
+                  />
+
+                  <SimpleGrid
+                    cols={{
+                      base: 1,
+                      sm: 2,
+                    }}
+                  >
+                    <TextInput
+                      label="Nomor BRS"
+                      placeholder="Contoh: 15/09/6472/Th. II"
+                      value={nomorBrs}
+                      onChange={(event) => {
+                        setNomorBrs(
+                          event.currentTarget.value
+                        );
+                      }}
+                      required
+                    />
+
+                    <TextInput
+                      type="date"
+                      label="Tanggal publikasi"
+                      value={tanggalPublikasi}
+                      onChange={(event) => {
+                        setTanggalPublikasi(
+                          event.currentTarget.value
+                        );
+                      }}
+                    />
+                  </SimpleGrid>
+
+                  <Group justify="flex-end">
+                    <Button
+                      color="orange"
+                      loading={actionLoading}
+                      disabled={
+                        !finalFile || !nomorBrs.trim()
+                      }
+                      onClick={() => {
+                        void handleSubmitFinal();
+                      }}
+                    >
+                      Kirim untuk Review
+                    </Button>
+                  </Group>
+                </Stack>
               </Paper>
-            </Paper>
-          )}
+            )}
+            {brs.status === 'FINAL_SUBMITTED' &&
+              brs.finalSubmission && (
+                <Paper withBorder p="lg" radius="md">
+                  <Group
+                    justify="space-between"
+                    align="flex-start"
+                    mb="lg"
+                  >
+                    <div>
+                      <Title order={4}>
+                        Review Calon BRS Final
+                      </Title>
 
-        {brs.status === 'FINAL' && brs.finalFile && (
-          <Paper withBorder p="lg" radius="md">
-            <Group
-              justify="space-between"
-              align="flex-start"
-              mb="lg"
-            >
-              <div>
-                <Title order={4}>BRS Final</Title>
+                      <Text size="sm" c="dimmed">
+                        Periksa PDF sebelum memberikan
+                        keputusan.
+                      </Text>
+                    </div>
 
-                <Text size="sm" c="dimmed">
-                  Dokumen ini sudah disetujui dan menjadi
-                  BRS final.
-                </Text>
-              </div>
+                    <Badge color="orange" variant="light">
+                      Versi {brs.finalSubmission.version}
+                    </Badge>
+                  </Group>
 
-              <Badge
-                color="green"
-                size="lg"
-                variant="light"
+                  <SimpleGrid
+                    cols={{
+                      base: 1,
+                      sm: 2,
+                    }}
+                    mb="lg"
+                  >
+                    <Info
+                      label="Nama file"
+                      value={
+                        brs.finalSubmission.originalName
+                      }
+                    />
+
+                    <Info
+                      label="Nomor BRS yang diajukan"
+                      value={
+                        brs.finalSubmission.proposedNomorBrs
+                      }
+                    />
+
+                    <Info
+                      label="Tanggal publikasi"
+                      value={
+                        brs.finalSubmission
+                          .proposedTanggalPublikasi
+                          ? formatDate(
+                              brs.finalSubmission
+                                .proposedTanggalPublikasi
+                            )
+                          : 'Belum ditentukan'
+                      }
+                    />
+
+                    <Info
+                      label="Diajukan oleh"
+                      value={
+                        brs.finalSubmission.submittedBy.name
+                      }
+                    />
+                  </SimpleGrid>
+
+                  <Group justify="flex-end">
+                    <Button
+                      variant="light"
+                      loading={actionLoading}
+                      onClick={() => {
+                        void handleDownloadPending();
+                      }}
+                    >
+                      Unduh dan Periksa PDF
+                    </Button>
+
+                    <Button
+                      color="red"
+                      variant="light"
+                      disabled={actionLoading}
+                      onClick={rejectModal.open}
+                    >
+                      Tolak
+                    </Button>
+
+                    <Button
+                      color="green"
+                      loading={actionLoading}
+                      onClick={() => {
+                        void handleApprove();
+                      }}
+                    >
+                      Setujui
+                    </Button>
+                  </Group>
+
+                  <Paper withBorder p="lg" radius="md">
+                    <Title order={4} mb={4}>
+                      Riwayat Review BRS Final
+                    </Title>
+
+                    <Text size="sm" c="dimmed" mb="lg">
+                      Riwayat pengajuan, persetujuan, dan
+                      penolakan BRS final.
+                    </Text>
+
+                    {brs.reviewHistories.length === 0 ? (
+                      <Text c="dimmed" ta="center" py="lg">
+                        Belum ada riwayat review.
+                      </Text>
+                    ) : (
+                      <Table.ScrollContainer minWidth={850}>
+                        <Table
+                          striped
+                          highlightOnHover
+                          withTableBorder
+                        >
+                          <Table.Thead>
+                            <Table.Tr>
+                              <Table.Th>Versi</Table.Th>
+                              <Table.Th>File</Table.Th>
+                              <Table.Th>Nomor BRS</Table.Th>
+                              <Table.Th>Pengelola</Table.Th>
+                              <Table.Th>Keputusan</Table.Th>
+                              <Table.Th>Catatan</Table.Th>
+                              <Table.Th>
+                                Waktu Review
+                              </Table.Th>
+                            </Table.Tr>
+                          </Table.Thead>
+
+                          <Table.Tbody>
+                            {brs.reviewHistories.map(
+                              (history) => (
+                                <Table.Tr key={history.id}>
+                                  <Table.Td>
+                                    {
+                                      history.submissionVersion
+                                    }
+                                  </Table.Td>
+
+                                  <Table.Td>
+                                    {history.originalName}
+                                  </Table.Td>
+
+                                  <Table.Td>
+                                    {
+                                      history.proposedNomorBrs
+                                    }
+                                  </Table.Td>
+
+                                  <Table.Td>
+                                    {
+                                      history.submittedBy
+                                        .name
+                                    }
+                                  </Table.Td>
+
+                                  <Table.Td>
+                                    <Badge
+                                      color={
+                                        history.decision ===
+                                        'APPROVED'
+                                          ? 'green'
+                                          : 'red'
+                                      }
+                                      variant="light"
+                                    >
+                                      {history.decision ===
+                                      'APPROVED'
+                                        ? 'Disetujui'
+                                        : 'Ditolak'}
+                                    </Badge>
+                                  </Table.Td>
+
+                                  <Table.Td>
+                                    {history.note ?? '-'}
+                                  </Table.Td>
+
+                                  <Table.Td>
+                                    {formatDateTime(
+                                      history.reviewedAt
+                                    )}
+                                  </Table.Td>
+                                </Table.Tr>
+                              )
+                            )}
+                          </Table.Tbody>
+                        </Table>
+                      </Table.ScrollContainer>
+                    )}
+                  </Paper>
+                </Paper>
+              )}
+
+            {brs.status === 'FINAL' && brs.finalFile && (
+              <Paper withBorder p="lg" radius="md">
+                <Group
+                  justify="space-between"
+                  align="flex-start"
+                  mb="lg"
+                >
+                  <div>
+                    <Title order={4}>BRS Final</Title>
+
+                    <Text size="sm" c="dimmed">
+                      Dokumen ini sudah disetujui dan
+                      menjadi BRS final.
+                    </Text>
+                  </div>
+
+                  <Badge
+                    color="green"
+                    size="lg"
+                    variant="light"
+                  >
+                    Disetujui
+                  </Badge>
+                </Group>
+
+                <SimpleGrid
+                  cols={{
+                    base: 1,
+                    sm: 2,
+                    md: 4,
+                  }}
+                  mb="lg"
+                >
+                  <Info
+                    label="Nama file"
+                    value={brs.finalFile.originalName}
+                  />
+
+                  <Info
+                    label="Nomor BRS"
+                    value={
+                      brs.nomorBrs ?? 'Belum ditetapkan'
+                    }
+                  />
+
+                  <Info
+                    label="Tanggal publikasi"
+                    value={
+                      brs.tanggalPublikasi
+                        ? formatDate(brs.tanggalPublikasi)
+                        : 'Belum ditetapkan'
+                    }
+                  />
+
+                  <Info
+                    label="Disetujui oleh"
+                    value={brs.finalFile.approvedBy.name}
+                  />
+                </SimpleGrid>
+
+                <Group justify="flex-end">
+                  <Button
+                    color="green"
+                    loading={actionLoading}
+                    onClick={() => {
+                      void handleDownloadFinal();
+                    }}
+                  >
+                    Unduh BRS Final
+                  </Button>
+                </Group>
+              </Paper>
+            )}
+
+            {brs.status === 'FINAL' && !brs.finalFile && (
+              <Alert
+                color="red"
+                title="File final tidak ditemukan"
               >
-                Disetujui
-              </Badge>
-            </Group>
-
-            <SimpleGrid
-              cols={{
-                base: 1,
-                sm: 2,
-                md: 4,
-              }}
-              mb="lg"
-            >
-              <Info
-                label="Nama file"
-                value={brs.finalFile.originalName}
-              />
-
-              <Info
-                label="Nomor BRS"
-                value={brs.nomorBrs ?? 'Belum ditetapkan'}
-              />
-
-              <Info
-                label="Tanggal publikasi"
-                value={
-                  brs.tanggalPublikasi
-                    ? formatDate(brs.tanggalPublikasi)
-                    : 'Belum ditetapkan'
-                }
-              />
-
-              <Info
-                label="Disetujui oleh"
-                value={brs.finalFile.approvedBy.name}
-              />
-            </SimpleGrid>
-
-            <Group justify="flex-end">
-              <Button
-                color="green"
-                loading={actionLoading}
-                onClick={() => {
-                  void handleDownloadFinal();
-                }}
-              >
-                Unduh BRS Final
-              </Button>
-            </Group>
-          </Paper>
-        )}
-
-        {brs.status === 'FINAL' && !brs.finalFile && (
-          <Alert
-            color="red"
-            title="File final tidak ditemukan"
-          >
-            Status BRS sudah final, tetapi informasi PDF
-            final tidak tersedia.
-          </Alert>
-        )}
+                Status BRS sudah final, tetapi informasi PDF
+                final tidak tersedia.
+              </Alert>
+            )}
+          </Tabs.Panel>
+        </Tabs>
       </Stack>
       <Modal
         opened={rejectOpened}
@@ -1355,7 +1720,50 @@ export default function BrsDetailPage() {
     </Container>
   );
 }
+interface RlmtRowProps {
+  label: string;
+  metric: MetricComparison;
+}
 
+function RlmtRow({ label, metric }: RlmtRowProps) {
+  return (
+    <Table.Tr>
+      <Table.Td
+        fw={label === 'Seluruh Tamu' ? 700 : undefined}
+      >
+        {label}
+      </Table.Td>
+
+      <Table.Td ta="right">
+        {formatPreviewNumber(metric.current, ' hari')}
+      </Table.Td>
+
+      <Table.Td ta="right">
+        {formatPreviewNumber(metric.previousMonth, ' hari')}
+      </Table.Td>
+
+      <Table.Td ta="right">
+        {formatPreviewNumber(metric.previousYear, ' hari')}
+      </Table.Td>
+
+      <Table.Td>
+        <ChangeValue
+          value={metric.mtmChange}
+          status={metric.mtmStatus}
+          suffix=" hari"
+        />
+      </Table.Td>
+
+      <Table.Td>
+        <ChangeValue
+          value={metric.yoyChange}
+          status={metric.yoyStatus}
+          suffix=" hari"
+        />
+      </Table.Td>
+    </Table.Tr>
+  );
+}
 interface ChangeValueProps {
   value: number | null;
   status: ChangeStatus;
@@ -1509,5 +1917,20 @@ function formatPreviewNumber(
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
     }).format(value) + suffix
+  );
+}
+
+function getClassificationValue(
+  classifications: Array<{
+    key: string;
+    label: string;
+    value: number | null;
+  }>,
+  key: string
+) {
+  return (
+    classifications.find(
+      (classification) => classification.key === key
+    )?.value ?? null
   );
 }
