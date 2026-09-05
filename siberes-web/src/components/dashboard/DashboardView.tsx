@@ -11,8 +11,32 @@ import {
   Skeleton,
   Stack,
   Text,
+  ThemeIcon,
   Title,
+  Tabs,
 } from '@mantine/core';
+import {
+  IconAdjustments,
+  IconBed,
+  IconBuilding,
+  IconChartBar,
+  IconChartLine,
+  IconClock,
+  IconLayoutDashboard,
+  IconMapPin,
+  IconPercentage,
+  IconPlane,
+  IconTrendingUp,
+  IconUsers,
+  IconWorld,
+  IconArrowDownRight,
+  IconArrowUpRight,
+  IconHelpCircle,
+  IconMinus,
+  IconTrophy,
+} from '@tabler/icons-react';
+
+import type { ComponentType } from 'react';
 import { useEffect, useState } from 'react';
 import { getBrsPreview } from '@/lib/api/brs-preview';
 import type { Brs } from '@/types/brs';
@@ -237,218 +261,338 @@ export function DashboardView() {
   }
   return (
     <Stack gap="lg">
-      <div>
-        <Title order={2}>Dashboard Pariwisata</Title>
+      <Paper withBorder p="lg">
+        <Stack gap="lg">
+          <Group justify="space-between">
+            <Group wrap="nowrap">
+              <ThemeIcon
+                size={54}
+                radius="md"
+                variant="gradient"
+                gradient={{
+                  from: 'bpsBlue.6',
+                  to: 'bpsGreen.6',
+                  deg: 135,
+                }}
+              >
+                <IconLayoutDashboard
+                  size={30}
+                  stroke={1.8}
+                />
+              </ThemeIcon>
 
-        <Text c="dimmed" mt={4}>
-          Ringkasan indikator perkembangan pariwisata Kota
-          Samarinda.
-        </Text>
-      </div>
+              <div>
+                <Title order={2}>
+                  Dashboard Pariwisata
+                </Title>
 
-      <Paper withBorder p="md" radius="md">
-        <Group align="end">
-          <Select
-            label="Bulan"
-            placeholder="Pilih bulan"
-            data={availableMonthOptions}
-            value={month}
-            onChange={(value) => {
-              setMonth(value ?? '');
-            }}
-            allowDeselect={false}
-            w={180}
-          />
-          <Select
-            label="Tahun"
-            placeholder="Pilih tahun"
-            data={availableYears}
-            value={year}
-            onChange={handleYearChange}
-            allowDeselect={false}
-            w={140}
-          />
+                <Text c="dimmed" mt={2}>
+                  Ringkasan perkembangan pariwisata Kota
+                  Samarinda
+                </Text>
+              </div>
+            </Group>
 
-          <Button
-            onClick={handleFilter}
-            loading={isLoading}
-          >
-            Tampilkan
-          </Button>
-        </Group>
-      </Paper>
-
-      {error && (
-        <Alert color="red" title="Data tidak tersedia">
-          {error}
-        </Alert>
-      )}
-
-      {isLoading && <DashboardSkeleton />}
-
-      {!isLoading && summary && (
-        <>
-          <Group justify="space-between" align="center">
-            <div>
-              <Text fw={600}>
-                Periode{' '}
-                {
-                  MONTH_OPTIONS.find(
-                    (item) =>
-                      item.value ===
-                      String(summary.brs.bulan)
-                  )?.label
-                }{' '}
-                {summary.brs.tahun}
-              </Text>
-
-              <Text size="sm" c="dimmed">
-                {summary.dataUpload.originalName}
-              </Text>
-            </div>
-            <Badge color="green" variant="light">
-              {summary.dataUpload.rowCount} baris
+            <Badge
+              color="bpsOrange"
+              variant="light"
+              size="lg"
+            >
+              Statistik Pariwisata
             </Badge>
           </Group>
 
-          <SimpleGrid
-            cols={{
-              base: 1,
-              sm: 2,
-              lg: 4,
-            }}
-          >
-            <IndicatorCard
-              label="Malam kamar tersedia"
-              value={integerFormatter.format(
-                summary.indicators.malamKamarTersedia
-              )}
-              description="Total MKTS"
-            />
+          <Paper withBorder p="md" bg="white" shadow="xs">
+            <Group align="end">
+              <ThemeIcon
+                color="bpsBlue"
+                variant="light"
+                size={38}
+              >
+                <IconAdjustments size={21} />
+              </ThemeIcon>
 
-            <IndicatorCard
-              label="Malam kamar terjual"
-              value={integerFormatter.format(
-                summary.indicators.malamKamarTerjual
-              )}
-              description="Total MKTJ"
-            />
+              <Select
+                label="Tahun"
+                placeholder="Pilih tahun"
+                data={availableYears}
+                value={year}
+                onChange={handleYearChange}
+                allowDeselect={false}
+                w={140}
+              />
 
-            <IndicatorCard
-              label="Tamu asing"
-              value={integerFormatter.format(
-                summary.indicators.tamuAsing
-              )}
-              description="Jumlah tamu asing"
-            />
+              <Select
+                label="Bulan"
+                placeholder="Pilih bulan"
+                data={availableMonthOptions}
+                value={month}
+                onChange={(value) => {
+                  setMonth(value ?? '');
+                }}
+                allowDeselect={false}
+                w={180}
+              />
 
-            <IndicatorCard
-              label="Tamu nusantara"
-              value={integerFormatter.format(
-                summary.indicators.tamuNusantara
-              )}
-              description="Jumlah tamu nusantara"
-            />
+              <Button
+                leftSection={<IconChartBar size={18} />}
+                onClick={handleFilter}
+                loading={isLoading}
+              >
+                Tampilkan
+              </Button>
+            </Group>
+          </Paper>
+          {error && (
+            <Alert color="red" title="Data tidak tersedia">
+              {error}
+            </Alert>
+          )}
 
-            <IndicatorCard
-              label="Tingkat penghunian kamar"
-              value={`${decimalFormatter.format(
-                summary.indicators.tingkatPenghunianKamar
-              )}%`}
-              description="MKTJ ÷ MKTS × 100"
-            />
+          {isLoading && <DashboardSkeleton />}
 
-            <IndicatorCard
-              label="Rata-rata lama menginap"
-              value={decimalFormatter.format(
-                summary.indicators.rataLamaMenginap
-              )}
-              description="Gabungan seluruh tamu"
-            />
+          {!isLoading && summary && (
+            <>
+              <Group justify="space-between" align="center">
+                <div>
+                  <Text fw={600}>
+                    Periode{' '}
+                    {
+                      MONTH_OPTIONS.find(
+                        (item) =>
+                          item.value ===
+                          String(summary.brs.bulan)
+                      )?.label
+                    }{' '}
+                    {summary.brs.tahun}
+                  </Text>
 
-            <IndicatorCard
-              label="RLM tamu asing"
-              value={formatNullableNumber(
-                summary.indicators.rataLamaMenginapAsing
-              )}
-              description="Malam tamu asing ÷ tamu asing"
-            />
-
-            <IndicatorCard
-              label="RLM tamu nusantara"
-              value={formatNullableNumber(
-                summary.indicators.rataLamaMenginapNusantara
-              )}
-              description="Malam tamu nusantara ÷ tamu nusantara"
-            />
-          </SimpleGrid>
-          {analytics && (
-            <div>
-              <Title order={3} mb={4}>
-                Perubahan Indikator
-              </Title>
-
-              <Text size="sm" c="dimmed" mb="lg">
-                Perbandingan terhadap bulan sebelumnya dan
-                bulan yang sama tahun sebelumnya.
-              </Text>
+                  <Text size="sm" c="dimmed">
+                    {summary.dataUpload.originalName}
+                  </Text>
+                </div>
+                <Badge color="green" variant="light">
+                  {summary.dataUpload.rowCount} baris
+                </Badge>
+              </Group>
 
               <SimpleGrid
                 cols={{
                   base: 1,
-                  md: 2,
+                  xs: 2,
+                  lg: 4,
                 }}
+                spacing="md"
               >
-                <ComparisonCard
-                  title="Tingkat Penghunian Kamar"
-                  metric={analytics.tpk.total}
-                  currentSuffix="%"
-                  changeSuffix=" poin"
+                <IndicatorCard
+                  icon={IconBuilding}
+                  color="bpsBlue"
+                  label="Malam kamar tersedia"
+                  value={integerFormatter.format(
+                    summary.indicators.malamKamarTersedia
+                  )}
+                  description="Total MKTS"
                 />
 
-                <ComparisonCard
-                  title="Rata-Rata Lama Menginap"
-                  metric={analytics.rlmt.total}
-                  currentSuffix=" hari"
-                  changeSuffix=" hari"
+                <IndicatorCard
+                  icon={IconBed}
+                  color="bpsOrange"
+                  label="Malam kamar terjual"
+                  value={integerFormatter.format(
+                    summary.indicators.malamKamarTerjual
+                  )}
+                  description="Total MKTJ"
+                />
+
+                <IndicatorCard
+                  icon={IconPlane}
+                  color="bpsGreen"
+                  label="Tamu asing"
+                  value={integerFormatter.format(
+                    summary.indicators.tamuAsing
+                  )}
+                  description="Jumlah tamu asing"
+                />
+
+                <IndicatorCard
+                  icon={IconUsers}
+                  color="bpsBlue"
+                  label="Tamu nusantara"
+                  value={integerFormatter.format(
+                    summary.indicators.tamuNusantara
+                  )}
+                  description="Jumlah tamu nusantara"
+                />
+
+                <IndicatorCard
+                  icon={IconPercentage}
+                  color="bpsOrange"
+                  label="Tingkat penghunian kamar"
+                  value={`${decimalFormatter.format(
+                    summary.indicators
+                      .tingkatPenghunianKamar
+                  )}%`}
+                  description="MKTJ ÷ MKTS × 100"
+                />
+
+                <IndicatorCard
+                  icon={IconClock}
+                  color="bpsGreen"
+                  label="Rata-rata lama menginap"
+                  value={decimalFormatter.format(
+                    summary.indicators.rataLamaMenginap
+                  )}
+                  description="Gabungan seluruh tamu"
+                />
+
+                <IndicatorCard
+                  icon={IconWorld}
+                  color="bpsOrange"
+                  label="RLM tamu asing"
+                  value={formatNullableNumber(
+                    summary.indicators.rataLamaMenginapAsing
+                  )}
+                  description="Malam tamu asing ÷ tamu asing"
+                />
+
+                <IndicatorCard
+                  icon={IconMapPin}
+                  color="bpsGreen"
+                  label="RLM tamu nusantara"
+                  value={formatNullableNumber(
+                    summary.indicators
+                      .rataLamaMenginapNusantara
+                  )}
+                  description="Malam tamu nusantara ÷ tamu nusantara"
                 />
               </SimpleGrid>
-            </div>
-          )}
+              {analytics && (
+                <Tabs
+                  defaultValue="ringkasan"
+                  variant="pills"
+                  color="bpsBlue"
+                  radius="md"
+                >
+                  <Tabs.List
+                    grow
+                    p={6}
+                    bg="bpsBlue.0"
+                    style={{
+                      borderRadius:
+                        'var(--mantine-radius-md)',
+                    }}
+                  >
+                    <Tabs.Tab
+                      value="ringkasan"
+                      leftSection={
+                        <IconTrendingUp size={18} />
+                      }
+                    >
+                      Ringkasan
+                    </Tabs.Tab>
 
-          {analytics && (
-            <TpkClassificationSection
-              classifications={
-                analytics.tpk.classifications
-              }
-            />
-          )}
+                    <Tabs.Tab
+                      value="tpk"
+                      leftSection={
+                        <IconPercentage size={18} />
+                      }
+                    >
+                      Tingkat Penghunian Kamar
+                    </Tabs.Tab>
 
-          {analytics && (
-            <TpkExtremes history={analytics.history} />
-          )}
+                    <Tabs.Tab
+                      value="rlmt"
+                      leftSection={<IconClock size={18} />}
+                    >
+                      Rata-Rata Lama Menginap
+                    </Tabs.Tab>
+                  </Tabs.List>
 
-          {analytics && (
-            <RlmtExtremes history={analytics.history} />
-          )}
-          {analytics && (
-            <div>
-              <Title order={3} mb={4}>
-                Grafik Perkembangan Pariwisata
-              </Title>
+                  <Tabs.Panel value="ringkasan" pt="lg">
+                    <Stack gap="lg">
+                      <SectionHeading
+                        icon={IconTrendingUp}
+                        color="bpsGreen"
+                        title="Perubahan Indikator"
+                        description="Perbandingan terhadap bulan sebelumnya dan bulan yang sama tahun sebelumnya."
+                      />
 
-              <Text size="sm" c="dimmed" mb="lg">
-                Perkembangan indikator selama 13 bulan
-                sampai dengan periode yang dipilih.
-              </Text>
+                      <SimpleGrid
+                        cols={{
+                          base: 1,
+                          md: 2,
+                        }}
+                      >
+                        <ComparisonCard
+                          title="Tingkat Penghunian Kamar"
+                          metric={analytics.tpk.total}
+                          currentSuffix="%"
+                          changeSuffix=" poin"
+                        />
 
-              <TourismTrendCharts
-                history={analytics.history}
-              />
-            </div>
+                        <ComparisonCard
+                          title="Rata-Rata Lama Menginap"
+                          metric={analytics.rlmt.total}
+                          currentSuffix=" hari"
+                          changeSuffix=" hari"
+                        />
+                      </SimpleGrid>
+                    </Stack>
+                  </Tabs.Panel>
+
+                  <Tabs.Panel value="tpk" pt="lg">
+                    <Stack gap="xl">
+                      <TpkClassificationSection
+                        classifications={
+                          analytics.tpk.classifications
+                        }
+                      />
+
+                      <TpkExtremes
+                        history={analytics.history}
+                      />
+
+                      <SectionHeading
+                        icon={IconChartLine}
+                        color="bpsBlue"
+                        title="Perkembangan TPK"
+                        description="Perkembangan Tingkat Penghunian Kamar selama 13 bulan sampai periode yang dipilih."
+                      />
+
+                      <TourismTrendCharts
+                        history={analytics.history}
+                        metric="tpk"
+                      />
+                    </Stack>
+                  </Tabs.Panel>
+
+                  <Tabs.Panel value="rlmt" pt="lg">
+                    <Stack gap="xl">
+                      <RlmtExtremes
+                        history={analytics.history}
+                      />
+
+                      <div>
+                        <SectionHeading
+                          icon={IconChartLine}
+                          color="bpsOrange"
+                          title="Perkembangan RLMT"
+                          description="Perkembangan rata-rata lama menginap selama 13 bulan sampai periode yang dipilih."
+                        />
+
+                        <TourismTrendCharts
+                          history={analytics.history}
+                          metric="rlmt"
+                        />
+                      </div>
+                    </Stack>
+                  </Tabs.Panel>
+                </Tabs>
+              )}
+            </>
           )}
-        </>
-      )}
+        </Stack>
+      </Paper>
     </Stack>
   );
 }
@@ -462,113 +606,98 @@ function RlmtExtremes({ history }: RlmtExtremesProps) {
     {
       key: 'rlmtTotal',
       label: 'Seluruh Tamu',
-      color: 'blue',
     },
     {
       key: 'rlmtAsing',
       label: 'Tamu Asing',
-      color: 'orange',
     },
     {
       key: 'rlmtNusantara',
       label: 'Tamu Nusantara',
-      color: 'green',
     },
   ] as const;
 
-  return (
-    <div>
-      <Title order={3} mb={4}>
-        Rekor Rata-Rata Lama Menginap
-      </Title>
+return (
+  <div>
+    <SectionHeading
+      icon={IconClock}
+      color="bpsBlue"
+      title="Rekor Rata-Rata Lama Menginap"
+      description="Periode tertinggi dan terendah selama 13 bulan berdasarkan jenis tamu."
+    />
 
-      <Text size="sm" c="dimmed" mb="lg">
-        Periode tertinggi dan terendah selama 13 bulan
-        berdasarkan jenis tamu.
-      </Text>
+    <SimpleGrid
+      cols={{
+        base: 1,
+        lg: 3,
+      }}
+      mt="lg"
+    >
+      {metrics.map((metric) => {
+        const extremes = calculateRlmtExtremes(
+          history,
+          metric.key
+        );
 
-      <SimpleGrid
-        cols={{
-          base: 1,
-          md: 3,
-        }}
-      >
-        {metrics.map((metric) => {
-          const extremes = calculateRlmtExtremes(
-            history,
-            metric.key
-          );
+        return (
+          <Paper
+            key={metric.key}
+            withBorder
+            p="md"
+            shadow="xs"
+          >
+            <Group mb="md">
+              <ThemeIcon
+                color="bpsBlue"
+                variant="light"
+                size={38}
+              >
+                <IconClock size={21} />
+              </ThemeIcon>
 
-          return (
-            <Paper
-              key={metric.key}
-              withBorder
-              p="lg"
-              radius="md"
-            >
-              <Text fw={700} size="lg" mb="md">
+              <Text fw={700} size="lg">
                 {metric.label}
               </Text>
+            </Group>
 
-              {!extremes ? (
-                <Text size="sm" c="dimmed">
-                  Data belum tersedia.
-                </Text>
-              ) : (
-                <Stack gap="md">
-                  <div>
-                    <Badge
-                      color={metric.color}
-                      variant="light"
-                      mb={4}
-                    >
-                      Tertinggi
-                    </Badge>
+            {!extremes ? (
+              <Alert
+                color="yellow"
+                title="Data belum tersedia"
+              >
+                Belum tersedia data untuk jenis tamu ini.
+              </Alert>
+            ) : (
+              <Stack gap="md">
+                <ExtremeCard
+                  type="highest"
+                  label={formatHistoryPeriod(
+                    extremes.highest.period
+                  )}
+                  value={decimalFormatter.format(
+                    extremes.highest.value
+                  )}
+                  suffix=" hari"
+                />
 
-                    <Text fw={600}>
-                      {formatHistoryPeriod(
-                        extremes.highest.period
-                      )}
-                    </Text>
-
-                    <Text fw={700} fz={24}>
-                      {decimalFormatter.format(
-                        extremes.highest.value
-                      )}{' '}
-                      hari
-                    </Text>
-                  </div>
-
-                  <div>
-                    <Badge
-                      color="gray"
-                      variant="light"
-                      mb={4}
-                    >
-                      Terendah
-                    </Badge>
-
-                    <Text fw={600}>
-                      {formatHistoryPeriod(
-                        extremes.lowest.period
-                      )}
-                    </Text>
-
-                    <Text fw={700} fz={24}>
-                      {decimalFormatter.format(
-                        extremes.lowest.value
-                      )}{' '}
-                      hari
-                    </Text>
-                  </div>
-                </Stack>
-              )}
-            </Paper>
-          );
-        })}
-      </SimpleGrid>
-    </div>
-  );
+                <ExtremeCard
+                  type="lowest"
+                  label={formatHistoryPeriod(
+                    extremes.lowest.period
+                  )}
+                  value={decimalFormatter.format(
+                    extremes.lowest.value
+                  )}
+                  suffix=" hari"
+                />
+              </Stack>
+            )}
+          </Paper>
+        );
+      })}
+    </SimpleGrid>
+  </div>
+);
 }
 
 interface TpkExtremesProps {
@@ -608,48 +737,33 @@ function TpkExtremes({ history }: TpkExtremesProps) {
 
   return (
     <div>
-      <Title order={3} mb={4}>
-        Rekor TPK Selama 13 Bulan
-      </Title>
-
-      <Text size="sm" c="dimmed" mb="lg">
-        Periode dengan TPK total tertinggi dan terendah
-        dalam rentang data yang ditampilkan.
-      </Text>
+      <SectionHeading
+        icon={IconTrophy}
+        color="bpsOrange"
+        title="Rekor TPK Selama 13 Bulan"
+        description="Periode dengan TPK total tertinggi dan terendah dalam rentang data yang ditampilkan."
+      />
 
       <SimpleGrid
         cols={{
           base: 1,
           md: 2,
         }}
+        mt="lg"
       >
-        <Paper withBorder p="lg" radius="md" bg="blue.0">
-          <Badge color="blue" variant="light" mb="sm">
-            Tertinggi
-          </Badge>
+        <ExtremeCard
+          type="highest"
+          label={formatHistoryPeriod(highest)}
+          value={decimalFormatter.format(highest.tpkTotal)}
+          suffix="%"
+        />
 
-          <Text fw={700} size="lg">
-            {formatHistoryPeriod(highest)}
-          </Text>
-
-          <Text fw={700} fz={30} c="blue.8">
-            {decimalFormatter.format(highest.tpkTotal)}%
-          </Text>
-        </Paper>
-
-        <Paper withBorder p="lg" radius="md" bg="orange.0">
-          <Badge color="orange" variant="light" mb="sm">
-            Terendah
-          </Badge>
-
-          <Text fw={700} size="lg">
-            {formatHistoryPeriod(lowest)}
-          </Text>
-
-          <Text fw={700} fz={30} c="orange.8">
-            {decimalFormatter.format(lowest.tpkTotal)}%
-          </Text>
-        </Paper>
+        <ExtremeCard
+          type="lowest"
+          label={formatHistoryPeriod(lowest)}
+          value={decimalFormatter.format(lowest.tpkTotal)}
+          suffix="%"
+        />
       </SimpleGrid>
     </div>
   );
@@ -693,49 +807,38 @@ function TpkClassificationSection({
 
   return (
     <div>
-      <Title order={3} mb={4}>
-        TPK Menurut Klasifikasi Hotel
-      </Title>
-
-      <Text size="sm" c="dimmed" mb="lg">
-        Perbandingan Tingkat Penghunian Kamar berdasarkan
-        klasifikasi hotel bintang.
-      </Text>
+      <SectionHeading
+        icon={IconBuilding}
+        color="bpsBlue"
+        title="TPK Menurut Klasifikasi Hotel"
+        description="Perbandingan Tingkat Penghunian Kamar berdasarkan klasifikasi hotel bintang."
+      />
 
       <SimpleGrid
         cols={{
           base: 1,
           md: 2,
         }}
+        mt="lg"
         mb="lg"
       >
-        <Paper withBorder p="lg" radius="md" bg="green.0">
-          <Text size="sm" c="dimmed">
-            TPK tertinggi
-          </Text>
+        <ExtremeCard
+          type="highest"
+          label={highest.label}
+          value={decimalFormatter.format(
+            highest.current ?? 0
+          )}
+          suffix="%"
+        />
 
-          <Text fw={700} size="lg" mt={4}>
-            {highest.label}
-          </Text>
-
-          <Text fw={700} fz={28} c="green.8">
-            {decimalFormatter.format(highest.current ?? 0)}%
-          </Text>
-        </Paper>
-
-        <Paper withBorder p="lg" radius="md" bg="red.0">
-          <Text size="sm" c="dimmed">
-            TPK terendah
-          </Text>
-
-          <Text fw={700} size="lg" mt={4}>
-            {lowest.label}
-          </Text>
-
-          <Text fw={700} fz={28} c="red.8">
-            {decimalFormatter.format(lowest.current ?? 0)}%
-          </Text>
-        </Paper>
+        <ExtremeCard
+          type="lowest"
+          label={lowest.label}
+          value={decimalFormatter.format(
+            lowest.current ?? 0
+          )}
+          suffix="%"
+        />
       </SimpleGrid>
 
       <SimpleGrid
@@ -773,16 +876,41 @@ function ComparisonCard({
   changeSuffix,
 }: ComparisonCardProps) {
   return (
-    <Paper withBorder p="lg" radius="md">
-      <Text size="sm" c="dimmed">
-        {title}
-      </Text>
+    <Paper
+      withBorder
+      p="lg"
+      radius="md"
+      shadow="xs"
+      style={{
+        borderLeft:
+          '4px solid var(--mantine-color-bpsBlue-6)',
+      }}
+    >
+      <Group justify="space-between" align="flex-start">
+        <div>
+          <Text size="sm" c="dimmed">
+            {title}
+          </Text>
 
-      <Text fw={700} fz={30} mt={4} mb="md">
-        {formatMetricValue(metric.current, currentSuffix)}
-      </Text>
+          <Text fw={750} fz={30} mt={4}>
+            {formatMetricValue(
+              metric.current,
+              currentSuffix
+            )}
+          </Text>
+        </div>
 
-      <Stack gap="sm">
+        <ThemeIcon
+          color="bpsBlue"
+          variant="light"
+          size={40}
+          radius="md"
+        >
+          <IconTrendingUp size={22} />
+        </ThemeIcon>
+      </Group>
+
+      <Stack gap="sm" mt="md">
         <Group justify="space-between">
           <Text size="sm">Dibanding bulan lalu</Text>
 
@@ -820,57 +948,217 @@ function ChangeBadge({
 }: ChangeBadgeProps) {
   if (value === null || status === 'TIDAK_TERSEDIA') {
     return (
-      <Badge color="gray" variant="light">
+      <Badge
+        color="gray"
+        variant="light"
+        leftSection={<IconHelpCircle size={13} />}
+      >
         Tidak tersedia
       </Badge>
     );
   }
 
-  const colors: Record<ChangeStatus, string> = {
-    NAIK: 'green',
-    TURUN: 'red',
-    TETAP: 'gray',
-    TIDAK_TERSEDIA: 'gray',
-  };
+  const configurations = {
+    NAIK: {
+      color: 'bpsGreen',
+      label: 'Naik',
+      icon: IconArrowUpRight,
+    },
 
-  const labels: Record<ChangeStatus, string> = {
-    NAIK: 'Naik',
-    TURUN: 'Turun',
-    TETAP: 'Tetap',
-    TIDAK_TERSEDIA: 'Tidak tersedia',
-  };
+    TURUN: {
+      color: 'red',
+      label: 'Turun',
+      icon: IconArrowDownRight,
+    },
+
+    TETAP: {
+      color: 'gray',
+      label: 'Tetap',
+      icon: IconMinus,
+    },
+
+    TIDAK_TERSEDIA: {
+      color: 'gray',
+      label: 'Tidak tersedia',
+      icon: IconHelpCircle,
+    },
+  } as const;
+
+  const configuration = configurations[status];
+  const StatusIcon = configuration.icon;
 
   return (
-    <Badge color={colors[status]} variant="light">
-      {labels[status]}{' '}
+    <Badge
+      color={configuration.color}
+      variant="light"
+      leftSection={<StatusIcon size={13} stroke={2} />}
+    >
+      {configuration.label}{' '}
       {decimalFormatter.format(Math.abs(value))}
       {suffix}
     </Badge>
   );
 }
 
-function IndicatorCard({
-  label,
-  value,
-  description,
-}: {
+type IndicatorColor = 'bpsBlue' | 'bpsOrange' | 'bpsGreen';
+
+interface IndicatorCardProps {
+  icon: ComponentType<{
+    size?: number | string;
+    stroke?: number;
+  }>;
+  color: IndicatorColor;
   label: string;
   value: string;
   description: string;
-}) {
+}
+
+interface SectionHeadingProps {
+  icon: ComponentType<{
+    size?: number | string;
+    stroke?: number;
+  }>;
+  color: IndicatorColor;
+  title: string;
+  description: string;
+}
+
+function SectionHeading({
+  icon: Icon,
+  color,
+  title,
+  description,
+}: SectionHeadingProps) {
   return (
-    <Paper withBorder p="lg" radius="md" shadow="xs">
-      <Text size="sm" c="dimmed">
-        {label}
-      </Text>
+    <Group align="flex-start" wrap="nowrap">
+      <ThemeIcon
+        color={color}
+        variant="light"
+        size={42}
+        radius="md"
+      >
+        <Icon size={23} stroke={1.8} />
+      </ThemeIcon>
 
-      <Text fw={700} fz={28} mt="xs">
-        {value}
-      </Text>
+      <div>
+        <Title order={3}>{title}</Title>
 
-      <Text size="xs" c="dimmed" mt="xs">
-        {description}
-      </Text>
+        <Text size="sm" c="dimmed" mt={2}>
+          {description}
+        </Text>
+      </div>
+    </Group>
+  );
+}
+
+interface ExtremeCardProps {
+  type: 'highest' | 'lowest';
+  label: string;
+  value: string;
+  suffix?: string;
+}
+
+function ExtremeCard({
+  type,
+  label,
+  value,
+  suffix = '',
+}: ExtremeCardProps) {
+  const isHighest = type === 'highest';
+
+  const color = isHighest ? 'bpsGreen' : 'bpsOrange';
+
+  const Icon = isHighest ? IconTrophy : IconArrowDownRight;
+
+  return (
+    <Paper
+      withBorder
+      p="lg"
+      h="100%"
+      bg={`${color}.0`}
+      style={{
+        borderColor: `var(--mantine-color-${color}-2)`,
+      }}
+    >
+      <Group
+        justify="space-between"
+        align="flex-start"
+        wrap="nowrap"
+      >
+        <div>
+          <Badge
+            color={color}
+            variant="light"
+            leftSection={<Icon size={13} stroke={2} />}
+          >
+            {isHighest ? 'Tertinggi' : 'Terendah'}
+          </Badge>
+
+          <Text fw={700} size="lg" mt="sm">
+            {label}
+          </Text>
+
+          <Text fw={750} fz={30} c={`${color}.8`} lh={1.2}>
+            {value}
+            {suffix}
+          </Text>
+        </div>
+
+        <ThemeIcon
+          color={color}
+          variant="filled"
+          size={46}
+          radius="xl"
+          flex="0 0 auto"
+        >
+          <Icon size={25} stroke={1.8} />
+        </ThemeIcon>
+      </Group>
+    </Paper>
+  );
+}
+function IndicatorCard({
+  icon: Icon,
+  color,
+  label,
+  value,
+  description,
+}: IndicatorCardProps) {
+  return (
+    <Paper
+      withBorder
+      p="lg"
+      shadow="xs"
+      h="100%"
+      style={{
+        borderTop: `4px solid var(--mantine-color-${color}-6)`,
+      }}
+    >
+      <Group align="flex-start" wrap="nowrap">
+        <ThemeIcon
+          color={color}
+          variant="light"
+          size={46}
+          radius="md"
+          flex="0 0 auto"
+        >
+          <Icon size={25} stroke={1.8} />
+        </ThemeIcon>
+
+        <div>
+          <Text size="sm" c="dimmed" lh={1.3}>
+            {label}
+          </Text>
+
+          <Text fw={750} fz={26} mt={4} lh={1.2}>
+            {value}
+          </Text>
+
+          <Text size="xs" c="dimmed" mt={6}>
+            {description}
+          </Text>
+        </div>
+      </Group>
     </Paper>
   );
 }

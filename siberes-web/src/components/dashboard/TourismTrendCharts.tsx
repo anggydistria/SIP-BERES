@@ -12,8 +12,11 @@ import {
 
 import type { BrsHistoryPeriod } from '@/types/brs-preview';
 
+type TourismMetric = 'all' | 'tpk' | 'rlmt';
+
 interface TourismTrendChartsProps {
   history: BrsHistoryPeriod[];
+  metric?: TourismMetric;
 }
 
 const MONTH_NAMES = [
@@ -55,6 +58,7 @@ const decimalFormatter = new Intl.NumberFormat('id-ID', {
 
 export function TourismTrendCharts({
   history,
+  metric = 'all',
 }: TourismTrendChartsProps) {
   const availablePeriods = history.filter(
     (period) => period.available
@@ -105,118 +109,123 @@ export function TourismTrendCharts({
 
   return (
     <Stack gap="lg">
-      <Paper withBorder p="lg" radius="md">
-        <Title order={4} ta="center">
-          Perkembangan TPK Hotel Klasifikasi Bintang di Kota
-          Samarinda (persen), {periodRange}
-        </Title>
+      {(metric === 'all' || metric === 'tpk') && (
+        <Paper withBorder p="lg" radius="md">
+          <Title order={4} ta="center">
+            Perkembangan TPK Hotel Klasifikasi Bintang di
+            Kota Samarinda (persen), {periodRange}
+          </Title>
 
-        <Text
-          size="sm"
-          c="dimmed"
-          ta="center"
-          mt={4}
-          mb="lg"
-        >
-          Tingkat Penghunian Kamar hotel klasifikasi bintang
-        </Text>
+          <Text
+            size="sm"
+            c="dimmed"
+            ta="center"
+            mt={4}
+            mb="lg"
+          >
+            Tingkat Penghunian Kamar hotel klasifikasi
+            bintang
+          </Text>
 
-        <LineChart
-          h={380}
-          data={tpkData}
-          dataKey="periode"
-          series={[
-            {
-              name: 'total',
-              label: 'Total Bintang',
-              color: 'blue.7',
-            },
-            {
-              name: 'bintang12',
-              label: 'Bintang 1 dan 2',
-              color: 'cyan.6',
-            },
-            {
-              name: 'bintang3',
-              label: 'Bintang 3',
-              color: 'green.6',
-            },
-            {
-              name: 'bintang4',
-              label: 'Bintang 4',
-              color: 'orange.6',
-            },
-            {
-              name: 'bintang5',
-              label: 'Bintang 5',
-              color: 'red.6',
-            },
-          ]}
-          curveType="linear"
-          connectNulls={false}
-          withLegend
-          withDots
-          gridAxis="xy"
-          yAxisProps={{
-            domain: [0, 100],
-          }}
-          valueFormatter={(value) =>
-            `${decimalFormatter.format(value)}%`
-          }
-        />
-      </Paper>
+          <LineChart
+            h={380}
+            data={tpkData}
+            dataKey="periode"
+            series={[
+              {
+                name: 'total',
+                label: 'Total Bintang',
+                color: 'bpsBlue.7',
+              },
+              {
+                name: 'bintang12',
+                label: 'Bintang 1 dan 2',
+                color: 'cyan.6',
+              },
+              {
+                name: 'bintang3',
+                label: 'Bintang 3',
+                color: 'bpsGreen.6',
+              },
+              {
+                name: 'bintang4',
+                label: 'Bintang 4',
+                color: 'bpsOrange.6',
+              },
+              {
+                name: 'bintang5',
+                label: 'Bintang 5',
+                color: 'red.6',
+              },
+            ]}
+            curveType="linear"
+            connectNulls={false}
+            withLegend
+            withDots
+            gridAxis="xy"
+            yAxisProps={{
+              domain: [0, 100],
+            }}
+            valueFormatter={(value) =>
+              `${decimalFormatter.format(value)}%`
+            }
+          />
+        </Paper>
+      )}
 
-      <Paper withBorder p="lg" radius="md">
-        <Title order={4} ta="center">
-          Rata-Rata Lama Menginap Tamu Hotel Klasifikasi
-          Bintang di Kota Samarinda (hari), {periodRange}
-        </Title>
+      {(metric === 'all' || metric === 'rlmt') && (
+        <Paper withBorder p="lg" radius="md">
+          <Title order={4} ta="center">
+            Rata-Rata Lama Menginap Tamu Hotel Klasifikasi
+            Bintang di Kota Samarinda (hari), {periodRange}
+          </Title>
 
-        <Text
-          size="sm"
-          c="dimmed"
-          ta="center"
-          mt={4}
-          mb="lg"
-        >
-          Perkembangan rata-rata lama menginap berdasarkan
-          jenis tamu
-        </Text>
+          <Text
+            size="sm"
+            c="dimmed"
+            ta="center"
+            mt={4}
+            mb="lg"
+          >
+            Perkembangan rata-rata lama menginap berdasarkan
+            jenis tamu
+          </Text>
 
-        <LineChart
-          h={380}
-          data={rlmtData}
-          dataKey="periode"
-          series={[
-            {
-              name: 'seluruhTamu',
-              label: 'Seluruh Tamu',
-              color: 'blue.7',
-            },
-            {
-              name: 'tamuAsing',
-              label: 'Tamu Asing',
-              color: 'orange.6',
-            },
-            {
-              name: 'tamuNusantara',
-              label: 'Tamu Nusantara',
-              color: 'green.6',
-            },
-          ]}
-          curveType="linear"
-          connectNulls={false}
-          withLegend
-          withDots
-          gridAxis="xy"
-          yAxisProps={{
-            domain: [0, 'auto'],
-          }}
-          valueFormatter={(value) =>
-            `${decimalFormatter.format(value)} hari`
-          }
-        />
-      </Paper>
+          <LineChart
+            h={380}
+            data={rlmtData}
+            dataKey="periode"
+            series={[
+              {
+                name: 'seluruhTamu',
+                label: 'Seluruh Tamu',
+                color: 'bpsBlue.7',
+              },
+              {
+                name: 'tamuAsing',
+                label: 'Tamu Asing',
+                color: 'bpsOrange.6',
+              },
+              {
+                name: 'tamuNusantara',
+                label: 'Tamu Nusantara',
+                color: 'bpsGreen.6',
+              },
+            ]}
+            curveType="linear"
+            connectNulls={false}
+            withLegend
+            withDots
+            gridAxis="xy"
+            yAxisProps={{
+              domain: [0, 'auto'],
+            }}
+            valueFormatter={(value) =>
+              `${decimalFormatter.format(value)} hari`
+            }
+          />
+        </Paper>
+      )}
     </Stack>
   );
 }
