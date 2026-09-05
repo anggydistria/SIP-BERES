@@ -8,11 +8,20 @@ import {
   StreamableFile,
   UploadedFile,
   UseInterceptors,
+  UseGuards,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { extname } from 'node:path';
 import { memoryStorage } from 'multer';
+import { CurrentUser } from '../../auth/decorator/current-user.decorator';
 
+import { Roles } from '../../auth/decorator/roles.decorator';
+
+import { JwtAuthGuard } from '../../auth/guard/jwt-auth.guard';
+
+import { RolesGuard } from '../../auth/guard/roles.guard';
+
+import type { AuthenticatedUser } from '../../auth/interfaces/authenticated-user.interface';
 import {
   DataUploadService,
   type ExcelPreviewResponse,
@@ -43,10 +52,12 @@ const excelFileInterceptor = FileInterceptor('file', {
 });
 
 @Controller('data-uploads')
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class DataUploadController {
   constructor(private readonly dataUploadService: DataUploadService) {}
 
   @Get(':id/file')
+  @Roles('KETUA_BRS', 'PENGELOLA')
   async getActiveFile(
     @Param('id', ParseIntPipe)
     id: number,
@@ -62,6 +73,7 @@ export class DataUploadController {
     });
   }
   @Post('preview')
+  @Roles('KETUA_BRS')
   @UseInterceptors(
     FileInterceptor('file', {
       storage: memoryStorage(),
@@ -94,15 +106,21 @@ export class DataUploadController {
 
     return this.dataUploadService.previewExcel(file.buffer);
   }
+
   @Post()
+  @Roles('KETUA_BRS')
   @UseInterceptors(excelFileInterceptor)
   async saveExcel(
-    @UploadedFile() file?: Express.Multer.File,
+    @UploadedFile()
+    file: Express.Multer.File | undefined,
+
+    @CurrentUser()
+    user: AuthenticatedUser,
   ): Promise<SaveExcelResponse> {
     if (!file) {
       throw new BadRequestException('File Excel wajib diunggah');
     }
 
-    return this.dataUploadService.saveExcel(file);
+    return this.dataUploadService.saveExcel(file, user.id);
   }
 }

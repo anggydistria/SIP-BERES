@@ -11,6 +11,7 @@ import { join } from 'node:path';
 import { PrismaService } from '../../prisma/prisma.service';
 import { SubmitFinalBrsDto } from '../dto/submit-final-brs.dto';
 import { RejectFinalBrsDto } from '../dto/reject-final-brs.dto';
+import type { AuthenticatedUser } from '../../auth/interfaces/authenticated-user.interface';
 
 @Injectable()
 export class BrsFinalService {
@@ -64,6 +65,7 @@ export class BrsFinalService {
     brsId: number,
     file: Express.Multer.File,
     dto: SubmitFinalBrsDto,
+    user: AuthenticatedUser,
   ) {
     this.validatePdf(file);
 
@@ -92,11 +94,6 @@ export class BrsFinalService {
         'Masih ada calon BRS final yang menunggu review',
       );
     }
-
-    const submittedBy = await this.developmentUser(
-      'pengelola-development',
-      'Petugas Pengelola Development',
-    );
 
     const latestHistory = await this.prisma.brsReviewHistory.findFirst({
       where: {
@@ -139,7 +136,7 @@ export class BrsFinalService {
           data: {
             brsId,
 
-            submittedById: submittedBy.id,
+            submittedById: user.id,
 
             originalName: file.originalname,
 
@@ -185,7 +182,7 @@ export class BrsFinalService {
     }
   }
 
-  async reject(brsId: number, dto: RejectFinalBrsDto) {
+  async reject(brsId: number, dto: RejectFinalBrsDto, user: AuthenticatedUser) {
     const note = dto.note.trim();
 
     if (!note) {
@@ -194,11 +191,6 @@ export class BrsFinalService {
 
     const submission = await this.pendingSubmission(brsId);
 
-    const reviewedBy = await this.developmentUser(
-      'ketua-development',
-      'Ketua BRS Development',
-    );
-
     await this.prisma.$transaction(async (transaction) => {
       await transaction.brsReviewHistory.create({
         data: {
@@ -206,7 +198,7 @@ export class BrsFinalService {
 
           submittedById: submission.submittedById,
 
-          reviewedById: reviewedBy.id,
+          reviewedById: user.id,
 
           submissionVersion: submission.version,
 
@@ -251,13 +243,8 @@ export class BrsFinalService {
     };
   }
 
-  async approve(brsId: number) {
+  async approve(brsId: number, user: AuthenticatedUser) {
     const submission = await this.pendingSubmission(brsId);
-
-    const approvedBy = await this.developmentUser(
-      'ketua-development',
-      'Ketua BRS Development',
-    );
 
     const storedName = `${randomUUID()}.pdf`;
 
@@ -292,7 +279,7 @@ export class BrsFinalService {
 
             submittedById: submission.submittedById,
 
-            reviewedById: approvedBy.id,
+            reviewedById: user.id,
 
             submissionVersion: submission.version,
 
@@ -317,7 +304,7 @@ export class BrsFinalService {
           data: {
             brsId,
 
-            approvedById: approvedBy.id,
+            approvedById: user.id,
 
             originalName: submission.originalName,
 
@@ -447,22 +434,5 @@ export class BrsFinalService {
       throw new BadRequestException('Isi file bukan PDF yang valid');
     }
   }
-  private developmentUser(username: string, name: string) {
-    return this.prisma.user.upsert({
-      where: {
-        username,
-      },
-
-      update: {
-        isActive: true,
-      },
-
-      create: {
-        username,
-        name,
-        passwordHash: null,
-        isActive: true,
-      },
-    });
-  }
+  private developmentUser(username: string, name: string) {}
 }

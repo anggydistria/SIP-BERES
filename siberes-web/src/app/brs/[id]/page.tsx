@@ -19,6 +19,7 @@ import {
   Tabs,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
+import { useAuth } from '@/context/AuthContext';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -101,6 +102,12 @@ export default function BrsDetailPage() {
   const params = useParams<{
     id: string;
   }>();
+
+  const { hasRole } = useAuth();
+
+  const isKetua = hasRole('KETUA_BRS');
+
+  const isPengelola = hasRole('PENGELOLA');
 
   const brsId = Number(params.id);
 
@@ -324,7 +331,7 @@ export default function BrsDetailPage() {
     } catch (caughtError) {
       setError(errorMessage(caughtError));
     }
-  } 
+  }
   async function handleDownloadFinal() {
     setActionLoading(true);
     setError(null);
@@ -1285,7 +1292,7 @@ export default function BrsDetailPage() {
                       Unduh Draft Word
                     </Button>
 
-                    {brs.status === 'DRAFT' && (
+                    {brs.status === 'DRAFT' && isKetua && (
                       <Button
                         color="blue"
                         loading={actionLoading}
@@ -1310,111 +1317,112 @@ export default function BrsDetailPage() {
                 </Stack>
               )}
             </Paper>
-            {(brs.status === 'DRAFT_READY' ||
-              brs.status === 'FINAL_REJECTED') && (
-              <Paper withBorder p="lg" radius="md">
-                {brs.status === 'FINAL_REJECTED' &&
-                  latestRejected && (
+            {isPengelola &&
+              (brs.status === 'DRAFT_READY' ||
+                brs.status === 'FINAL_REJECTED') && (
+                <Paper withBorder p="lg" radius="md">
+                  {brs.status === 'FINAL_REJECTED' &&
+                    latestRejected && (
+                      <Alert
+                        color="red"
+                        title="Perbaikan diperlukan"
+                      >
+                        <Text mb={4}>
+                          {latestRejected.note ??
+                            'Tidak ada catatan penolakan.'}
+                        </Text>
+
+                        <Text size="xs" c="dimmed">
+                          Ditolak oleh{' '}
+                          {latestRejected.reviewedBy.name}
+                          {' pada '}
+                          {formatDateTime(
+                            latestRejected.reviewedAt
+                          )}
+                        </Text>
+                      </Alert>
+                    )}
+                  <Title order={4} mb={4}>
+                    Unggah Calon BRS Final
+                  </Title>
+
+                  <Text size="sm" c="dimmed" mb="lg">
+                    Unggah PDF yang sudah diperbaiki oleh
+                    Petugas Pengelola untuk diperiksa Ketua
+                    BRS.
+                  </Text>
+
+                  {brs.status === 'FINAL_REJECTED' && (
                     <Alert
                       color="red"
-                      title="Perbaikan diperlukan"
+                      title="Pengajuan sebelumnya ditolak"
+                      mb="md"
                     >
-                      <Text mb={4}>
-                        {latestRejected.note ??
-                          'Tidak ada catatan penolakan.'}
-                      </Text>
-
-                      <Text size="xs" c="dimmed">
-                        Ditolak oleh{' '}
-                        {latestRejected.reviewedBy.name}
-                        {' pada '}
-                        {formatDateTime(
-                          latestRejected.reviewedAt
-                        )}
-                      </Text>
+                      Silakan perbaiki BRS sesuai catatan
+                      Ketua, kemudian unggah kembali PDF
+                      perbaikannya.
                     </Alert>
                   )}
-                <Title order={4} mb={4}>
-                  Unggah Calon BRS Final
-                </Title>
 
-                <Text size="sm" c="dimmed" mb="lg">
-                  Unggah PDF yang sudah diperbaiki oleh
-                  Petugas Pengelola untuk diperiksa Ketua
-                  BRS.
-                </Text>
-
-                {brs.status === 'FINAL_REJECTED' && (
-                  <Alert
-                    color="red"
-                    title="Pengajuan sebelumnya ditolak"
-                    mb="md"
-                  >
-                    Silakan perbaiki BRS sesuai catatan
-                    Ketua, kemudian unggah kembali PDF
-                    perbaikannya.
-                  </Alert>
-                )}
-
-                <Stack gap="md">
-                  <FileInput
-                    label="File calon BRS final"
-                    description="Format PDF, maksimal 20 MB"
-                    placeholder="Pilih file PDF"
-                    accept="application/pdf,.pdf"
-                    value={finalFile}
-                    onChange={setFinalFile}
-                    clearable
-                    required
-                  />
-
-                  <SimpleGrid
-                    cols={{
-                      base: 1,
-                      sm: 2,
-                    }}
-                  >
-                    <TextInput
-                      label="Nomor BRS"
-                      placeholder="Contoh: 15/09/6472/Th. II"
-                      value={nomorBrs}
-                      onChange={(event) => {
-                        setNomorBrs(
-                          event.currentTarget.value
-                        );
-                      }}
+                  <Stack gap="md">
+                    <FileInput
+                      label="File calon BRS final"
+                      description="Format PDF, maksimal 20 MB"
+                      placeholder="Pilih file PDF"
+                      accept="application/pdf,.pdf"
+                      value={finalFile}
+                      onChange={setFinalFile}
+                      clearable
                       required
                     />
 
-                    <TextInput
-                      type="date"
-                      label="Tanggal publikasi"
-                      value={tanggalPublikasi}
-                      onChange={(event) => {
-                        setTanggalPublikasi(
-                          event.currentTarget.value
-                        );
-                      }}
-                    />
-                  </SimpleGrid>
-
-                  <Group justify="flex-end">
-                    <Button
-                      color="orange"
-                      loading={actionLoading}
-                      disabled={
-                        !finalFile || !nomorBrs.trim()
-                      }
-                      onClick={() => {
-                        void handleSubmitFinal();
+                    <SimpleGrid
+                      cols={{
+                        base: 1,
+                        sm: 2,
                       }}
                     >
-                      Kirim untuk Review
-                    </Button>
-                  </Group>
-                </Stack>
-              </Paper>
-            )}
+                      <TextInput
+                        label="Nomor BRS"
+                        placeholder="Contoh: 15/09/6472/Th. II"
+                        value={nomorBrs}
+                        onChange={(event) => {
+                          setNomorBrs(
+                            event.currentTarget.value
+                          );
+                        }}
+                        required
+                      />
+
+                      <TextInput
+                        type="date"
+                        label="Tanggal publikasi"
+                        value={tanggalPublikasi}
+                        onChange={(event) => {
+                          setTanggalPublikasi(
+                            event.currentTarget.value
+                          );
+                        }}
+                      />
+                    </SimpleGrid>
+
+                    <Group justify="flex-end">
+                      <Button
+                        color="orange"
+                        loading={actionLoading}
+                        disabled={
+                          !finalFile || !nomorBrs.trim()
+                        }
+                        onClick={() => {
+                          void handleSubmitFinal();
+                        }}
+                      >
+                        Kirim untuk Review
+                      </Button>
+                    </Group>
+                  </Stack>
+                </Paper>
+              )}
             {brs.status === 'FINAL_SUBMITTED' &&
               brs.finalSubmission && (
                 <Paper withBorder p="lg" radius="md">
@@ -1500,24 +1508,28 @@ export default function BrsDetailPage() {
                       Unduh PDF
                     </Button>
 
-                    <Button
-                      color="red"
-                      variant="light"
-                      disabled={actionLoading}
-                      onClick={rejectModal.open}
-                    >
-                      Tolak
-                    </Button>
+                    {isKetua && (
+                      <>
+                        <Button
+                          color="red"
+                          variant="light"
+                          disabled={actionLoading}
+                          onClick={rejectModal.open}
+                        >
+                          Tolak
+                        </Button>
 
-                    <Button
-                      color="green"
-                      loading={actionLoading}
-                      onClick={() => {
-                        void handleApprove();
-                      }}
-                    >
-                      Setujui
-                    </Button>
+                        <Button
+                          color="green"
+                          loading={actionLoading}
+                          onClick={() => {
+                            void handleApprove();
+                          }}
+                        >
+                          Setujui
+                        </Button>
+                      </>
+                    )}
                   </Group>
 
                   <Paper withBorder p="lg" radius="md">
@@ -1714,47 +1726,49 @@ export default function BrsDetailPage() {
           </Tabs.Panel>
         </Tabs>
       </Stack>
-      <Modal
-        opened={rejectOpened}
-        onClose={rejectModal.close}
-        title="Tolak Calon BRS Final"
-        centered
-      >
-        <Stack>
-          <Textarea
-            label="Catatan penolakan"
-            description="Jelaskan bagian yang perlu diperbaiki"
-            placeholder="Contoh: Perbaiki narasi TPK dan nomor BRS."
-            value={rejectNote}
-            onChange={(event) => {
-              setRejectNote(event.currentTarget.value);
-            }}
-            minRows={4}
-            required
-          />
-
-          <Group justify="flex-end">
-            <Button
-              variant="default"
-              disabled={actionLoading}
-              onClick={rejectModal.close}
-            >
-              Batal
-            </Button>
-
-            <Button
-              color="red"
-              loading={actionLoading}
-              disabled={!rejectNote.trim()}
-              onClick={() => {
-                void handleReject();
+      {isKetua && (
+        <Modal
+          opened={rejectOpened}
+          onClose={rejectModal.close}
+          title="Tolak Calon BRS Final"
+          centered
+        >
+          <Stack>
+            <Textarea
+              label="Catatan penolakan"
+              description="Jelaskan bagian yang perlu diperbaiki"
+              placeholder="Contoh: Perbaiki narasi TPK dan nomor BRS."
+              value={rejectNote}
+              onChange={(event) => {
+                setRejectNote(event.currentTarget.value);
               }}
-            >
-              Tolak BRS
-            </Button>
-          </Group>
-        </Stack>
-      </Modal>
+              minRows={4}
+              required
+            />
+
+            <Group justify="flex-end">
+              <Button
+                variant="default"
+                disabled={actionLoading}
+                onClick={rejectModal.close}
+              >
+                Batal
+              </Button>
+
+              <Button
+                color="red"
+                loading={actionLoading}
+                disabled={!rejectNote.trim()}
+                onClick={() => {
+                  void handleReject();
+                }}
+              >
+                Tolak BRS
+              </Button>
+            </Group>
+          </Stack>
+        </Modal>
+      )}
     </Container>
   );
 }

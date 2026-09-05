@@ -1,5 +1,15 @@
-import { Controller, Get, ParseIntPipe, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  ParseIntPipe,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
+import { Roles } from '../../auth/decorator/roles.decorator';
 
+import { JwtAuthGuard } from '../../auth/guard/jwt-auth.guard';
+
+import { RolesGuard } from '../../auth/guard/roles.guard';
 import {
   BrsAnalyticsService,
   type BrsAnalyticsResponse,
@@ -11,6 +21,8 @@ import {
 } from '../service/brs-narrative.service';
 
 @Controller('brs-analytics')
+@UseGuards(JwtAuthGuard, RolesGuard)
+@Roles('KETUA_BRS', 'PENGELOLA', 'ADMIN')
 export class BrsAnalyticsController {
   constructor(
     private readonly analyticsService: BrsAnalyticsService,

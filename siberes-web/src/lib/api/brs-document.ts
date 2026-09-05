@@ -1,3 +1,4 @@
+import { apiFetch } from './api-fetch';
 const API_URL =
   process.env.NEXT_PUBLIC_API_URL ??
   'http://localhost:3001/api';
@@ -15,8 +16,7 @@ export async function downloadBrsDocument(
     bulan: String(bulan),
     tahun: String(tahun),
   });
-
-  const response = await fetch(
+  const response = await apiFetch(
     `${API_URL}/brs-documents/generate?${searchParams.toString()}`,
     {
       method: 'GET',

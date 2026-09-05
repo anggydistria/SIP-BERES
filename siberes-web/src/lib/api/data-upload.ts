@@ -2,7 +2,7 @@ import type {
   ExcelPreviewResponse,
   SaveExcelResponse,
 } from '@/types/data-upload';
-
+import { apiFetch } from './api-fetch';
 const API_URL =
   process.env.NEXT_PUBLIC_API_URL ??
   'http://localhost:3001/api';
@@ -15,10 +15,10 @@ async function sendExcelFile<T>(
 
   formData.append('file', file);
 
-  const response = await fetch(`${API_URL}${endpoint}`, {
-    method: 'POST',
-    body: formData,
-  });
+const response = await apiFetch(`${API_URL}${endpoint}`, {
+  method: 'POST',
+  body: formData,
+});
 
   const responseText = await response.text();
 
@@ -68,9 +68,9 @@ export function saveExcel(
 }
 
 export async function downloadActiveExcel(id: number) {
-  const response = await fetch(
-    `${API_URL}/data-uploads/${id}/file`
-  );
+const response = await apiFetch(
+  `${API_URL}/data-uploads/${id}/file`
+);
 
   if (!response.ok) {
     const data = (await response

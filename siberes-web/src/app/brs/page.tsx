@@ -19,7 +19,7 @@ import { useEffect, useState } from 'react';
 import { BrsTable } from '@/components/brs/BrsTable';
 import { getBrsList } from '@/lib/api/brs';
 import type { Brs, BrsPaginationMeta } from '@/types/brs';
-
+import { useAuth } from '@/context/AuthContext';
 const MONTH_OPTIONS = [
   { value: '1', label: 'Januari' },
   { value: '2', label: 'Februari' },
@@ -53,7 +53,9 @@ export default function BrsPage() {
   const [loading, setLoading] = useState(true);
 
   const [error, setError] = useState<string | null>(null);
+  const { hasRole } = useAuth();
 
+  const canUploadExcel = hasRole('KETUA_BRS');
   useEffect(() => {
     let cancelled = false;
 
@@ -164,9 +166,11 @@ export default function BrsPage() {
             </Text>
           </div>
 
-          <Button component={Link} href="/brs/upload">
-            Unggah Data BRS
-          </Button>
+          {canUploadExcel && (
+            <Button component={Link} href="/brs/upload">
+              Unggah Data BRS
+            </Button>
+          )}
         </Group>
 
         <Paper withBorder p="md" radius="md">

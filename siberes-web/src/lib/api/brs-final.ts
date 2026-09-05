@@ -1,3 +1,5 @@
+import { apiFetch } from './api-fetch';
+
 const API_URL =
   process.env.NEXT_PUBLIC_API_URL ??
   'http://localhost:3001/api';
@@ -107,7 +109,7 @@ export function previewApprovedFinal(brsId: number) {
  * Helper untuk request yang menghasilkan JSON.
  */
 async function requestJson(url: string, init: RequestInit) {
-  const response = await fetch(url, init);
+  const response = await apiFetch(url, init);
 
   const data = (await response.json()) as {
     message?: string | string[];
@@ -123,7 +125,6 @@ async function requestJson(url: string, init: RequestInit) {
 
   return data;
 }
-
 /*
  * Helper untuk mengunduh file dari backend.
  */
@@ -131,7 +132,7 @@ async function downloadFile(
   url: string,
   fallbackFilename: string
 ) {
-  const response = await fetch(url);
+  const response = await apiFetch(url);
 
   if (!response.ok) {
     const data = (await response

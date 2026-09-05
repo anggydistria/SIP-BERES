@@ -3,7 +3,7 @@ import type {
   BrsNarrative,
   BrsPreviewData,
 } from '@/types/brs-preview';
-
+import { apiFetch } from './api-fetch';
 const API_URL =
   process.env.NEXT_PUBLIC_API_URL ??
   'http://localhost:3001/api';
@@ -36,9 +36,9 @@ export async function getBrsPreview(
 }
 
 async function requestJson<T>(url: string): Promise<T> {
-  const response = await fetch(url, {
-    cache: 'no-store',
-  });
+ const response = await apiFetch(url, {
+   cache: 'no-store',
+ });
 
   const responseText = await response.text();
 

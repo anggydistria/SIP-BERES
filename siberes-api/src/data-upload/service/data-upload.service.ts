@@ -191,7 +191,10 @@ export class DataUploadService {
     };
   }
 
-  async saveExcel(file: Express.Multer.File): Promise<SaveExcelResponse> {
+  async saveExcel(
+    file: Express.Multer.File,
+    uploadedById: number,
+  ): Promise<SaveExcelResponse> {
     const preview = this.previewExcel(file.buffer);
 
     if (preview.invalidRows > 0) {
@@ -200,19 +203,7 @@ export class DataUploadService {
         errors: preview.errors,
       });
     }
-
-    const developmentUser = await this.prisma.user.upsert({
-      where: {
-        username: 'system-development',
-      },
-      update: {},
-      create: {
-        name: 'System Development',
-        username: 'system-development',
-        passwordHash: null,
-        isActive: true,
-      },
-    });
+ 
 
     const brs = await this.prisma.brs.upsert({
       where: {
@@ -290,8 +281,7 @@ export class DataUploadService {
         const createdUpload = await transaction.dataUpload.create({
           data: {
             brsId: brs.id,
-            uploadedById: developmentUser.id,
-
+            uploadedById: uploadedById,
             originalName: file.originalname,
 
             storedName,

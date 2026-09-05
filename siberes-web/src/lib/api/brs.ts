@@ -6,6 +6,8 @@ import type {
   CreateBrsPayload,
 } from '@/types/brs';
 
+import { apiFetch } from './api-fetch';
+
 const API_URL =
   process.env.NEXT_PUBLIC_API_URL ??
   'http://localhost:3001/api';
@@ -53,7 +55,7 @@ export async function getBrsList(
     searchParams.set('tahun', String(params.tahun));
   }
 
-  const response = await fetch(
+  const response = await apiFetch(
     `${API_URL}/brs?${searchParams.toString()}`,
     {
       cache: 'no-store',
@@ -66,12 +68,13 @@ export async function getBrsList(
 export async function createBrs(
   payload: CreateBrsPayload
 ): Promise<Brs> {
-  const response = await fetch(`${API_URL}/brs`, {
+  const response = await apiFetch(`${API_URL}/brs`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify(payload),
+ 
   });
 
   return parseResponse<Brs>(response);
@@ -80,8 +83,9 @@ export async function createBrs(
 export async function getBrsDetail(
   id: number
 ): Promise<BrsDetail> {
-  const response = await fetch(`${API_URL}/brs/${id}`, {
+  const response = await apiFetch(`${API_URL}/brs/${id}`, {
     cache: 'no-store',
+    
   });
 
   const data = (await response.json()) as

@@ -10,12 +10,14 @@ import { DashboardModule } from './dashboard/dashboard.module';
 import { BrsAnalyticsModule } from './brs-analytics/brs-analytics.module';
 import { BrsDocumentModule } from './brs-document/brs-document.module';
 import { BrsFinalModule } from './brs-final/brs-final.module';
+import { AuthModule } from './auth/auth.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
     }),
     PrismaModule,
+    AuthModule,
     BrsModule,
     DataUploadModule,
     DashboardModule,

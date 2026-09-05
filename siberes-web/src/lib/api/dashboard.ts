@@ -1,4 +1,5 @@
 import type { DashboardSummary } from '@/types/dashboard';
+import { apiFetch } from './api-fetch';
 
 const API_URL =
   process.env.NEXT_PUBLIC_API_URL ??
@@ -13,12 +14,12 @@ export async function getDashboardSummary(
     tahun: String(tahun),
   });
 
-  const response = await fetch(
-    `${API_URL}/dashboard?${searchParams.toString()}`,
-    {
-      cache: 'no-store',
-    }
-  );
+const response = await apiFetch(
+  `${API_URL}/dashboard?${searchParams.toString()}`,
+  {
+    cache: 'no-store',
+  }
+);
 
   const responseText = await response.text();
 

@@ -1,8 +1,8 @@
 import '@mantine/core/styles.css';
-import '@mantine/core/styles.css';
 import '@mantine/charts/styles.css';
 import '@mantine/dropzone/styles.css';
-
+import { AuthGate } from '@/components/auth/AuthGate';
+import { AuthProvider } from '@/context/AuthContext';
 import {
   ColorSchemeScript,
   MantineProvider,
@@ -27,7 +27,9 @@ export default function RootLayout({
 
       <body>
         <MantineProvider defaultColorScheme="light">
-          {children}
+          <AuthProvider>
+            <AuthGate>{children}</AuthGate>
+          </AuthProvider>
         </MantineProvider>
       </body>
     </html>

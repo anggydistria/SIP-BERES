@@ -79,7 +79,7 @@ export function DashboardView() {
 
     getBrsList({
       page: 1,
-      limit: 100,
+      limit: 50,
     })
       .then(async (response) => {
         const latestBrs = response.data[0];
