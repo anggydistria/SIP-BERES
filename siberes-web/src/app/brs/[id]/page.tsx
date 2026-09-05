@@ -17,7 +17,32 @@ import {
   Textarea,
   Table,
   Tabs,
+  Stepper,
+  ThemeIcon,
 } from '@mantine/core';
+import {
+  IconAlertTriangle,
+  IconArrowLeft,
+  IconCircleCheck,
+  IconEye,
+  IconFileCheck,
+  IconFileSpreadsheet,
+  IconHistory,
+  IconInfoCircle,
+  IconBed,
+  IconBuilding,
+  IconCalendar,
+  IconCalendarEvent,
+  IconFileText,
+  IconHash,
+  IconMapPin,
+  IconPercentage,
+  IconPlane,
+  IconTag,
+  IconClock,
+  IconUsers,
+  IconWorld,
+} from '@tabler/icons-react';
 import { useDisclosure } from '@mantine/hooks';
 import { useAuth } from '@/context/AuthContext';
 import Link from 'next/link';
@@ -420,39 +445,158 @@ export default function BrsDetailPage() {
   const latestRejected = brs.reviewHistories.find(
     (history) => history.decision === 'REJECTED'
   );
+  const workflowStep: Record<BrsStatus, number> = {
+    DRAFT: 0,
+    DRAFT_READY: 1,
+    FINAL_SUBMITTED: 2,
+    FINAL_REJECTED: 2,
+    FINAL: 3,
+  };
 
+  const StatusIcon =
+    brs.status === 'FINAL'
+      ? IconCircleCheck
+      : brs.status === 'FINAL_REJECTED'
+        ? IconAlertTriangle
+        : IconClock;  
   return (
     <Container size="xl" py="xl">
       <Stack gap="lg">
-        <Group justify="space-between" align="flex-start">
-          <div>
-            <Button
-              component={Link}
-              href="/brs"
-              variant="subtle"
-              px={0}
+        <Paper
+          withBorder
+          p="lg"
+          style={{
+            background:
+              'linear-gradient(135deg, var(--mantine-color-bpsBlue-0), var(--mantine-color-bpsGreen-0))',
+            borderColor: 'var(--mantine-color-bpsBlue-2)',
+          }}
+        >
+          <Stack gap="lg">
+            <Group
+              justify="space-between"
+              align="flex-start"
             >
-              Kembali ke daftar BRS
-            </Button>
+              <Group align="flex-start" wrap="nowrap">
+                <ThemeIcon
+                  size={54}
+                  radius="md"
+                  variant="gradient"
+                  gradient={{
+                    from: 'bpsBlue.6',
+                    to: 'bpsGreen.6',
+                    deg: 135,
+                  }}
+                >
+                  <IconFileText size={29} stroke={1.8} />
+                </ThemeIcon>
 
-            <Title order={2}>
-              BRS {MONTH_NAMES[brs.bulan]} {brs.tahun}
-            </Title>
+                <div>
+                  <Button
+                    component={Link}
+                    href="/brs"
+                    variant="subtle"
+                    size="compact-sm"
+                    px={0}
+                    leftSection={
+                      <IconArrowLeft size={16} />
+                    }
+                  >
+                    Daftar BRS
+                  </Button>
 
-            <Text c="dimmed">
-              Kelola draft, review, dan PDF final.
-            </Text>
-          </div>
+                  <Title order={2} mt={4}>
+                    BRS {MONTH_NAMES[brs.bulan]} {brs.tahun}
+                  </Title>
 
-          <Badge
-            size="lg"
-            color={STATUS[brs.status].color}
-            variant="light"
-          >
-            {STATUS[brs.status].label}
-          </Badge>
-        </Group>
+                  <Text c="dimmed" mt={2}>
+                    Kelola data, draft, proses review, dan
+                    publikasi BRS final.
+                  </Text>
+                </div>
+              </Group>
 
+              <Badge
+                size="lg"
+                color={
+                  brs.status === 'FINAL'
+                    ? 'bpsGreen'
+                    : brs.status === 'FINAL_REJECTED'
+                      ? 'red'
+                      : brs.status === 'FINAL_SUBMITTED'
+                        ? 'bpsOrange'
+                        : 'bpsBlue'
+                }
+                variant="light"
+                leftSection={
+                  <StatusIcon size={14} stroke={2} />
+                }
+              >
+                {STATUS[brs.status].label}
+              </Badge>
+            </Group>
+
+            <Paper withBorder p="md" bg="white" shadow="xs">
+              <div
+                style={{
+                  overflowX: 'auto',
+                }}
+              >
+                <div
+                  style={{
+                    minWidth: 680,
+                  }}
+                >
+                  <Stepper
+                    active={workflowStep[brs.status]}
+                    color={
+                      brs.status === 'FINAL_REJECTED'
+                        ? 'red'
+                        : 'bpsBlue'
+                    }
+                    size="sm"
+                    allowNextStepsSelect={false}
+                  >
+                    <Stepper.Step
+                      label="Data Excel"
+                      description="Data berhasil diunggah"
+                      icon={
+                        <IconFileSpreadsheet size={18} />
+                      }
+                    />
+
+                    <Stepper.Step
+                      label="Draft Siap"
+                      description="Draft selesai diperiksa"
+                      icon={<IconFileText size={18} />}
+                    />
+
+                    <Stepper.Step
+                      label="Review Final"
+                      description={
+                        brs.status === 'FINAL_REJECTED'
+                          ? 'Perlu diperbaiki'
+                          : 'Diperiksa Ketua BRS'
+                      }
+                      icon={
+                        brs.status === 'FINAL_REJECTED' ? (
+                          <IconAlertTriangle size={18} />
+                        ) : (
+                          <IconEye size={18} />
+                        )
+                      }
+                    />
+
+                    <Stepper.Step
+                      label="BRS Final"
+                      description="Disetujui dan dipublikasi"
+                      icon={<IconFileCheck size={18} />}
+                    />
+                  </Stepper>
+                </div>
+              </div>
+            </Paper>
+          </Stack>
+        </Paper>
         {error && (
           <Alert color="red" title="Terjadi kesalahan">
             {error}
@@ -472,54 +616,95 @@ export default function BrsDetailPage() {
 
         <Tabs
           defaultValue="informasi"
-          variant="outline"
+          variant="pills"
+          color="bpsBlue"
           radius="md"
         >
-          <Tabs.List>
-            <Tabs.Tab value="informasi">
+          <Tabs.List
+            grow
+            p={6}
+            bg="bpsBlue.0"
+            style={{
+              borderRadius: 'var(--mantine-radius-md)',
+            }}
+          >
+            <Tabs.Tab
+              value="informasi"
+              leftSection={<IconInfoCircle size={18} />}
+            >
               Informasi dan Proses
             </Tabs.Tab>
 
-            <Tabs.Tab value="preview">Preview BRS</Tabs.Tab>
+            <Tabs.Tab
+              value="preview"
+              leftSection={<IconEye size={18} />}
+            >
+              Preview BRS
+            </Tabs.Tab>
 
-            <Tabs.Tab value="riwayat">
-              Riwayat Review
+            <Tabs.Tab
+              value="riwayat"
+              leftSection={<IconHistory size={18} />}
+            >
+              Dokumen dan Riwayat
             </Tabs.Tab>
           </Tabs.List>
 
           <Tabs.Panel value="informasi" pt="lg">
             <Stack gap="lg">
-              {/* <Paper withBorder p="lg" radius="md">
-                <Title order={4} mb="md">
-                  Informasi BRS
-                </Title>
+              <Paper withBorder p="lg" shadow="xs">
+                <Group mb="lg" wrap="nowrap">
+                  <ThemeIcon
+                    color="bpsBlue"
+                    variant="light"
+                    size={42}
+                  >
+                    <IconFileText size={23} />
+                  </ThemeIcon>
+
+                  <div>
+                    <Title order={4}>Informasi BRS</Title>
+
+                    <Text size="sm" c="dimmed">
+                      Identitas dan informasi publikasi BRS.
+                    </Text>
+                  </div>
+                </Group>
 
                 <SimpleGrid
                   cols={{
                     base: 1,
                     sm: 2,
-                    md: 4,
+                    lg: 4,
                   }}
                 >
-                  <Info
-                    label="Tahun"
-                    value={String(brs.tahun)}
+                  <MetadataCard
+                    icon={IconCalendar}
+                    color="bpsBlue"
+                    label="Periode"
+                    value={`${MONTH_NAMES[brs.bulan]} ${brs.tahun}`}
                   />
 
-                  <Info
-                    label="Bulan"
-                    value={MONTH_NAMES[brs.bulan]}
+                  <MetadataCard
+                    icon={IconTag}
+                    color="bpsGreen"
+                    label="Jenis BRS"
+                    value={brs.jenisBrs}
                   />
 
-                  <Info
+                  <MetadataCard
+                    icon={IconHash}
+                    color="bpsOrange"
                     label="Nomor BRS"
                     value={
                       brs.nomorBrs ?? 'Belum ditetapkan'
                     }
                   />
 
-                  <Info
-                    label="Tanggal publikasi"
+                  <MetadataCard
+                    icon={IconCalendarEvent}
+                    color="bpsBlue"
+                    label="Tanggal Publikasi"
                     value={
                       brs.tanggalPublikasi
                         ? formatDate(brs.tanggalPublikasi)
@@ -527,17 +712,27 @@ export default function BrsDetailPage() {
                     }
                   />
                 </SimpleGrid>
-              </Paper> */}
+              </Paper>
 
               <Paper withBorder p="lg" radius="md">
-                <Title order={4} mb={4}>
-                  Ringkasan BRS
-                </Title>
+                <Group mb="lg" wrap="nowrap">
+                  <ThemeIcon
+                    color="bpsGreen"
+                    variant="light"
+                    size={42}
+                  >
+                    <IconBuilding size={23} />
+                  </ThemeIcon>
 
-                <Text size="sm" c="dimmed" mb="lg">
-                  Ringkasan indikator berdasarkan data Excel
-                  aktif.
-                </Text>
+                  <div>
+                    <Title order={4}>Ringkasan BRS</Title>
+
+                    <Text size="sm" c="dimmed">
+                      Ringkasan indikator berdasarkan data
+                      Excel aktif.
+                    </Text>
+                  </div>
+                </Group>
 
                 {!summary ? (
                   <Alert
@@ -551,10 +746,12 @@ export default function BrsDetailPage() {
                     cols={{
                       base: 1,
                       sm: 2,
-                      md: 4,
+                      lg: 4,
                     }}
                   >
                     <IndicatorCard
+                      icon={IconBuilding}
+                      color="bpsBlue"
                       label="Malam Kamar Tersedia"
                       value={formatNumber(
                         summary.indicators
@@ -563,6 +760,8 @@ export default function BrsDetailPage() {
                     />
 
                     <IndicatorCard
+                      icon={IconBed}
+                      color="bpsOrange"
                       label="Malam Kamar Terjual"
                       value={formatNumber(
                         summary.indicators.malamKamarTerjual
@@ -570,6 +769,8 @@ export default function BrsDetailPage() {
                     />
 
                     <IndicatorCard
+                      icon={IconPlane}
+                      color="bpsGreen"
                       label="Tamu Asing"
                       value={formatNumber(
                         summary.indicators.tamuAsing
@@ -577,6 +778,8 @@ export default function BrsDetailPage() {
                     />
 
                     <IndicatorCard
+                      icon={IconUsers}
+                      color="bpsBlue"
                       label="Tamu Nusantara"
                       value={formatNumber(
                         summary.indicators.tamuNusantara
@@ -584,6 +787,8 @@ export default function BrsDetailPage() {
                     />
 
                     <IndicatorCard
+                      icon={IconPercentage}
+                      color="bpsOrange"
                       label="TPK"
                       value={formatDecimal(
                         summary.indicators
@@ -593,6 +798,8 @@ export default function BrsDetailPage() {
                     />
 
                     <IndicatorCard
+                      icon={IconClock}
+                      color="bpsGreen"
                       label="Rata-rata Lama Menginap"
                       value={formatDecimal(
                         summary.indicators.rataLamaMenginap,
@@ -601,6 +808,8 @@ export default function BrsDetailPage() {
                     />
 
                     <IndicatorCard
+                      icon={IconWorld}
+                      color="bpsOrange"
                       label="RLM Tamu Asing"
                       value={formatNullableDecimal(
                         summary.indicators
@@ -610,6 +819,8 @@ export default function BrsDetailPage() {
                     />
 
                     <IndicatorCard
+                      icon={IconMapPin}
+                      color="bpsGreen"
                       label="RLM Tamu Nusantara"
                       value={formatNullableDecimal(
                         summary.indicators
@@ -1857,29 +2068,111 @@ function ChangeValue({
 }
 
 interface IndicatorCardProps {
+  icon: ComponentType<{
+    size?: number | string;
+    stroke?: number;
+  }>;
+  color: BrsColor;
   label: string;
   value: string;
 }
 
 function IndicatorCard({
+  icon: Icon,
+  color,
   label,
   value,
 }: IndicatorCardProps) {
   return (
-    <Paper withBorder p="md" radius="md" bg="gray.0">
-      <Text size="sm" c="dimmed" mb={6}>
-        {label}
-      </Text>
+    <Paper
+      withBorder
+      p="md"
+      h="100%"
+      shadow="xs"
+      style={{
+        borderTop: `4px solid var(--mantine-color-${color}-6)`,
+      }}
+    >
+      <Group align="flex-start" wrap="nowrap">
+        <ThemeIcon
+          color={color}
+          variant="light"
+          size={42}
+          radius="md"
+          flex="0 0 auto"
+        >
+          <Icon size={23} stroke={1.8} />
+        </ThemeIcon>
 
-      <Text fw={700} size="xl">
-        {value}
-      </Text>
+        <div>
+          <Text size="sm" c="dimmed" lh={1.25}>
+            {label}
+          </Text>
+
+          <Text fw={750} fz={24} mt={5} lh={1.2}>
+            {value}
+          </Text>
+        </div>
+      </Group>
     </Paper>
   );
 }
 interface InfoProps {
   label: string;
   value: string;
+}
+
+type BrsColor = 'bpsBlue' | 'bpsGreen' | 'bpsOrange';
+
+interface MetadataCardProps {
+  icon: ComponentType<{
+    size?: number | string;
+    stroke?: number;
+  }>;
+  color: BrsColor;
+  label: string;
+  value: string;
+}
+
+function MetadataCard({
+  icon: Icon,
+  color,
+  label,
+  value,
+}: MetadataCardProps) {
+  return (
+    <Paper
+      withBorder
+      p="md"
+      bg={`${color}.0`}
+      h="100%"
+      style={{
+        borderColor: `var(--mantine-color-${color}-2)`,
+      }}
+    >
+      <Group align="flex-start" wrap="nowrap">
+        <ThemeIcon
+          color={color}
+          variant="light"
+          size={38}
+          radius="md"
+          flex="0 0 auto"
+        >
+          <Icon size={20} stroke={1.8} />
+        </ThemeIcon>
+
+        <div>
+          <Text size="xs" c="dimmed">
+            {label}
+          </Text>
+
+          <Text fw={650} mt={3}>
+            {value}
+          </Text>
+        </div>
+      </Group>
+    </Paper>
+  );
 }
 
 function Info({ label, value }: InfoProps) {
