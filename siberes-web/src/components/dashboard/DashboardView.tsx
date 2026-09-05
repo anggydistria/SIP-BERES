@@ -5,7 +5,6 @@ import {
   Badge,
   Button,
   Group,
-  NumberInput,
   Paper,
   Select,
   SimpleGrid,
@@ -16,7 +15,7 @@ import {
 } from '@mantine/core';
 import { useEffect, useState } from 'react';
 import { getBrsPreview } from '@/lib/api/brs-preview';
-
+import type { Brs } from '@/types/brs';
 import type {
   BrsAnalytics,
   BrsHistoryPeriod,
@@ -26,8 +25,9 @@ import type {
 } from '@/types/brs-preview';
 import { getDashboardSummary } from '@/lib/api/dashboard';
 import type { DashboardSummary } from '@/types/dashboard';
-import { downloadBrsDocument } from '@/lib/api/brs-document';
+
 import { TourismTrendCharts } from '@/components/dashboard/TourismTrendCharts';
+import { getBrsList } from '@/lib/api/brs';
 const MONTH_OPTIONS = [
   { value: '1', label: 'Januari' },
   { value: '2', label: 'Februari' },
@@ -51,9 +51,16 @@ const decimalFormatter = new Intl.NumberFormat('id-ID', {
 });
 
 export function DashboardView() {
-  const [month, setMonth] = useState('2');
+  const [availablePeriods, setAvailablePeriods] = useState<
+    Brs[]
+  >([]);
+  const [month, setMonth] = useState('');
 
-  const [year, setYear] = useState<number | string>(2026);
+  const [year, setYear] = useState('');
+
+  const [availableYears, setAvailableYears] = useState<
+    string[]
+  >([]);
 
   const [summary, setSummary] =
     useState<DashboardSummary | null>(null);
@@ -62,7 +69,6 @@ export function DashboardView() {
   const [isLoading, setIsLoading] = useState(true);
 
   const [error, setError] = useState<string | null>(null);
-  const [isDownloading, setIsDownloading] = useState(false);
 
   const [downloadError, setDownloadError] = useState<
     string | null
@@ -71,17 +77,50 @@ export function DashboardView() {
   useEffect(() => {
     let isCancelled = false;
 
-    Promise.all([
-      getDashboardSummary(2, 2026),
-      getBrsPreview(2, 2026),
-    ])
-      .then(([summaryResult, previewResult]) => {
+    getBrsList({
+      page: 1,
+      limit: 100,
+    })
+      .then(async (response) => {
+        const latestBrs = response.data[0];
+        const years = Array.from(
+          new Set(
+            response.data.map((brs) => String(brs.tahun))
+          )
+        ).sort(
+          (first, second) => Number(second) - Number(first)
+        );
+
+        if (!latestBrs) {
+          throw new Error(
+            'Belum ada periode BRS yang tersedia'
+          );
+        }
+
+        const [summaryResult, previewResult] =
+          await Promise.all([
+            getDashboardSummary(
+              latestBrs.bulan,
+              latestBrs.tahun
+            ),
+
+            getBrsPreview(latestBrs.bulan, latestBrs.tahun),
+          ]);
+
         if (isCancelled) {
           return;
         }
 
+        setMonth(String(latestBrs.bulan));
+
+        setYear(String(latestBrs.tahun));
+
+        setAvailableYears(years);
+
         setSummary(summaryResult);
+
         setAnalytics(previewResult.analytics);
+        setAvailablePeriods(response.data);
 
         setError(null);
       })
@@ -144,6 +183,14 @@ export function DashboardView() {
   function handleFilter() {
     const selectedMonth = Number(month);
     const selectedYear = Number(year);
+    if (
+      !Number.isInteger(selectedYear) ||
+      !availableYears.includes(String(selectedYear))
+    ) {
+      setError('Tahun tidak tersedia');
+
+      return;
+    }
 
     if (
       !Number.isInteger(selectedMonth) ||
@@ -165,42 +212,28 @@ export function DashboardView() {
     void loadSummary(selectedMonth, selectedYear);
   }
 
-  async function handleDownloadDocument() {
-    if (!summary) {
-      return;
-    }
+  const availableMonthOptions = MONTH_OPTIONS.filter(
+    (option) =>
+      availablePeriods.some(
+        (brs) =>
+          String(brs.tahun) === year &&
+          String(brs.bulan) === option.value
+      )
+  );
+  function handleYearChange(value: string | null) {
+    const selectedYear = value ?? '';
 
-    setIsDownloading(true);
-    setDownloadError(null);
+    setYear(selectedYear);
 
-    try {
-      const result = await downloadBrsDocument(
-        summary.brs.bulan,
-        summary.brs.tahun
-      );
+    const latestPeriodInYear = availablePeriods.find(
+      (brs) => String(brs.tahun) === selectedYear
+    );
 
-      const objectUrl = URL.createObjectURL(result.blob);
-
-      const anchor = document.createElement('a');
-
-      anchor.href = objectUrl;
-      anchor.download = result.filename;
-
-      document.body.appendChild(anchor);
-
-      anchor.click();
-      anchor.remove();
-
-      URL.revokeObjectURL(objectUrl);
-    } catch (caughtError) {
-      setDownloadError(
-        caughtError instanceof Error
-          ? caughtError.message
-          : 'Gagal mengunduh dokumen BRS'
-      );
-    } finally {
-      setIsDownloading(false);
-    }
+    setMonth(
+      latestPeriodInYear
+        ? String(latestPeriodInYear.bulan)
+        : ''
+    );
   }
   return (
     <Stack gap="lg">
@@ -217,23 +250,22 @@ export function DashboardView() {
         <Group align="end">
           <Select
             label="Bulan"
-            data={MONTH_OPTIONS}
+            placeholder="Pilih bulan"
+            data={availableMonthOptions}
             value={month}
             onChange={(value) => {
-              setMonth(value ?? '2');
+              setMonth(value ?? '');
             }}
             allowDeselect={false}
             w={180}
           />
-
-          <NumberInput
+          <Select
             label="Tahun"
+            placeholder="Pilih tahun"
+            data={availableYears}
             value={year}
-            onChange={setYear}
-            min={2000}
-            max={2100}
-            allowDecimal={false}
-            allowNegative={false}
+            onChange={handleYearChange}
+            allowDeselect={false}
             w={140}
           />
 
@@ -249,17 +281,6 @@ export function DashboardView() {
       {error && (
         <Alert color="red" title="Data tidak tersedia">
           {error}
-        </Alert>
-      )}
-
-      {downloadError && (
-        <Alert
-          color="red"
-          title="Dokumen gagal dibuat"
-          withCloseButton
-          onClose={() => setDownloadError(null)}
-        >
-          {downloadError}
         </Alert>
       )}
 
@@ -285,23 +306,9 @@ export function DashboardView() {
                 {summary.dataUpload.originalName}
               </Text>
             </div>
-
-            <Group>
-              <Badge color="green" variant="light">
-                Versi {summary.dataUpload.version} ·{' '}
-                {summary.dataUpload.rowCount} baris
-              </Badge>
-
-              <Button
-                color="orange"
-                onClick={() => {
-                  void handleDownloadDocument();
-                }}
-                loading={isDownloading}
-              >
-                Unduh BRS Word
-              </Button>
-            </Group>
+            <Badge color="green" variant="light">
+              {summary.dataUpload.rowCount} baris
+            </Badge>
           </Group>
 
           <SimpleGrid
@@ -416,6 +423,14 @@ export function DashboardView() {
               }
             />
           )}
+
+          {analytics && (
+            <TpkExtremes history={analytics.history} />
+          )}
+
+          {analytics && (
+            <RlmtExtremes history={analytics.history} />
+          )}
           {analytics && (
             <div>
               <Title order={3} mb={4}>
@@ -435,6 +450,124 @@ export function DashboardView() {
         </>
       )}
     </Stack>
+  );
+}
+
+interface RlmtExtremesProps {
+  history: BrsHistoryPeriod[];
+}
+
+function RlmtExtremes({ history }: RlmtExtremesProps) {
+  const metrics = [
+    {
+      key: 'rlmtTotal',
+      label: 'Seluruh Tamu',
+      color: 'blue',
+    },
+    {
+      key: 'rlmtAsing',
+      label: 'Tamu Asing',
+      color: 'orange',
+    },
+    {
+      key: 'rlmtNusantara',
+      label: 'Tamu Nusantara',
+      color: 'green',
+    },
+  ] as const;
+
+  return (
+    <div>
+      <Title order={3} mb={4}>
+        Rekor Rata-Rata Lama Menginap
+      </Title>
+
+      <Text size="sm" c="dimmed" mb="lg">
+        Periode tertinggi dan terendah selama 13 bulan
+        berdasarkan jenis tamu.
+      </Text>
+
+      <SimpleGrid
+        cols={{
+          base: 1,
+          md: 3,
+        }}
+      >
+        {metrics.map((metric) => {
+          const extremes = calculateRlmtExtremes(
+            history,
+            metric.key
+          );
+
+          return (
+            <Paper
+              key={metric.key}
+              withBorder
+              p="lg"
+              radius="md"
+            >
+              <Text fw={700} size="lg" mb="md">
+                {metric.label}
+              </Text>
+
+              {!extremes ? (
+                <Text size="sm" c="dimmed">
+                  Data belum tersedia.
+                </Text>
+              ) : (
+                <Stack gap="md">
+                  <div>
+                    <Badge
+                      color={metric.color}
+                      variant="light"
+                      mb={4}
+                    >
+                      Tertinggi
+                    </Badge>
+
+                    <Text fw={600}>
+                      {formatHistoryPeriod(
+                        extremes.highest.period
+                      )}
+                    </Text>
+
+                    <Text fw={700} fz={24}>
+                      {decimalFormatter.format(
+                        extremes.highest.value
+                      )}{' '}
+                      hari
+                    </Text>
+                  </div>
+
+                  <div>
+                    <Badge
+                      color="gray"
+                      variant="light"
+                      mb={4}
+                    >
+                      Terendah
+                    </Badge>
+
+                    <Text fw={600}>
+                      {formatHistoryPeriod(
+                        extremes.lowest.period
+                      )}
+                    </Text>
+
+                    <Text fw={700} fz={24}>
+                      {decimalFormatter.format(
+                        extremes.lowest.value
+                      )}{' '}
+                      hari
+                    </Text>
+                  </div>
+                </Stack>
+              )}
+            </Paper>
+          );
+        })}
+      </SimpleGrid>
+    </div>
   );
 }
 
@@ -626,10 +759,6 @@ function TpkClassificationSection({
   );
 }
 
-{
-  analytics && <TpkExtremes history={analytics.history} />;
-}
-
 interface ComparisonCardProps {
   title: string;
   metric: MetricComparison;
@@ -781,11 +910,19 @@ function formatMetricValue(
   return decimalFormatter.format(value) + suffix;
 }
 
+function formatHistoryPeriod(period: BrsHistoryPeriod) {
+  const month = MONTH_OPTIONS.find(
+    (item) => item.value === String(period.bulan)
+  )?.label;
+
+  return `${month ?? period.bulan} ${period.tahun}`;
+}
+
 type RlmtMetricKey =
   | 'rlmtTotal'
   | 'rlmtAsing'
   | 'rlmtNusantara';
-  
+
 function calculateRlmtExtremes(
   history: BrsHistoryPeriod[],
   key: RlmtMetricKey
