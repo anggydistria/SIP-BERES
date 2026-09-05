@@ -14,12 +14,20 @@ import {
   Text,
   Title,
 } from '@mantine/core';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
+import { getBrsPreview } from '@/lib/api/brs-preview';
 
+import type {
+  BrsAnalytics,
+  BrsHistoryPeriod,
+  ChangeStatus,
+  MetricComparison,
+  ClassificationComparison,
+} from '@/types/brs-preview';
 import { getDashboardSummary } from '@/lib/api/dashboard';
 import type { DashboardSummary } from '@/types/dashboard';
 import { downloadBrsDocument } from '@/lib/api/brs-document';
-
+import { TourismTrendCharts } from '@/components/dashboard/TourismTrendCharts';
 const MONTH_OPTIONS = [
   { value: '1', label: 'Januari' },
   { value: '2', label: 'Februari' },
@@ -49,7 +57,8 @@ export function DashboardView() {
 
   const [summary, setSummary] =
     useState<DashboardSummary | null>(null);
-
+  const [analytics, setAnalytics] =
+    useState<BrsAnalytics | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   const [error, setError] = useState<string | null>(null);
@@ -62,13 +71,18 @@ export function DashboardView() {
   useEffect(() => {
     let isCancelled = false;
 
-    getDashboardSummary(2, 2026)
-      .then((result) => {
+    Promise.all([
+      getDashboardSummary(2, 2026),
+      getBrsPreview(2, 2026),
+    ])
+      .then(([summaryResult, previewResult]) => {
         if (isCancelled) {
           return;
         }
 
-        setSummary(result);
+        setSummary(summaryResult);
+        setAnalytics(previewResult.analytics);
+
         setError(null);
       })
       .catch((caughtError: unknown) => {
@@ -77,6 +91,7 @@ export function DashboardView() {
         }
 
         setSummary(null);
+        setAnalytics(null);
 
         setError(
           caughtError instanceof Error
@@ -103,14 +118,18 @@ export function DashboardView() {
     setError(null);
 
     try {
-      const result = await getDashboardSummary(
-        selectedMonth,
-        selectedYear
-      );
+      const [summaryResult, previewResult] =
+        await Promise.all([
+          getDashboardSummary(selectedMonth, selectedYear),
 
-      setSummary(result);
+          getBrsPreview(selectedMonth, selectedYear),
+        ]);
+
+      setSummary(summaryResult);
+      setAnalytics(previewResult.analytics);
     } catch (caughtError) {
       setSummary(null);
+      setAnalytics(null);
 
       setError(
         caughtError instanceof Error
@@ -356,9 +375,348 @@ export function DashboardView() {
               description="Malam tamu nusantara ÷ tamu nusantara"
             />
           </SimpleGrid>
+          {analytics && (
+            <div>
+              <Title order={3} mb={4}>
+                Perubahan Indikator
+              </Title>
+
+              <Text size="sm" c="dimmed" mb="lg">
+                Perbandingan terhadap bulan sebelumnya dan
+                bulan yang sama tahun sebelumnya.
+              </Text>
+
+              <SimpleGrid
+                cols={{
+                  base: 1,
+                  md: 2,
+                }}
+              >
+                <ComparisonCard
+                  title="Tingkat Penghunian Kamar"
+                  metric={analytics.tpk.total}
+                  currentSuffix="%"
+                  changeSuffix=" poin"
+                />
+
+                <ComparisonCard
+                  title="Rata-Rata Lama Menginap"
+                  metric={analytics.rlmt.total}
+                  currentSuffix=" hari"
+                  changeSuffix=" hari"
+                />
+              </SimpleGrid>
+            </div>
+          )}
+
+          {analytics && (
+            <TpkClassificationSection
+              classifications={
+                analytics.tpk.classifications
+              }
+            />
+          )}
+          {analytics && (
+            <div>
+              <Title order={3} mb={4}>
+                Grafik Perkembangan Pariwisata
+              </Title>
+
+              <Text size="sm" c="dimmed" mb="lg">
+                Perkembangan indikator selama 13 bulan
+                sampai dengan periode yang dipilih.
+              </Text>
+
+              <TourismTrendCharts
+                history={analytics.history}
+              />
+            </div>
+          )}
         </>
       )}
     </Stack>
+  );
+}
+
+interface TpkExtremesProps {
+  history: BrsHistoryPeriod[];
+}
+
+function TpkExtremes({ history }: TpkExtremesProps) {
+  const availablePeriods = history.filter(
+    (
+      period
+    ): period is BrsHistoryPeriod & {
+      tpkTotal: number;
+    } => period.available && period.tpkTotal !== null
+  );
+
+  if (availablePeriods.length === 0) {
+    return (
+      <Alert
+        color="yellow"
+        title="Riwayat TPK belum tersedia"
+      >
+        Belum tersedia data untuk menentukan periode
+        tertinggi dan terendah.
+      </Alert>
+    );
+  }
+
+  const highest = availablePeriods.reduce(
+    (result, period) =>
+      period.tpkTotal > result.tpkTotal ? period : result
+  );
+
+  const lowest = availablePeriods.reduce(
+    (result, period) =>
+      period.tpkTotal < result.tpkTotal ? period : result
+  );
+
+  return (
+    <div>
+      <Title order={3} mb={4}>
+        Rekor TPK Selama 13 Bulan
+      </Title>
+
+      <Text size="sm" c="dimmed" mb="lg">
+        Periode dengan TPK total tertinggi dan terendah
+        dalam rentang data yang ditampilkan.
+      </Text>
+
+      <SimpleGrid
+        cols={{
+          base: 1,
+          md: 2,
+        }}
+      >
+        <Paper withBorder p="lg" radius="md" bg="blue.0">
+          <Badge color="blue" variant="light" mb="sm">
+            Tertinggi
+          </Badge>
+
+          <Text fw={700} size="lg">
+            {formatHistoryPeriod(highest)}
+          </Text>
+
+          <Text fw={700} fz={30} c="blue.8">
+            {decimalFormatter.format(highest.tpkTotal)}%
+          </Text>
+        </Paper>
+
+        <Paper withBorder p="lg" radius="md" bg="orange.0">
+          <Badge color="orange" variant="light" mb="sm">
+            Terendah
+          </Badge>
+
+          <Text fw={700} size="lg">
+            {formatHistoryPeriod(lowest)}
+          </Text>
+
+          <Text fw={700} fz={30} c="orange.8">
+            {decimalFormatter.format(lowest.tpkTotal)}%
+          </Text>
+        </Paper>
+      </SimpleGrid>
+    </div>
+  );
+}
+
+interface TpkClassificationSectionProps {
+  classifications: ClassificationComparison[];
+}
+
+function TpkClassificationSection({
+  classifications,
+}: TpkClassificationSectionProps) {
+  const available = classifications.filter(
+    (item) =>
+      item.key !== 'TOTAL_BINTANG' && item.current !== null
+  );
+
+  if (available.length === 0) {
+    return (
+      <Alert
+        color="yellow"
+        title="TPK per klasifikasi belum tersedia"
+      >
+        Belum tersedia data hotel berdasarkan klasifikasi
+        bintang.
+      </Alert>
+    );
+  }
+
+  const highest = available.reduce((result, item) =>
+    (item.current ?? 0) > (result.current ?? 0)
+      ? item
+      : result
+  );
+
+  const lowest = available.reduce((result, item) =>
+    (item.current ?? 0) < (result.current ?? 0)
+      ? item
+      : result
+  );
+
+  return (
+    <div>
+      <Title order={3} mb={4}>
+        TPK Menurut Klasifikasi Hotel
+      </Title>
+
+      <Text size="sm" c="dimmed" mb="lg">
+        Perbandingan Tingkat Penghunian Kamar berdasarkan
+        klasifikasi hotel bintang.
+      </Text>
+
+      <SimpleGrid
+        cols={{
+          base: 1,
+          md: 2,
+        }}
+        mb="lg"
+      >
+        <Paper withBorder p="lg" radius="md" bg="green.0">
+          <Text size="sm" c="dimmed">
+            TPK tertinggi
+          </Text>
+
+          <Text fw={700} size="lg" mt={4}>
+            {highest.label}
+          </Text>
+
+          <Text fw={700} fz={28} c="green.8">
+            {decimalFormatter.format(highest.current ?? 0)}%
+          </Text>
+        </Paper>
+
+        <Paper withBorder p="lg" radius="md" bg="red.0">
+          <Text size="sm" c="dimmed">
+            TPK terendah
+          </Text>
+
+          <Text fw={700} size="lg" mt={4}>
+            {lowest.label}
+          </Text>
+
+          <Text fw={700} fz={28} c="red.8">
+            {decimalFormatter.format(lowest.current ?? 0)}%
+          </Text>
+        </Paper>
+      </SimpleGrid>
+
+      <SimpleGrid
+        cols={{
+          base: 1,
+          md: 2,
+          xl: 4,
+        }}
+      >
+        {available.map((classification) => (
+          <ComparisonCard
+            key={classification.key}
+            title={classification.label}
+            metric={classification}
+            currentSuffix="%"
+            changeSuffix=" poin"
+          />
+        ))}
+      </SimpleGrid>
+    </div>
+  );
+}
+
+{
+  analytics && <TpkExtremes history={analytics.history} />;
+}
+
+interface ComparisonCardProps {
+  title: string;
+  metric: MetricComparison;
+  currentSuffix: string;
+  changeSuffix: string;
+}
+
+function ComparisonCard({
+  title,
+  metric,
+  currentSuffix,
+  changeSuffix,
+}: ComparisonCardProps) {
+  return (
+    <Paper withBorder p="lg" radius="md">
+      <Text size="sm" c="dimmed">
+        {title}
+      </Text>
+
+      <Text fw={700} fz={30} mt={4} mb="md">
+        {formatMetricValue(metric.current, currentSuffix)}
+      </Text>
+
+      <Stack gap="sm">
+        <Group justify="space-between">
+          <Text size="sm">Dibanding bulan lalu</Text>
+
+          <ChangeBadge
+            value={metric.mtmChange}
+            status={metric.mtmStatus}
+            suffix={changeSuffix}
+          />
+        </Group>
+
+        <Group justify="space-between">
+          <Text size="sm">Dibanding tahun lalu</Text>
+
+          <ChangeBadge
+            value={metric.yoyChange}
+            status={metric.yoyStatus}
+            suffix={changeSuffix}
+          />
+        </Group>
+      </Stack>
+    </Paper>
+  );
+}
+
+interface ChangeBadgeProps {
+  value: number | null;
+  status: ChangeStatus;
+  suffix: string;
+}
+
+function ChangeBadge({
+  value,
+  status,
+  suffix,
+}: ChangeBadgeProps) {
+  if (value === null || status === 'TIDAK_TERSEDIA') {
+    return (
+      <Badge color="gray" variant="light">
+        Tidak tersedia
+      </Badge>
+    );
+  }
+
+  const colors: Record<ChangeStatus, string> = {
+    NAIK: 'green',
+    TURUN: 'red',
+    TETAP: 'gray',
+    TIDAK_TERSEDIA: 'gray',
+  };
+
+  const labels: Record<ChangeStatus, string> = {
+    NAIK: 'Naik',
+    TURUN: 'Turun',
+    TETAP: 'Tetap',
+    TIDAK_TERSEDIA: 'Tidak tersedia',
+  };
+
+  return (
+    <Badge color={colors[status]} variant="light">
+      {labels[status]}{' '}
+      {decimalFormatter.format(Math.abs(value))}
+      {suffix}
+    </Badge>
   );
 }
 
@@ -410,4 +768,57 @@ function formatNullableNumber(
   return value === null
     ? '–'
     : decimalFormatter.format(value);
+}
+
+function formatMetricValue(
+  value: number | null,
+  suffix: string
+) {
+  if (value === null) {
+    return '–';
+  }
+
+  return decimalFormatter.format(value) + suffix;
+}
+
+type RlmtMetricKey =
+  | 'rlmtTotal'
+  | 'rlmtAsing'
+  | 'rlmtNusantara';
+  
+function calculateRlmtExtremes(
+  history: BrsHistoryPeriod[],
+  key: RlmtMetricKey
+) {
+  const values = history.flatMap((period) => {
+    const value = period[key];
+
+    if (!period.available || value === null) {
+      return [];
+    }
+
+    return [
+      {
+        period,
+        value,
+      },
+    ];
+  });
+
+  if (values.length === 0) {
+    return null;
+  }
+
+  const highest = values.reduce((result, item) =>
+    item.value > result.value ? item : result
+  );
+
+  const lowest = values.reduce((result, item) =>
+    item.value < result.value ? item : result
+  );
+
+  return {
+    highest,
+    lowest,
+  };
 }
