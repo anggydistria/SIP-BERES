@@ -84,6 +84,20 @@ export function AppHeader() {
             >
               Daftar BRS
             </Button>
+            {user.roles.includes('ADMIN') && (
+              <Button
+                component={Link}
+                href="/admin/users"
+                variant={
+                  pathname.startsWith('/admin/users')
+                    ? 'light'
+                    : 'subtle'
+                }
+                size="sm"
+              >
+                Kelola Pengguna
+              </Button>
+            )}
           </Group>
 
           <Group gap="sm">

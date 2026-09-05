@@ -187,7 +187,7 @@ export class UsersService {
   }
 
   async update(id: number, dto: UpdateUserDto) {
-    await this.findOne(id);
+   const currentUser = await this.findOne(id);
 
     const username =
       dto.username !== undefined
@@ -224,26 +224,54 @@ export class UsersService {
         }>
       | undefined;
 
-    if (dto.roles !== undefined) {
-      const roleNames = Array.from(new Set(dto.roles));
+   if (dto.roles !== undefined) {
+     const roleNames = Array.from(new Set(dto.roles));
 
-      selectedRoles = await this.prisma.role.findMany({
-        where: {
-          name: {
-            in: roleNames,
-          },
-        },
+     selectedRoles = await this.prisma.role.findMany({
+       where: {
+         name: {
+           in: roleNames,
+         },
+       },
 
-        select: {
-          id: true,
-          name: true,
-        },
-      });
+       select: {
+         id: true,
+         name: true,
+       },
+     });
 
-      if (selectedRoles.length !== roleNames.length) {
-        throw new BadRequestException('Terdapat role yang tidak tersedia');
-      }
-    }
+     if (selectedRoles.length !== roleNames.length) {
+       throw new BadRequestException('Terdapat role yang tidak tersedia');
+     }
+
+     const currentlyAdmin = currentUser.roles.includes('ADMIN');
+
+     const remainsAdmin = selectedRoles.some((role) => role.name === 'ADMIN');
+
+     if (currentUser.isActive && currentlyAdmin && !remainsAdmin) {
+       const activeAdminCount = await this.prisma.user.count({
+         where: {
+           isActive: true,
+
+           roles: {
+             some: {
+               endedAt: null,
+
+               role: {
+                 name: 'ADMIN',
+               },
+             },
+           },
+         },
+       });
+
+       if (activeAdminCount <= 1) {
+         throw new BadRequestException(
+           'Role Admin terakhir tidak dapat dihapus',
+         );
+       }
+     }
+   }
 
     await this.prisma.$transaction(async (transaction) => {
       await transaction.user.update({

@@ -11,6 +11,7 @@ import { BrsAnalyticsModule } from './brs-analytics/brs-analytics.module';
 import { BrsDocumentModule } from './brs-document/brs-document.module';
 import { BrsFinalModule } from './brs-final/brs-final.module';
 import { AuthModule } from './auth/auth.module';
+import { UsersModule } from './users/users.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -18,6 +19,7 @@ import { AuthModule } from './auth/auth.module';
     }),
     PrismaModule,
     AuthModule,
+    UsersModule,
     BrsModule,
     DataUploadModule,
     DashboardModule,
