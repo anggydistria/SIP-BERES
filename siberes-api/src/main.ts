@@ -9,15 +9,27 @@ async function bootstrap() {
 
   app.use(cookieParser());
 
-  const allowedOrigins = (process.env.FRONTEND_URL ?? 'http://localhost:3000')
-    .split(',')
-    .map((origin) => origin.trim());
+const configuredOrigins = (process.env.FRONTEND_URL ?? '')
+  .split(',')
+  .map((origin) => origin.trim())
+  .filter(Boolean);
 
-  app.enableCors({
-    origin: allowedOrigins,
-    credentials: true,
-    exposedHeaders: ['Content-Disposition'],
-  });
+const allowedOrigins = [
+  'http://localhost:3000',
+  'https://siberes-web.vercel.app',
+  ...configuredOrigins,
+];
+
+console.log('Allowed CORS origins:', allowedOrigins);
+
+ app.enableCors({
+   origin: allowedOrigins,
+   credentials: true,
+   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+   allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
+   exposedHeaders: ['Content-Disposition'],
+   optionsSuccessStatus: 204,
+ });
 
   app.useGlobalPipes(
     new ValidationPipe({
