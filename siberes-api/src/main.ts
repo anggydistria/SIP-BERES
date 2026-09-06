@@ -9,12 +9,16 @@ async function bootstrap() {
 
   app.use(cookieParser());
 
-app.enableCors({
-  origin: process.env.FRONTEND_URL ?? 'http://localhost:3000',
+  const allowedOrigins = (process.env.FRONTEND_URL ?? 'http://localhost:3000')
+    .split(',')
+    .map((origin) => origin.trim());
 
-  credentials: true,
-  exposedHeaders: ['Content-Disposition'],
-});
+  app.enableCors({
+    origin: allowedOrigins,
+    credentials: true,
+    exposedHeaders: ['Content-Disposition'],
+  });
+
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -24,7 +28,9 @@ app.enableCors({
 
   app.setGlobalPrefix('api');
 
-  await app.listen(process.env.PORT ?? 3001);
+  const port = Number(process.env.PORT) || 3001;
+
+  await app.listen(port, '0.0.0.0');
 }
 
 void bootstrap();
