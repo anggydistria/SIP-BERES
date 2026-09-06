@@ -79,89 +79,88 @@ export function UsersView() {
 
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState('10');
-  useEffect(() => {
-    if (!isAdmin) {
-      return;
-    }
+ useEffect(() => {
+   if (!isAdmin) {
+     return;
+   }
 
-    let isCancelled = false;
+   let isCancelled = false;
 
-    getUsers()
-      .then((result) => {
-        if (!isCancelled) {
-          setUsers(result);
-          setError(null);
-        }
-      })
-      .catch((caughtError: unknown) => {
-        if (!isCancelled) {
-          setError(
-            caughtError instanceof Error
-              ? caughtError.message
-              : 'Gagal mengambil daftar pengguna'
-          );
-        }
-      })
-      .finally(() => {
-        if (!isCancelled) {
-          setIsLoading(false);
-        }
-      });
-    const filteredUsers = useMemo(() => {
-      const normalizedSearch = search.trim().toLowerCase();
+   getUsers()
+     .then((result) => {
+       if (!isCancelled) {
+         setUsers(result);
+         setError(null);
+       }
+     })
+     .catch((caughtError: unknown) => {
+       if (!isCancelled) {
+         setError(
+           caughtError instanceof Error
+             ? caughtError.message
+             : 'Gagal mengambil daftar pengguna'
+         );
+       }
+     })
+     .finally(() => {
+       if (!isCancelled) {
+         setIsLoading(false);
+       }
+     });
 
-      return users.filter((item) => {
-        const matchesSearch =
-          normalizedSearch.length === 0 ||
-          item.name
-            .toLowerCase()
-            .includes(normalizedSearch) ||
-          item.username
-            .toLowerCase()
-            .includes(normalizedSearch);
+   return () => {
+     isCancelled = true;
+   };
+ }, [isAdmin]);
 
-        const matchesRole =
-          roleFilter === null ||
-          item.roles.includes(
-            roleFilter as User['roles'][number]
-          );
+ const filteredUsers = useMemo(() => {
+   const normalizedSearch = search.trim().toLowerCase();
 
-        const matchesStatus =
-          statusFilter === null ||
-          (statusFilter === 'ACTIVE' && item.isActive) ||
-          (statusFilter === 'INACTIVE' && !item.isActive);
+   return users.filter((item) => {
+     const matchesSearch =
+       normalizedSearch.length === 0 ||
+       item.name.toLowerCase().includes(normalizedSearch) ||
+       item.username
+         .toLowerCase()
+         .includes(normalizedSearch);
 
-        return (
-          matchesSearch && matchesRole && matchesStatus
-        );
-      });
-    }, [users, search, roleFilter, statusFilter]);
+     const matchesRole =
+       roleFilter === null ||
+       item.roles.includes(
+         roleFilter as User['roles'][number]
+       );
 
-    const numericPageSize = Number(pageSize);
+     const matchesStatus =
+       statusFilter === null ||
+       (statusFilter === 'ACTIVE' && item.isActive) ||
+       (statusFilter === 'INACTIVE' && !item.isActive);
 
-    const totalPages = Math.max(
-      1,
-      Math.ceil(filteredUsers.length / numericPageSize)
-    );
+     return matchesSearch && matchesRole && matchesStatus;
+   });
+ }, [users, search, roleFilter, statusFilter]);
 
-    const currentPage = Math.min(page, totalPages);
+ const numericPageSize = Number(pageSize);
 
-    const firstIndex = (currentPage - 1) * numericPageSize;
+ const totalPages = Math.max(
+   1,
+   Math.ceil(filteredUsers.length / numericPageSize)
+ );
 
-    const visibleUsers = filteredUsers.slice(
-      firstIndex,
-      firstIndex + numericPageSize
-    );
-    return () => {
-      isCancelled = true;
-    };
-  }, [isAdmin]);
-  function handleResetFilter() {
-    setSearch('');
-    setRoleFilter(null);
-    setStatusFilter(null);
-    setPage(1);
-  }
+ const currentPage = Math.min(page, totalPages);
+
+ const firstIndex = (currentPage - 1) * numericPageSize;
+
+ const visibleUsers = filteredUsers.slice(
+   firstIndex,
+   firstIndex + numericPageSize
+ );
+
+ function handleResetFilter() {
+   setSearch('');
+   setRoleFilter(null);
+   setStatusFilter(null);
+   setPage(1);
+ }
   function handleUserSaved(savedUser: User) {
     const isEditing = selectedUser !== null;
 
