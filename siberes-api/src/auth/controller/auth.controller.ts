@@ -1,8 +1,10 @@
 import { Body, Controller, Get, Post, Res, UseGuards } from '@nestjs/common';
 
 import { ConfigService } from '@nestjs/config';
-
-import type { Response } from 'express';
+import type {
+  CookieOptions,
+  Response,
+} from 'express';
 
 import { AUTH_COOKIE_NAME } from '../auth.constants';
 
@@ -20,31 +22,32 @@ import { AuthService } from '../service/auth.service';
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
-
     private readonly configService: ConfigService,
   ) {}
 
+  private getCookieOptions(): CookieOptions {
+    const isProduction =
+      this.configService.get<string>('NODE_ENV') === 'production';
+
+    return {
+      httpOnly: true,
+      secure: isProduction,
+      sameSite: isProduction ? 'none' : 'lax',
+      path: '/',
+    };
+  }
+
   @Post('login')
   async login(
-    @Body()
-    dto: LoginDto,
-
-    @Res({
-      passthrough: true,
-    })
+    @Body() dto: LoginDto,
+    @Res({ passthrough: true })
     response: Response,
   ) {
     const result = await this.authService.login(dto);
 
-    const isProduction =
-      this.configService.get<string>('NODE_ENV') === 'production';
-
     response.cookie(AUTH_COOKIE_NAME, result.accessToken, {
-      httpOnly: true,
-      secure: isProduction,
-      sameSite: 'lax',
+      ...this.getCookieOptions(),
       maxAge: 8 * 60 * 60 * 1000,
-      path: '/',
     });
 
     return {
@@ -54,18 +57,10 @@ export class AuthController {
 
   @Post('logout')
   logout(
-    @Res({
-      passthrough: true,
-    })
+    @Res({ passthrough: true })
     response: Response,
   ) {
-    response.clearCookie(AUTH_COOKIE_NAME, {
-      httpOnly: true,
-      secure: this.configService.get<string>('NODE_ENV') === 'production',
-
-      sameSite: 'lax',
-      path: '/',
-    });
+    response.clearCookie(AUTH_COOKIE_NAME, this.getCookieOptions());
 
     return {
       message: 'Logout berhasil',
@@ -74,10 +69,7 @@ export class AuthController {
 
   @Get('me')
   @UseGuards(JwtAuthGuard)
-  getProfile(
-    @CurrentUser()
-    user: AuthenticatedUser,
-  ) {
+  getProfile(@CurrentUser() user: AuthenticatedUser) {
     return {
       user,
     };

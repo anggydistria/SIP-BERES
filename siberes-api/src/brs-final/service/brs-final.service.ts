@@ -5,7 +5,8 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { randomUUID } from 'node:crypto';
-import { mkdir, readFile, rename, unlink, writeFile } from 'node:fs/promises';
+// import { mkdir, readFile, rename, unlink, writeFile } from 'node:fs/promises';
+import { StorageService } from '../../storage/service/storage.service';
 import { join } from 'node:path';
 
 import { PrismaService } from '../../prisma/prisma.service';
@@ -15,7 +16,10 @@ import type { AuthenticatedUser } from '../../auth/interfaces/authenticated-user
 
 @Injectable()
 export class BrsFinalService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly storageService: StorageService,
+  ) {}
 
   async markDraftReady(brsId: number) {
     const brs = await this.prisma.brs.findUnique({
@@ -111,24 +115,39 @@ export class BrsFinalService {
 
     const version = (latestHistory?.submissionVersion ?? 0) + 1;
 
+    // const temporaryName = `${randomUUID()}.pdf`;
+
+    // const relativeDirectory = join('uploads', 'brs-review-temp');
+
+    // const temporaryPath = join(relativeDirectory, temporaryName).replaceAll(
+    //   '\\',
+    //   '/',
+    // );
+
+    // const absoluteDirectory = join(process.cwd(), relativeDirectory);
+
+    // const absolutePath = join(process.cwd(), temporaryPath);
+
+    // await mkdir(absoluteDirectory, {
+    //   recursive: true,
+    // });
+
+    // await writeFile(absolutePath, file.buffer);
+
     const temporaryName = `${randomUUID()}.pdf`;
 
-    const relativeDirectory = join('uploads', 'brs-review-temp');
+    const temporaryPath = [
+      'review-temp',
+      String(brsId),
+      `v${version}`,
+      temporaryName,
+    ].join('/');
 
-    const temporaryPath = join(relativeDirectory, temporaryName).replaceAll(
-      '\\',
-      '/',
+    await this.storageService.upload(
+      temporaryPath,
+      file.buffer,
+      'application/pdf',
     );
-
-    const absoluteDirectory = join(process.cwd(), relativeDirectory);
-
-    const absolutePath = join(process.cwd(), temporaryPath);
-
-    await mkdir(absoluteDirectory, {
-      recursive: true,
-    });
-
-    await writeFile(absolutePath, file.buffer);
 
     try {
       const submission = await this.prisma.$transaction(async (transaction) => {
@@ -176,8 +195,8 @@ export class BrsFinalService {
         submission,
       };
     } catch (error) {
-      await unlink(absolutePath).catch(() => undefined);
-
+      // await unlink(absolutePath).catch(() => undefined);
+      await this.storageService.remove(temporaryPath).catch(() => undefined);
       throw error;
     }
   }
@@ -233,46 +252,154 @@ export class BrsFinalService {
       });
     });
 
-    await unlink(join(process.cwd(), submission.temporaryPath)).catch(
-      () => undefined,
-    );
-
+    // await unlink(join(process.cwd(), submission.temporaryPath)).catch(
+    //   () => undefined,
+    // );
+    await this.storageService
+      .remove(submission.temporaryPath)
+      .catch(() => undefined);
     return {
       message: 'Calon BRS final ditolak',
       note,
     };
   }
 
+  // async approve(brsId: number, user: AuthenticatedUser) {
+  //   const submission = await this.pendingSubmission(brsId);
+
+  //   const storedName = `${randomUUID()}.pdf`;
+
+  //   const finalDirectory = join('uploads', 'brs-final');
+
+  //   const finalPath = join(finalDirectory, storedName).replaceAll('\\', '/');
+
+  //   const temporaryAbsolutePath = join(process.cwd(), submission.temporaryPath);
+
+  //   const finalAbsoluteDirectory = join(process.cwd(), finalDirectory);
+
+  //   const finalAbsolutePath = join(process.cwd(), finalPath);
+
+  //   await mkdir(finalAbsoluteDirectory, {
+  //     recursive: true,
+  //   });
+
+  //   /*
+  //    * Pindahkan PDF dari folder sementara
+  //    * ke folder final.
+  //    */
+  //   await rename(temporaryAbsolutePath, finalAbsolutePath);
+
+  //   try {
+  //     await this.prisma.$transaction(async (transaction) => {
+  //       /*
+  //        * Simpan riwayat persetujuan.
+  //        */
+  //       await transaction.brsReviewHistory.create({
+  //         data: {
+  //           brsId,
+
+  //           submittedById: submission.submittedById,
+
+  //           reviewedById: user.id,
+
+  //           submissionVersion: submission.version,
+
+  //           originalName: submission.originalName,
+
+  //           proposedNomorBrs: submission.proposedNomorBrs,
+
+  //           proposedTanggalPublikasi: submission.proposedTanggalPublikasi,
+
+  //           decision: 'APPROVED',
+
+  //           note: null,
+
+  //           submittedAt: submission.submittedAt,
+  //         },
+  //       });
+
+  //       /*
+  //        * Simpan informasi PDF final permanen.
+  //        */
+  //       await transaction.brsFinalFile.create({
+  //         data: {
+  //           brsId,
+
+  //           approvedById: user.id,
+
+  //           originalName: submission.originalName,
+
+  //           storedName,
+  //           path: finalPath,
+
+  //           mimeType: 'application/pdf',
+
+  //           size: submission.size,
+  //         },
+  //       });
+
+  //       /*
+  //        * Hapus record file sementara.
+  //        */
+  //       await transaction.brsFinalSubmission.delete({
+  //         where: {
+  //           id: submission.id,
+  //         },
+  //       });
+
+  //       /*
+  //        * Nomor BRS dan tanggal publikasi
+  //        * baru menjadi resmi setelah disetujui.
+  //        */
+  //       await transaction.brs.update({
+  //         where: {
+  //           id: brsId,
+  //         },
+
+  //         data: {
+  //           nomorBrs: submission.proposedNomorBrs,
+
+  //           tanggalPublikasi: submission.proposedTanggalPublikasi,
+
+  //           status: 'FINAL',
+  //         },
+  //       });
+  //     });
+  //   } catch (error) {
+  //     /*
+  //      * Jika transaksi database gagal,
+  //      * PDF dikembalikan ke folder sementara.
+  //      */
+  //     await rename(finalAbsolutePath, temporaryAbsolutePath).catch(
+  //       () => undefined,
+  //     );
+
+  //     throw error;
+  //   }
+
+  //   return {
+  //     message: 'BRS final berhasil disetujui',
+  //   };
+  // }
+
   async approve(brsId: number, user: AuthenticatedUser) {
     const submission = await this.pendingSubmission(brsId);
 
     const storedName = `${randomUUID()}.pdf`;
 
-    const finalDirectory = join('uploads', 'brs-final');
+    const monthDirectory = String(submission.brs.bulan).padStart(2, '0');
 
-    const finalPath = join(finalDirectory, storedName).replaceAll('\\', '/');
+    const finalPath = [
+      'final-pdf',
+      String(submission.brs.tahun),
+      monthDirectory,
+      storedName,
+    ].join('/');
 
-    const temporaryAbsolutePath = join(process.cwd(), submission.temporaryPath);
-
-    const finalAbsoluteDirectory = join(process.cwd(), finalDirectory);
-
-    const finalAbsolutePath = join(process.cwd(), finalPath);
-
-    await mkdir(finalAbsoluteDirectory, {
-      recursive: true,
-    });
-
-    /*
-     * Pindahkan PDF dari folder sementara
-     * ke folder final.
-     */
-    await rename(temporaryAbsolutePath, finalAbsolutePath);
+    await this.storageService.move(submission.temporaryPath, finalPath);
 
     try {
       await this.prisma.$transaction(async (transaction) => {
-        /*
-         * Simpan riwayat persetujuan.
-         */
         await transaction.brsReviewHistory.create({
           data: {
             brsId,
@@ -290,46 +417,32 @@ export class BrsFinalService {
             proposedTanggalPublikasi: submission.proposedTanggalPublikasi,
 
             decision: 'APPROVED',
-
             note: null,
 
             submittedAt: submission.submittedAt,
           },
         });
 
-        /*
-         * Simpan informasi PDF final permanen.
-         */
         await transaction.brsFinalFile.create({
           data: {
             brsId,
-
             approvedById: user.id,
 
             originalName: submission.originalName,
 
             storedName,
             path: finalPath,
-
             mimeType: 'application/pdf',
-
             size: submission.size,
           },
         });
 
-        /*
-         * Hapus record file sementara.
-         */
         await transaction.brsFinalSubmission.delete({
           where: {
             id: submission.id,
           },
         });
 
-        /*
-         * Nomor BRS dan tanggal publikasi
-         * baru menjadi resmi setelah disetujui.
-         */
         await transaction.brs.update({
           where: {
             id: brsId,
@@ -345,13 +458,9 @@ export class BrsFinalService {
         });
       });
     } catch (error) {
-      /*
-       * Jika transaksi database gagal,
-       * PDF dikembalikan ke folder sementara.
-       */
-      await rename(finalAbsolutePath, temporaryAbsolutePath).catch(
-        () => undefined,
-      );
+      await this.storageService
+        .move(finalPath, submission.temporaryPath)
+        .catch(() => undefined);
 
       throw error;
     }
@@ -364,16 +473,22 @@ export class BrsFinalService {
   async getPendingFile(brsId: number) {
     const submission = await this.pendingSubmission(brsId);
 
-    const absolutePath = join(process.cwd(), submission.temporaryPath);
+    // const absolutePath = join(process.cwd(), submission.temporaryPath);
 
+    // let buffer: Buffer;
+
+    // try {
+    //   buffer = await readFile(absolutePath);
+    // } catch {
+    //   throw new NotFoundException('File calon BRS final tidak ditemukan');
+    // }
     let buffer: Buffer;
 
     try {
-      buffer = await readFile(absolutePath);
+      buffer = await this.storageService.download(submission.temporaryPath);
     } catch {
       throw new NotFoundException('File calon BRS final tidak ditemukan');
     }
-
     return {
       buffer,
       filename: submission.originalName,
@@ -391,12 +506,20 @@ export class BrsFinalService {
       throw new NotFoundException('PDF BRS final belum tersedia');
     }
 
-    const absolutePath = join(process.cwd(), finalFile.path);
+    // const absolutePath = join(process.cwd(), finalFile.path);
+
+    // let buffer: Buffer;
+
+    // try {
+    //   buffer = await readFile(absolutePath);
+    // } catch {
+    //   throw new NotFoundException('File PDF BRS final tidak ditemukan');
+    // }
 
     let buffer: Buffer;
 
     try {
-      buffer = await readFile(absolutePath);
+      buffer = await this.storageService.download(finalFile.path);
     } catch {
       throw new NotFoundException('File PDF BRS final tidak ditemukan');
     }
@@ -406,10 +529,33 @@ export class BrsFinalService {
       filename: finalFile.originalName,
     };
   }
+  // private async pendingSubmission(brsId: number) {
+  //   const submission = await this.prisma.brsFinalSubmission.findUnique({
+  //     where: {
+  //       brsId,
+  //     },
+  //   });
+
+  //   if (!submission) {
+  //     throw new NotFoundException('Calon BRS final belum tersedia');
+  //   }
+
+  //   return submission;
+  // }
+
   private async pendingSubmission(brsId: number) {
     const submission = await this.prisma.brsFinalSubmission.findUnique({
       where: {
         brsId,
+      },
+
+      include: {
+        brs: {
+          select: {
+            bulan: true,
+            tahun: true,
+          },
+        },
       },
     });
 
@@ -434,5 +580,5 @@ export class BrsFinalService {
       throw new BadRequestException('Isi file bukan PDF yang valid');
     }
   }
-  private developmentUser(username: string, name: string) {}
+  // private developmentUser(username: string, name: string) {}
 }

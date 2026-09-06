@@ -83,6 +83,22 @@ export class StorageService {
     }
   }
 
+  async move(sourcePath: string, destinationPath: string): Promise<void> {
+    const normalizedSource = this.normalizePath(sourcePath);
+
+    const normalizedDestination = this.normalizePath(destinationPath);
+
+    const { error } = await this.supabase.storage
+      .from(this.bucket)
+      .move(normalizedSource, normalizedDestination);
+
+    if (error) {
+      throw new InternalServerErrorException(
+        `File gagal dipindahkan: ${error.message}`,
+      );
+    }
+  }
+
   private normalizePath(path: string): string {
     return path.replace(/^\/+/, '');
   }
