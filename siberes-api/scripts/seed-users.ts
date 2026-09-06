@@ -20,7 +20,11 @@ const prisma = new PrismaClient({
   adapter,
 });
 
-const DEVELOPMENT_PASSWORD = 'Siberes123!';
+const seedUserPassword = process.env.SEED_USER_PASSWORD;
+
+if (!seedUserPassword) {
+  throw new Error('SEED_USER_PASSWORD belum tersedia di file .env');
+}
 
 const USERS = [
   {
@@ -45,7 +49,7 @@ const USERS = [
 async function main() {
   console.log('Memulai pembuatan akun SIBERES...');
 
-  const passwordHash = await hash(DEVELOPMENT_PASSWORD, 12);
+  const passwordHash = await hash(seedUserPassword, 12);
 
   for (const account of USERS) {
     const role = await prisma.role.upsert({
@@ -102,13 +106,7 @@ async function main() {
   }
 
   console.log('');
-  console.log('Akun development:');
-
-  console.log(`admin / ${DEVELOPMENT_PASSWORD}`);
-
-  console.log(`ketua.brs / ${DEVELOPMENT_PASSWORD}`);
-
-  console.log(`pengelola / ${DEVELOPMENT_PASSWORD}`);
+  console.log('Seluruh akun awal berhasil dibuat.');
 }
 
 main()

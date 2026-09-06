@@ -12,6 +12,7 @@ import { BrsDocumentModule } from './brs-document/brs-document.module';
 import { BrsFinalModule } from './brs-final/brs-final.module';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
+import { StorageModule } from './storage/storage.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -26,6 +27,7 @@ import { UsersModule } from './users/users.module';
     BrsAnalyticsModule,
     BrsDocumentModule,
     BrsFinalModule,
+    StorageModule,
   ],
   controllers: [AppController],
   providers: [AppService],
