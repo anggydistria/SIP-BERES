@@ -9,6 +9,7 @@ import { mkdir, unlink, writeFile, readFile } from 'node:fs/promises';
 import { extname, join } from 'node:path';
 
 import { PrismaService } from '../../prisma/prisma.service';
+import { UploadExcelPeriodDto } from '../dto/upload-excel-period.dto';
 
 const TARGET_SHEET = 'KabKot_KeLas64';
 const PERIOD_SOURCE_SHEET = 'Penimbang_Raw Data64';
@@ -43,6 +44,22 @@ const INDONESIAN_MONTHS: Record<string, number> = {
   NOVEMBER: 11,
   DESEMBER: 12,
 };
+
+const MONTH_NAMES = [
+  '',
+  'Januari',
+  'Februari',
+  'Maret',
+  'April',
+  'Mei',
+  'Juni',
+  'Juli',
+  'Agustus',
+  'September',
+  'Oktober',
+  'November',
+  'Desember',
+];
 
 type ExcelRow = Record<string, unknown>;
 
@@ -109,7 +126,10 @@ export interface SaveExcelResponse {
 @Injectable()
 export class DataUploadService {
   constructor(private readonly prisma: PrismaService) {}
-  previewExcel(buffer: Buffer): ExcelPreviewResponse {
+  previewExcel(
+    buffer: Buffer,
+    expectedPeriod: UploadExcelPeriodDto,
+  ): ExcelPreviewResponse {
     const workbook = this.readWorkbook(buffer);
 
     const worksheet = workbook.Sheets[TARGET_SHEET];
@@ -150,6 +170,7 @@ export class DataUploadService {
     }
 
     const period = this.getPeriod(workbook);
+    this.validateExpectedPeriod(period, expectedPeriod);
     const data: PreviewRow[] = [];
     const errors: RowError[] = [];
 
@@ -194,8 +215,9 @@ export class DataUploadService {
   async saveExcel(
     file: Express.Multer.File,
     uploadedById: number,
+    expectedPeriod: UploadExcelPeriodDto,
   ): Promise<SaveExcelResponse> {
-    const preview = this.previewExcel(file.buffer);
+    const preview = this.previewExcel(file.buffer, expectedPeriod);
 
     if (preview.invalidRows > 0) {
       throw new BadRequestException({
@@ -203,7 +225,6 @@ export class DataUploadService {
         errors: preview.errors,
       });
     }
- 
 
     const brs = await this.prisma.brs.upsert({
       where: {
@@ -441,7 +462,54 @@ export class DataUploadService {
       );
     }
   }
+  private validateExpectedPeriod(
+    detectedPeriod: {
+      label: string;
+      bulan: number;
+      tahun: number;
+    },
+    expectedPeriod: UploadExcelPeriodDto,
+  ) {
+    const periodMatches =
+      detectedPeriod.bulan === expectedPeriod.bulan &&
+      detectedPeriod.tahun === expectedPeriod.tahun;
 
+    if (periodMatches) {
+      return;
+    }
+
+    const selectedLabel = this.formatPeriod(
+      expectedPeriod.bulan,
+      expectedPeriod.tahun,
+    );
+
+    const detectedLabel = this.formatPeriod(
+      detectedPeriod.bulan,
+      detectedPeriod.tahun,
+    );
+
+    throw new BadRequestException({
+      message:
+        `Periode yang dipilih (${selectedLabel}) tidak sesuai ` +
+        `dengan periode pada file Excel (${detectedLabel})`,
+
+      selectedPeriod: {
+        bulan: expectedPeriod.bulan,
+        tahun: expectedPeriod.tahun,
+        label: selectedLabel,
+      },
+
+      detectedPeriod: {
+        bulan: detectedPeriod.bulan,
+        tahun: detectedPeriod.tahun,
+        label: detectedLabel,
+      },
+    });
+  }
+
+  private formatPeriod(bulan: number, tahun: number) {
+    return `${MONTH_NAMES[bulan]} ${tahun}`;
+  }
   private getPeriod(workbook: XLSX.WorkBook) {
     const worksheet = workbook.Sheets[PERIOD_SOURCE_SHEET];
 

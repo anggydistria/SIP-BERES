@@ -7,7 +7,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
 import { useAuth } from '@/context/AuthContext';
-import { AppHeader } from '@/components/layout/AppHeader';
+import { AppLayout } from '@/components/layout/AppLayout';
 
 interface AuthGateProps {
   children: React.ReactNode;
@@ -47,11 +47,5 @@ export function AuthGate({ children }: AuthGateProps) {
     return null;
   }
 
-  return (
-    <>
-      <AppHeader />
-
-      <main>{children}</main>
-    </>
-  );
+ return <AppLayout>{children}</AppLayout>;
 }

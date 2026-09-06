@@ -9,6 +9,7 @@ import {
   UploadedFile,
   UseInterceptors,
   UseGuards,
+  Body,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { extname } from 'node:path';
@@ -27,6 +28,7 @@ import {
   type ExcelPreviewResponse,
   type SaveExcelResponse,
 } from '../service/data-upload.service';
+import { UploadExcelPeriodDto } from '../dto/upload-excel-period.dto';
 
 const excelFileInterceptor = FileInterceptor('file', {
   storage: memoryStorage(),
@@ -97,14 +99,21 @@ export class DataUploadController {
       },
     }),
   )
+  @Post('preview')
+  @Roles('KETUA_BRS')
+  @UseInterceptors(excelFileInterceptor)
   previewExcel(
-    @UploadedFile() file?: Express.Multer.File,
+    @UploadedFile()
+    file: Express.Multer.File | undefined,
+
+    @Body()
+    periodDto: UploadExcelPeriodDto,
   ): ExcelPreviewResponse {
     if (!file) {
       throw new BadRequestException('File Excel wajib diunggah');
     }
 
-    return this.dataUploadService.previewExcel(file.buffer);
+    return this.dataUploadService.previewExcel(file.buffer, periodDto);
   }
 
   @Post()
@@ -114,6 +123,9 @@ export class DataUploadController {
     @UploadedFile()
     file: Express.Multer.File | undefined,
 
+    @Body()
+    periodDto: UploadExcelPeriodDto,
+
     @CurrentUser()
     user: AuthenticatedUser,
   ): Promise<SaveExcelResponse> {
@@ -121,6 +133,6 @@ export class DataUploadController {
       throw new BadRequestException('File Excel wajib diunggah');
     }
 
-    return this.dataUploadService.saveExcel(file, user.id);
+    return this.dataUploadService.saveExcel(file, user.id, periodDto);
   }
 }

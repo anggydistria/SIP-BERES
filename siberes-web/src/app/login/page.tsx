@@ -23,6 +23,7 @@ import {
   IconLogin2,
   IconShieldCheck,
   IconUser,
+  IconThumbUp,
 } from '@tabler/icons-react';
 
 import { useRouter } from 'next/navigation';
@@ -137,7 +138,7 @@ export default function LoginPage() {
                     variant="white"
                     color="bpsBlue"
                   >
-                    <IconFileText size={30} stroke={1.8} />
+                    <IconThumbUp size={30} stroke={1.8} />
                   </ThemeIcon>
 
                   <div>
