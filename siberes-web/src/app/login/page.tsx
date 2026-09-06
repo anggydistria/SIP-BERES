@@ -133,12 +133,7 @@ export default function LoginPage() {
             >
               <div>
                 <Group mb={36}>
-                  <ThemeIcon
-                    size={54}
-                    radius="md"
-                    variant="white"
-                    color="bpsBlue"
-                  >
+                
                     <Image
                       src="/siberes-logo.svg"
                       alt="Logo SIBERES"
@@ -146,7 +141,7 @@ export default function LoginPage() {
                       height={58}
                       priority
                     />
-                  </ThemeIcon>
+                
 
                   <div>
                     <Title
