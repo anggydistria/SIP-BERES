@@ -5,7 +5,9 @@ import {
 } from '@nestjs/common';
 import * as XLSX from 'xlsx';
 import { randomUUID } from 'node:crypto';
-import { mkdir, unlink, writeFile, readFile } from 'node:fs/promises';
+// import { mkdir, unlink, writeFile, readFile } from 'node:fs/promises';
+
+import { StorageService } from '../../storage/service/storage.service';
 import { extname, join } from 'node:path';
 
 import { PrismaService } from '../../prisma/prisma.service';
@@ -125,7 +127,10 @@ export interface SaveExcelResponse {
 
 @Injectable()
 export class DataUploadService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly storageService: StorageService,
+  ) {}
   previewExcel(
     buffer: Buffer,
     expectedPeriod: UploadExcelPeriodDto,
@@ -275,24 +280,42 @@ export class DataUploadService {
 
     const fileExtension = extname(file.originalname).toLowerCase();
 
+    // const storedName = `${randomUUID()}${fileExtension}`;
+
+    // const relativeDirectory = join('uploads', 'data-uploads');
+
+    // const relativePath = join(relativeDirectory, storedName).replaceAll(
+    //   '\\',
+    //   '/',
+    // );
+
+    // const absoluteDirectory = join(process.cwd(), relativeDirectory);
+
+    // const absolutePath = join(process.cwd(), relativePath);
+
+    // await mkdir(absoluteDirectory, {
+    //   recursive: true,
+    // });
+
+    // await writeFile(absolutePath, file.buffer);
+
     const storedName = `${randomUUID()}${fileExtension}`;
 
-    const relativeDirectory = join('uploads', 'data-uploads');
+    const monthDirectory = String(preview.period.bulan).padStart(2, '0');
 
-    const relativePath = join(relativeDirectory, storedName).replaceAll(
-      '\\',
-      '/',
+    const storagePath = [
+      'excel',
+      String(preview.period.tahun),
+      monthDirectory,
+      storedName,
+    ].join('/');
+
+    await this.storageService.upload(
+      storagePath,
+      file.buffer,
+      file.mimetype ||
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
     );
-
-    const absoluteDirectory = join(process.cwd(), relativeDirectory);
-
-    const absolutePath = join(process.cwd(), relativePath);
-
-    await mkdir(absoluteDirectory, {
-      recursive: true,
-    });
-
-    await writeFile(absolutePath, file.buffer);
 
     try {
       const dataUpload = await this.prisma.$transaction(async (transaction) => {
@@ -306,7 +329,8 @@ export class DataUploadService {
             originalName: file.originalname,
 
             storedName,
-            path: relativePath,
+            // path: relativePath,
+            path: storagePath,
             mimeType: file.mimetype,
             size: file.size,
 
@@ -371,9 +395,14 @@ export class DataUploadService {
         return createdUpload;
       });
 
-      await Promise.all(
+      // await Promise.all(
+      //   existingUploads.map((upload) =>
+      //     unlink(join(process.cwd(), upload.path)).catch(() => undefined),
+      //   ),
+      // );
+      await Promise.allSettled(
         existingUploads.map((upload) =>
-          unlink(join(process.cwd(), upload.path)).catch(() => undefined),
+          this.storageService.remove(upload.path),
         ),
       );
 
@@ -389,8 +418,13 @@ export class DataUploadService {
         },
         period: preview.period,
       };
+      // } catch (error) {
+      //   await unlink(absolutePath).catch(() => undefined);
+
+      //   throw error;
+      // }
     } catch (error) {
-      await unlink(absolutePath).catch(() => undefined);
+      await this.storageService.remove(storagePath).catch(() => undefined);
 
       throw error;
     }
@@ -408,16 +442,24 @@ export class DataUploadService {
       throw new BadRequestException('File Excel aktif tidak ditemukan');
     }
 
+    // let buffer: Buffer;
+
+    // try {
+    //   buffer = await readFile(join(process.cwd(), upload.path));
+    // } catch {
+    //   throw new BadRequestException(
+    //     'File Excel tidak ditemukan di penyimpanan',
+    //   );
+    // }
     let buffer: Buffer;
 
     try {
-      buffer = await readFile(join(process.cwd(), upload.path));
+      buffer = await this.storageService.download(upload.path);
     } catch {
       throw new BadRequestException(
         'File Excel tidak ditemukan di penyimpanan',
       );
     }
-
     return {
       buffer,
       filename: upload.originalName,
