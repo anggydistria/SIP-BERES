@@ -23,8 +23,9 @@ import {
   IconLogin2,
   IconShieldCheck,
   IconUser,
-  IconThumbUp,
+ 
 } from '@tabler/icons-react';
+import Image from 'next/image';
 
 import { useRouter } from 'next/navigation';
 
@@ -138,7 +139,13 @@ export default function LoginPage() {
                     variant="white"
                     color="bpsBlue"
                   >
-                    <IconThumbUp size={30} stroke={1.8} />
+                    <Image
+                      src="/siberes-logo.svg"
+                      alt="Logo SIBERES"
+                      width={58}
+                      height={58}
+                      priority
+                    />
                   </ThemeIcon>
 
                   <div>

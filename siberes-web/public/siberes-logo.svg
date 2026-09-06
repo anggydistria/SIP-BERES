@@ -1,0 +1,41 @@
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 512 512"
+  role="img"
+  aria-labelledby="title description"
+>
+  <title id="title">Logo SIBERES</title>
+  <desc id="description">
+    Lingkaran hijau dengan aliran Sungai Mahakam berwarna biru dan aksen oranye.
+  </desc>
+
+  <circle cx="230" cy="270" r="182" fill="#16AD61" />
+
+  <path
+    d="M88 382 C82 336 84 289 111 279 C143 268 159 325 193 316 C236 305 224 244 220 194 C216 153 224 130 250 132 C282 135 272 198 291 230 C313 267 347 270 398 276"
+    fill="none"
+    stroke="#FFFFFF"
+    stroke-width="38"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+  <path
+    d="M88 382 C82 336 84 289 111 279 C143 268 159 325 193 316 C236 305 224 244 220 194 C216 153 224 130 250 132 C282 135 272 198 291 230 C313 267 347 270 398 276"
+    fill="none"
+    stroke="#1688EA"
+    stroke-width="24"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+
+  <g
+    fill="none"
+    stroke="#FFAE61"
+    stroke-width="22"
+    stroke-linecap="round"
+  >
+    <path d="M421 225 L446 192" />
+    <path d="M432 250 L471 229" />
+    <path d="M437 279 L478 280" />
+  </g>
+</svg>

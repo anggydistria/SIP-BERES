@@ -24,9 +24,8 @@ import {
   IconShieldCheck,
   IconUpload,
   IconUsers,
-  IconThumbUp,
 } from '@tabler/icons-react';
-
+import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -120,18 +119,13 @@ export function AppLayout({ children }: AppLayoutProps) {
               aria-label="Buka navigasi"
             />
 
-            <ThemeIcon
-              size={40}
-              radius="md"
-              variant="gradient"
-              gradient={{
-                from: 'bpsBlue.6',
-                to: 'bpsGreen.6',
-                deg: 135,
-              }}
-            >
-              <IconThumbUp size={23} stroke={1.9} />
-            </ThemeIcon>
+            <Image
+              src="/siberes-logo.svg"
+              alt="Logo SIBERES"
+              width={44}
+              height={44}
+              priority
+            />
 
             <div>
               <Text
