@@ -473,10 +473,28 @@ export class DataUploadService {
     try {
       return XLSX.read(buffer, {
         type: 'buffer',
-        raw: true,
+
+        // Hanya membaca sheet yang digunakan SIBERES
+        sheets: [TARGET_SHEET, PERIOD_SOURCE_SHEET],
+
+        // Format penyimpanan sel lebih hemat memori
+        dense: true,
+
+        // Kita tidak membutuhkan informasi tambahan berikut
+        cellFormula: false,
+        cellHTML: false,
+        cellStyles: false,
+        cellNF: false,
+
+        // Data yang diperlukan berada pada baris awal
+        sheetRows: 500,
       });
-    } catch {
-      throw new BadRequestException('File Excel tidak dapat dibaca atau rusak');
+    } catch (error) {
+      console.error('Gagal membaca Excel:', error);
+
+      throw new BadRequestException(
+        'File Excel tidak dapat dibaca atau ukurannya terlalu besar',
+      );
     }
   }
 
