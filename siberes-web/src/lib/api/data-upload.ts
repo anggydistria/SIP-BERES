@@ -19,10 +19,13 @@ async function sendExcelFile<T>(
   formData.append('bulan', String(period.bulan));
   formData.append('tahun', String(period.tahun));
 
-  const response = await apiFetch(`${API_URL}${endpoint}`, {
-    method: 'POST',
-    body: formData,
-  });
+  const response = await apiFetch(
+    `${API_URL}${endpoint}`,
+    {
+      method: 'POST',
+      body: formData,
+    }
+  );
 
   const responseText = await response.text();
 

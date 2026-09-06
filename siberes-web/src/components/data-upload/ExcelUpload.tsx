@@ -5,7 +5,9 @@ import {
   Badge,
   Button,
   Group,
+  NumberInput,
   Paper,
+  Select,
   SimpleGrid,
   Stack,
   Table,
@@ -19,14 +21,29 @@ import {
   previewExcel,
   saveExcel,
 } from '@/lib/api/data-upload';
+
 import type {
   ExcelPreviewResponse,
   SaveExcelResponse,
+  UploadExcelPeriod,
 } from '@/types/data-upload';
-
 const MAX_FILE_SIZE = 20 * 1024 * 1024;
 
 const numberFormatter = new Intl.NumberFormat('id-ID');
+const MONTH_OPTIONS = [
+  { value: '1', label: 'Januari' },
+  { value: '2', label: 'Februari' },
+  { value: '3', label: 'Maret' },
+  { value: '4', label: 'April' },
+  { value: '5', label: 'Mei' },
+  { value: '6', label: 'Juni' },
+  { value: '7', label: 'Juli' },
+  { value: '8', label: 'Agustus' },
+  { value: '9', label: 'September' },
+  { value: '10', label: 'Oktober' },
+  { value: '11', label: 'November' },
+  { value: '12', label: 'Desember' },
+];
 
 export function ExcelUpload() {
   const [file, setFile] = useState<File | null>(null);
@@ -41,12 +58,56 @@ export function ExcelUpload() {
 
   const [saveResult, setSaveResult] =
     useState<SaveExcelResponse | null>(null);
-    const [month, setMonth] = useState<string | null>(null);
+  const [month, setMonth] = useState<string | null>(null);
 
-    const [year, setYear] = useState<number | string>(
-      new Date().getFullYear()
-    );
+  const [year, setYear] = useState<number | string>(
+    new Date().getFullYear()
+  );
+  function getSelectedPeriod(): UploadExcelPeriod | null {
+    const numericMonth = Number(month);
+    const numericYear = Number(year);
 
+    if (
+      !Number.isInteger(numericMonth) ||
+      numericMonth < 1 ||
+      numericMonth > 12
+    ) {
+      setError('Pilih bulan periode BRS terlebih dahulu');
+
+      return null;
+    }
+
+    if (
+      !Number.isInteger(numericYear) ||
+      numericYear < 2000 ||
+      numericYear > 2100
+    ) {
+      setError('Tahun periode BRS tidak valid');
+
+      return null;
+    }
+
+    return {
+      bulan: numericMonth,
+      tahun: numericYear,
+    };
+  }
+
+  function resetPreview() {
+    setPreview(null);
+    setSaveResult(null);
+    setError(null);
+  }
+
+  function handleMonthChange(value: string | null) {
+    setMonth(value);
+    resetPreview();
+  }
+
+  function handleYearChange(value: number | string) {
+    setYear(value);
+    resetPreview();
+  }
   function handleFile(fileToUpload: File) {
     setFile(fileToUpload);
     setPreview(null);
@@ -57,19 +118,27 @@ export function ExcelUpload() {
   async function handlePreview() {
     if (!file) {
       setError('Pilih file Excel terlebih dahulu');
+
+      return;
+    }
+
+    const selectedPeriod = getSelectedPeriod();
+
+    if (!selectedPeriod) {
       return;
     }
 
     setIsLoading(true);
     setError(null);
     setSaveResult(null);
-    try {
-  const selectedPeriod = {
-    bulan: Number(month),
-    tahun: Number(year),
-  };
 
-  const result = await previewExcel(file, selectedPeriod);
+    try {
+      const result = await previewExcel(
+        file,
+        selectedPeriod
+      );
+
+      setPreview(result);
     } catch (caughtError) {
       setPreview(null);
 
@@ -90,7 +159,24 @@ export function ExcelUpload() {
 
       return;
     }
+    const selectedPeriod = getSelectedPeriod();
 
+    if (!selectedPeriod) {
+      return;
+    }
+
+    if (
+      preview.period.bulan !== selectedPeriod.bulan ||
+      preview.period.tahun !== selectedPeriod.tahun
+    ) {
+      setPreview(null);
+
+      setError(
+        'Periode pilihan telah berubah. Tampilkan preview kembali.'
+      );
+
+      return;
+    }
     if (preview.invalidRows > 0) {
       setError(
         'Data yang tidak valid harus diperbaiki sebelum disimpan'
@@ -125,34 +211,47 @@ export function ExcelUpload() {
   }
   return (
     <Stack gap="lg">
-      <div>
-        <Title order={2}>Unggah Data BRS</Title>
-        <NumberInput
-          label="Tahun"
-          value={year}
-          onChange={setYear}
-          min={2000}
-          max={2100}
-          allowDecimal={false}
-          required
-        />
-
-        <Select
-          label="Bulan"
-          placeholder="Pilih bulan"
-          data={MONTH_OPTIONS}
-          value={month}
-          onChange={setMonth}
-          required
-        />
-        <Text c="dimmed" mt={4}>
-          Unggah file Excel untuk menampilkan data estimasi
-          Kota Samarinda.
-        </Text>
-      </div>
+   
 
       <Paper withBorder p="lg" radius="md">
         <Stack>
+          <Alert color="blue" title="Tentukan periode BRS">
+            Pilih bulan dan tahun yang seharusnya terdapat
+            dalam file. Sistem akan mencocokkannya dengan
+            periode yang terbaca dari Excel.
+          </Alert>
+
+          <SimpleGrid
+            cols={{
+              base: 1,
+              sm: 2,
+            }}
+          >
+            <NumberInput
+              label="Tahun"
+              description="Tahun periode data BRS"
+              placeholder="Contoh: 2026"
+              value={year}
+              onChange={handleYearChange}
+              min={2000}
+              max={2100}
+              allowDecimal={false}
+              allowNegative={false}
+              required
+            />
+
+            <Select
+              label="Bulan"
+              description="Bulan periode data BRS"
+              placeholder="Pilih bulan"
+              data={MONTH_OPTIONS}
+              value={month}
+              onChange={handleMonthChange}
+              allowDeselect={false}
+              searchable
+              required
+            />
+          </SimpleGrid>
           <Dropzone
             accept={[MIME_TYPES.xlsx, MIME_TYPES.xls]}
             maxSize={MAX_FILE_SIZE}
@@ -222,7 +321,9 @@ export function ExcelUpload() {
             <Button
               onClick={handlePreview}
               loading={isLoading}
-              disabled={!file}
+              disabled={
+                !file || month === null || year === ''
+              }
             >
               Tampilkan Preview
             </Button>
