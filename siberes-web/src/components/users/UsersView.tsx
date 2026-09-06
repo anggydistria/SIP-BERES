@@ -6,13 +6,28 @@ import {
   Button,
   Group,
   Loader,
+  Pagination,
   Paper,
+  Select,
+  SimpleGrid,
   Stack,
   Table,
   Text,
+  TextInput,
+  ThemeIcon,
   Title,
 } from '@mantine/core';
-import { useEffect, useState } from 'react';
+import {
+  IconShieldCheck,
+  IconUserCheck,
+  IconUserOff,
+  IconUserPlus,
+  IconUsers,
+  IconAdjustments,
+  IconRefresh,
+  IconSearch,
+} from '@tabler/icons-react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { useAuth } from '@/context/AuthContext';
 import {
@@ -54,6 +69,16 @@ export function UsersView() {
   const [selectedUser, setSelectedUser] =
     useState<User | null>(null);
 
+  const [search, setSearch] = useState('');
+  const [roleFilter, setRoleFilter] = useState<
+    string | null
+  >(null);
+  const [statusFilter, setStatusFilter] = useState<
+    string | null
+  >(null);
+
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState('10');
   useEffect(() => {
     if (!isAdmin) {
       return;
@@ -82,12 +107,61 @@ export function UsersView() {
           setIsLoading(false);
         }
       });
+    const filteredUsers = useMemo(() => {
+      const normalizedSearch = search.trim().toLowerCase();
 
+      return users.filter((item) => {
+        const matchesSearch =
+          normalizedSearch.length === 0 ||
+          item.name
+            .toLowerCase()
+            .includes(normalizedSearch) ||
+          item.username
+            .toLowerCase()
+            .includes(normalizedSearch);
+
+        const matchesRole =
+          roleFilter === null ||
+          item.roles.includes(
+            roleFilter as User['roles'][number]
+          );
+
+        const matchesStatus =
+          statusFilter === null ||
+          (statusFilter === 'ACTIVE' && item.isActive) ||
+          (statusFilter === 'INACTIVE' && !item.isActive);
+
+        return (
+          matchesSearch && matchesRole && matchesStatus
+        );
+      });
+    }, [users, search, roleFilter, statusFilter]);
+
+    const numericPageSize = Number(pageSize);
+
+    const totalPages = Math.max(
+      1,
+      Math.ceil(filteredUsers.length / numericPageSize)
+    );
+
+    const currentPage = Math.min(page, totalPages);
+
+    const firstIndex = (currentPage - 1) * numericPageSize;
+
+    const visibleUsers = filteredUsers.slice(
+      firstIndex,
+      firstIndex + numericPageSize
+    );
     return () => {
       isCancelled = true;
     };
   }, [isAdmin]);
-
+  function handleResetFilter() {
+    setSearch('');
+    setRoleFilter(null);
+    setStatusFilter(null);
+    setPage(1);
+  }
   function handleUserSaved(savedUser: User) {
     const isEditing = selectedUser !== null;
 
@@ -178,22 +252,199 @@ export function UsersView() {
     }
   }
 
+  const activeUsers = users.filter(
+    (item) => item.isActive
+  ).length;
+
+  const inactiveUsers = users.filter(
+    (item) => !item.isActive
+  ).length;
+
+  const activeAdmins = users.filter(
+    (item) => item.isActive && item.roles.includes('ADMIN')
+  ).length;
   return (
     <Stack gap="lg">
-      <Group justify="space-between">
-        <div>
-          <Title order={2}>Kelola Pengguna</Title>
+      <Paper
+        withBorder
+        p={{
+          base: 'md',
+          sm: 'lg',
+        }}
+        shadow="xs"
+        style={{
+          background:
+            'linear-gradient(135deg, var(--mantine-color-bpsBlue-0), var(--mantine-color-bpsGreen-0))',
+          borderColor: 'var(--mantine-color-bpsBlue-2)',
+        }}
+      >
+        <Group justify="space-between" align="flex-start">
+          <Group align="flex-start" wrap="nowrap">
+            <ThemeIcon
+              size={54}
+              radius="md"
+              variant="gradient"
+              gradient={{
+                from: 'bpsBlue.6',
+                to: 'bpsGreen.6',
+                deg: 135,
+              }}
+            >
+              <IconUsers size={30} stroke={1.8} />
+            </ThemeIcon>
 
-          <Text c="dimmed" size="sm">
-            Tambah, ubah, dan atur status pengguna SIBERES.
-          </Text>
-        </div>
+            <div>
+              <Title order={2}>Kelola Pengguna</Title>
 
-        <Button onClick={handleOpenCreate}>
-          Tambah Pengguna
-        </Button>
-      </Group>
+              <Text c="dimmed" size="sm" mt={2}>
+                Tambah, ubah, dan atur hak akses pengguna
+                SIBERES.
+              </Text>
+            </div>
+          </Group>
 
+          <Button
+            color="bpsBlue"
+            leftSection={<IconUserPlus size={18} />}
+            onClick={handleOpenCreate}
+          >
+            Tambah Pengguna
+          </Button>
+        </Group>
+      </Paper>
+
+      <SimpleGrid
+        cols={{
+          base: 1,
+          xs: 2,
+          lg: 4,
+        }}
+      >
+        <UserSummaryCard
+          icon={<IconUsers size={24} />}
+          color="bpsBlue"
+          label="Total Pengguna"
+          value={isLoading ? '–' : String(users.length)}
+        />
+
+        <UserSummaryCard
+          icon={<IconUserCheck size={24} />}
+          color="bpsGreen"
+          label="Pengguna Aktif"
+          value={isLoading ? '–' : String(activeUsers)}
+        />
+
+        <UserSummaryCard
+          icon={<IconUserOff size={24} />}
+          color="bpsOrange"
+          label="Pengguna Nonaktif"
+          value={isLoading ? '–' : String(inactiveUsers)}
+        />
+
+        <UserSummaryCard
+          icon={<IconShieldCheck size={24} />}
+          color="bpsBlue"
+          label="Admin Aktif"
+          value={isLoading ? '–' : String(activeAdmins)}
+        />
+      </SimpleGrid>
+      <Paper withBorder p="md" shadow="xs">
+        <Group mb="md">
+          <ThemeIcon
+            color="bpsBlue"
+            variant="light"
+            size={38}
+          >
+            <IconAdjustments size={21} />
+          </ThemeIcon>
+
+          <div>
+            <Text fw={650}>Filter Pengguna</Text>
+
+            <Text size="xs" c="dimmed">
+              Cari pengguna berdasarkan identitas, role, dan
+              status.
+            </Text>
+          </div>
+        </Group>
+
+        <SimpleGrid
+          cols={{
+            base: 1,
+            sm: 2,
+            lg: 4,
+          }}
+          style={{
+            alignItems: 'end',
+          }}
+        >
+          <TextInput
+            label="Pencarian"
+            placeholder="Nama atau username"
+            value={search}
+            leftSection={<IconSearch size={17} />}
+            onChange={(event) => {
+              setSearch(event.currentTarget.value);
+              setPage(1);
+            }}
+          />
+
+          <Select
+            label="Role"
+            placeholder="Semua role"
+            value={roleFilter}
+            data={[
+              {
+                value: 'ADMIN',
+                label: 'Administrator',
+              },
+              {
+                value: 'KETUA_BRS',
+                label: 'Ketua BRS',
+              },
+              {
+                value: 'PENGELOLA',
+                label: 'Pengelola',
+              },
+            ]}
+            onChange={(value) => {
+              setRoleFilter(value);
+              setPage(1);
+            }}
+            clearable
+          />
+
+          <Select
+            label="Status"
+            placeholder="Semua status"
+            value={statusFilter}
+            data={[
+              {
+                value: 'ACTIVE',
+                label: 'Aktif',
+              },
+              {
+                value: 'INACTIVE',
+                label: 'Nonaktif',
+              },
+            ]}
+            onChange={(value) => {
+              setStatusFilter(value);
+              setPage(1);
+            }}
+            clearable
+          />
+
+          <Button
+            variant="light"
+            color="gray"
+            leftSection={<IconRefresh size={18} />}
+            onClick={handleResetFilter}
+          >
+            Reset Filter
+          </Button>
+        </SimpleGrid>
+      </Paper>
       {error && (
         <Alert
           color="red"
@@ -221,9 +472,11 @@ export function UsersView() {
           <Group justify="center" py="xl">
             <Loader />
           </Group>
-        ) : users.length === 0 ? (
+        ) : filteredUsers.length === 0 ? (
           <Text c="dimmed" ta="center" py="xl">
-            Belum ada data pengguna.
+            {users.length === 0
+              ? 'Belum ada data pengguna.'
+              : 'Pengguna tidak ditemukan berdasarkan filter.'}
           </Text>
         ) : (
           <Table.ScrollContainer minWidth={800}>
@@ -240,7 +493,7 @@ export function UsersView() {
               </Table.Thead>
 
               <Table.Tbody>
-                {users.map((item) => {
+                {visibleUsers.map((item) => {
                   const isCurrentUser =
                     item.id === currentUser?.id;
 
@@ -331,6 +584,19 @@ export function UsersView() {
           </Table.ScrollContainer>
         )}
       </Paper>
+      <UsersPagination
+        total={filteredUsers.length}
+        displayedRows={visibleUsers.length}
+        page={currentPage}
+        totalPages={totalPages}
+        pageSize={pageSize}
+        loading={isLoading}
+        onPageChange={setPage}
+        onPageSizeChange={(value) => {
+          setPageSize(value);
+          setPage(1);
+        }}
+      />
       {userFormOpened && (
         <UserFormModal
           opened={userFormOpened}
@@ -340,5 +606,128 @@ export function UsersView() {
         />
       )}
     </Stack>
+  );
+}
+
+interface UserSummaryCardProps {
+  icon: React.ReactNode;
+  color: 'bpsBlue' | 'bpsGreen' | 'bpsOrange';
+  label: string;
+  value: string;
+}
+
+function UserSummaryCard({
+  icon,
+  color,
+  label,
+  value,
+}: UserSummaryCardProps) {
+  return (
+    <Paper
+      withBorder
+      p="lg"
+      shadow="xs"
+      h="100%"
+      style={{
+        borderTop: `4px solid var(--mantine-color-${color}-6)`,
+      }}
+    >
+      <Group justify="space-between" align="flex-start">
+        <div>
+          <Text size="sm" c="dimmed">
+            {label}
+          </Text>
+
+          <Text fw={750} fz={30} mt={4}>
+            {value}
+          </Text>
+        </div>
+
+        <ThemeIcon
+          color={color}
+          variant="light"
+          size={46}
+          radius="md"
+        >
+          {icon}
+        </ThemeIcon>
+      </Group>
+    </Paper>
+  );
+}
+
+interface UsersPaginationProps {
+  total: number;
+  displayedRows: number;
+  page: number;
+  totalPages: number;
+  pageSize: string;
+  loading: boolean;
+  onPageChange: (page: number) => void;
+  onPageSizeChange: (pageSize: string) => void;
+}
+
+function UsersPagination({
+  total,
+  displayedRows,
+  page,
+  totalPages,
+  pageSize,
+  loading,
+  onPageChange,
+  onPageSizeChange,
+}: UsersPaginationProps) {
+  if (total === 0) {
+    return null;
+  }
+
+  const numericPageSize = Number(pageSize);
+  const firstRow = (page - 1) * numericPageSize + 1;
+  const lastRow = firstRow + displayedRows - 1;
+
+  return (
+    <Paper withBorder p="sm" shadow="xs">
+      <Group justify="space-between">
+        <Group gap="sm">
+          <Text size="sm" c="dimmed">
+            Tampilkan
+          </Text>
+
+          <Select
+            value={pageSize}
+            data={[
+              { value: '10', label: '10' },
+              { value: '25', label: '25' },
+              { value: '50', label: '50' },
+              { value: '100', label: '100' },
+            ]}
+            onChange={(value) => {
+              onPageSizeChange(value ?? '10');
+            }}
+            allowDeselect={false}
+            disabled={loading}
+            w={80}
+          />
+
+          <Text size="sm" c="dimmed">
+            data
+          </Text>
+        </Group>
+
+        <Text size="sm" c="dimmed">
+          Menampilkan {firstRow}–{lastRow} dari {total}{' '}
+          pengguna
+        </Text>
+
+        <Pagination
+          value={page}
+          total={totalPages}
+          onChange={onPageChange}
+          disabled={loading}
+          color="bpsBlue"
+          withEdges
+        />
+      </Group>
+    </Paper>
   );
 }
