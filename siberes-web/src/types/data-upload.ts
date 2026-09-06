@@ -57,3 +57,8 @@ export interface SaveExcelResponse {
     tahun: number;
   };
 }
+
+export interface UploadExcelPeriod {
+  bulan: number;
+  tahun: number;
+}

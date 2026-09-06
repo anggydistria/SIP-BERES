@@ -41,6 +41,11 @@ export function ExcelUpload() {
 
   const [saveResult, setSaveResult] =
     useState<SaveExcelResponse | null>(null);
+    const [month, setMonth] = useState<string | null>(null);
+
+    const [year, setYear] = useState<number | string>(
+      new Date().getFullYear()
+    );
 
   function handleFile(fileToUpload: File) {
     setFile(fileToUpload);
@@ -59,8 +64,12 @@ export function ExcelUpload() {
     setError(null);
     setSaveResult(null);
     try {
-      const result = await previewExcel(file);
-      setPreview(result);
+  const selectedPeriod = {
+    bulan: Number(month),
+    tahun: Number(year),
+  };
+
+  const result = await previewExcel(file, selectedPeriod);
     } catch (caughtError) {
       setPreview(null);
 
@@ -94,7 +103,12 @@ export function ExcelUpload() {
     setError(null);
 
     try {
-      const result = await saveExcel(file);
+      const selectedPeriod = {
+        bulan: Number(month),
+        tahun: Number(year),
+      };
+
+      const result = await saveExcel(file, selectedPeriod);
 
       setSaveResult(result);
     } catch (caughtError) {
@@ -113,7 +127,24 @@ export function ExcelUpload() {
     <Stack gap="lg">
       <div>
         <Title order={2}>Unggah Data BRS</Title>
+        <NumberInput
+          label="Tahun"
+          value={year}
+          onChange={setYear}
+          min={2000}
+          max={2100}
+          allowDecimal={false}
+          required
+        />
 
+        <Select
+          label="Bulan"
+          placeholder="Pilih bulan"
+          data={MONTH_OPTIONS}
+          value={month}
+          onChange={setMonth}
+          required
+        />
         <Text c="dimmed" mt={4}>
           Unggah file Excel untuk menampilkan data estimasi
           Kota Samarinda.

@@ -74,31 +74,31 @@ export class DataUploadController {
       )}`,
     });
   }
-  @Post('preview')
-  @Roles('KETUA_BRS')
-  @UseInterceptors(
-    FileInterceptor('file', {
-      storage: memoryStorage(),
-      limits: {
-        fileSize: 20 * 1024 * 1024,
-      },
-      fileFilter: (_request, file, callback) => {
-        const extension = extname(file.originalname).toLowerCase();
+  // @Post('preview')
+  // @Roles('KETUA_BRS')
+  // @UseInterceptors(
+  //   FileInterceptor('file', {
+  //     storage: memoryStorage(),
+  //     limits: {
+  //       fileSize: 20 * 1024 * 1024,
+  //     },
+  //     fileFilter: (_request, file, callback) => {
+  //       const extension = extname(file.originalname).toLowerCase();
 
-        const allowedExtensions = ['.xlsx', '.xls'];
+  //       const allowedExtensions = ['.xlsx', '.xls'];
 
-        if (!allowedExtensions.includes(extension)) {
-          callback(
-            new BadRequestException('File harus berformat .xlsx atau .xls'),
-            false,
-          );
-          return;
-        }
+  //       if (!allowedExtensions.includes(extension)) {
+  //         callback(
+  //           new BadRequestException('File harus berformat .xlsx atau .xls'),
+  //           false,
+  //         );
+  //         return;
+  //       }
 
-        callback(null, true);
-      },
-    }),
-  )
+  //       callback(null, true);
+  //     },
+  //   }),
+  // )
   @Post('preview')
   @Roles('KETUA_BRS')
   @UseInterceptors(excelFileInterceptor)

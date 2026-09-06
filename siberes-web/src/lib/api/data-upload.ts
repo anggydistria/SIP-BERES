@@ -1,6 +1,7 @@
 import type {
   ExcelPreviewResponse,
   SaveExcelResponse,
+  UploadExcelPeriod,
 } from '@/types/data-upload';
 import { apiFetch } from './api-fetch';
 const API_URL =
@@ -9,16 +10,19 @@ const API_URL =
 
 async function sendExcelFile<T>(
   endpoint: string,
-  file: File
+  file: File,
+  period: UploadExcelPeriod
 ): Promise<T> {
   const formData = new FormData();
 
   formData.append('file', file);
+  formData.append('bulan', String(period.bulan));
+  formData.append('tahun', String(period.tahun));
 
-const response = await apiFetch(`${API_URL}${endpoint}`, {
-  method: 'POST',
-  body: formData,
-});
+  const response = await apiFetch(`${API_URL}${endpoint}`, {
+    method: 'POST',
+    body: formData,
+  });
 
   const responseText = await response.text();
 
@@ -50,27 +54,31 @@ const response = await apiFetch(`${API_URL}${endpoint}`, {
 }
 
 export function previewExcel(
-  file: File
+  file: File,
+  period: UploadExcelPeriod
 ): Promise<ExcelPreviewResponse> {
   return sendExcelFile<ExcelPreviewResponse>(
     '/data-uploads/preview',
-    file
+    file,
+    period
   );
 }
 
 export function saveExcel(
-  file: File
+  file: File,
+  period: UploadExcelPeriod
 ): Promise<SaveExcelResponse> {
   return sendExcelFile<SaveExcelResponse>(
     '/data-uploads',
-    file
+    file,
+    period
   );
 }
 
 export async function downloadActiveExcel(id: number) {
-const response = await apiFetch(
-  `${API_URL}/data-uploads/${id}/file`
-);
+  const response = await apiFetch(
+    `${API_URL}/data-uploads/${id}/file`
+  );
 
   if (!response.ok) {
     const data = (await response
